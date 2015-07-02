@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\ConvertPdfToImage;
+namespace Spatie\ConvertPdfToImage\Exceptions;
 
 class PdfDoesNotExist extends \Exception
 {
