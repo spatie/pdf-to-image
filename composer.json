@@ -1,0 +1,41 @@
+{
+    "name": "spatie/pdf-to-image",
+    "description": "Convert a pdf to an image",
+    "keywords": [
+        "spatie",
+        "pdf-to-image",
+        "pdf",
+        "convert",
+        "image"
+    ],
+    "homepage": "https://github.com/spatie/pdf-to-image",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Freek Van der Herten",
+            "email": "freek@spatie.be",
+            "homepage": "https://spatie.be",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php" : ">=5.5.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit" : "4.*",
+        "scrutinizer/ocular": "~1.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Spatie\\PdfToImage\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Spatie\\PdfToImage\\Test\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "phpunit"
+    }
+}
