@@ -14,7 +14,8 @@ This package provides an easy to work with class to convert pdf's to images.
 You should have [Imagick](http://php.net/manual/en/imagick.setresolution.php) installed. On Ubuntu you can install it by issuing this command:
 ```bash
 sudo apt-get install imagemagick php5-imagick
-``
+``` 
+
 
 ## Install
 
