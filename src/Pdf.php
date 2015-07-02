@@ -16,11 +16,14 @@ class Pdf
 
     /**
      * @param string $pdfFile The path to the pdffile.
+     *
      * @throws \Spatie\ConvertPdfToImage\PdfDoesNotExist
      */
     public function __construct($pdfFile)
     {
-        if (! file_exists($pdfFile)) throw new PdfDoesNotExist;
+        if (!file_exists($pdfFile)) {
+            throw new PdfDoesNotExist();
+        }
 
         $this->pdfFile = $pdfFile;
     }
@@ -29,6 +32,7 @@ class Pdf
      * Set the raster resolution.
      *
      * @param int $resolution
+     *
      * @return $this
      */
     public function setResolution($resolution)
@@ -39,7 +43,7 @@ class Pdf
     }
 
     /**
-     * Set the output format
+     * Set the output format.
      *
      * @param string $outputFormat
      */
@@ -52,11 +56,14 @@ class Pdf
      * Set the page number that should be rendered.
      *
      * @param int $page
+     *
      * @throws \Spatie\PdfToImage\PageDoesNotExist
      */
     public function setPage($page)
     {
-        if ($page > $this->getPageCount()) throw new PageDoesNotExist('Page ' . $page . ' does not exist');
+        if ($page > $this->getPageCount()) {
+            throw new PageDoesNotExist('Page '.$page.' does not exist');
+        }
 
         $this->page = $page;
     }
@@ -75,6 +82,7 @@ class Pdf
      * Save the image to the given path.
      *
      * @param string $pathToImage
+     *
      * @throws \Spatie\PdfToImage\InvalidFormat
      */
     public function saveImage($pathToImage)
@@ -99,7 +107,7 @@ class Pdf
 
         $outputFormat = strtolower($outputFormat);
 
-        if (! in_array($outputFormat, ['jpg', 'jpeg', 'png'])) {
+        if (!in_array($outputFormat, ['jpg', 'jpeg', 'png'])) {
             $outputFormat = 'jpg';
         }
 
