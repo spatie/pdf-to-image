@@ -16,7 +16,6 @@ You should have [Imagick](http://php.net/manual/en/imagick.setresolution.php) in
 sudo apt-get install imagemagick php5-imagick
 ``` 
 
-
 ## Install
 
 The package can be installed via composer:
