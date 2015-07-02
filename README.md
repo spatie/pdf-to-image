@@ -37,7 +37,7 @@ Otherwise the output will be a jpg.
 ##Other methods
 You can get the total number of pages in the pdf:
 ```php
-$pdf->getPageCount() //returns an int
+$pdf->getNumberOfPages() //returns an int
 ```
 
 By default the first page of the pdf will be rendered. If you want to render another page you can do so:

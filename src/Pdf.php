@@ -50,19 +50,27 @@ class Pdf
      * Set the output format.
      *
      * @param string $outputFormat
+     *
+     * @return $this
+     *
      * @throws \Spatie\ConvertPdfToImage\Exceptions\InvalidFormat
      */
     public function setOutputFormat($outputFormat)
     {
-        if (! $this->isValidOutputFormat($outputFormat)) throw new InvalidFormat('Format ' . $outputFormat . ' is not supported');
+        if (!$this->isValidOutputFormat($outputFormat)) {
+            throw new InvalidFormat('Format '.$outputFormat.' is not supported');
+        }
 
         $this->outputFormat = $outputFormat;
+
+        return $this;
     }
 
     /**
      * Determine if the given format is a valid output format.
      *
      * @param $outputFormat
+     *
      * @return bool
      */
     public function isValidOutputFormat($outputFormat)
@@ -75,6 +83,8 @@ class Pdf
      *
      * @param int $page
      *
+     * @return $this
+     *
      * @throws \Spatie\ConvertPdfToImage\Exceptions\PageDoesNotExist
      */
     public function setPage($page)
@@ -84,6 +94,8 @@ class Pdf
         }
 
         $this->page = $page;
+
+        return $this;
     }
 
     /**
@@ -91,7 +103,7 @@ class Pdf
      *
      * @return int
      */
-    public function getPageCount()
+    public function getNumberOfPages()
     {
         return (new \Imagick($this->pdfFile))->getNumberImages();
     }
@@ -100,23 +112,29 @@ class Pdf
      * Save the image to the given path.
      *
      * @param string $pathToImage
+     *
+     * @return bool
      */
     public function saveImage($pathToImage)
     {
-        $outputFormat = $this->determineOutputFormat($pathToImage);
+        $imagick = new \Imagick();
 
-        $im = new \Imagick();
-        $im->setResolution($this->resolution, $this->resolution);
-        $im->readImage($this->pdfFile[$this->page - 1]);
-        $im->setImageFormat($outputFormat);
+        $imagick->setResolution($this->resolution, $this->resolution);
 
-        file_put_contents($pathToImage, $im);
+        $imagick->readImage(sprintf('%s[%s]', $this->pdfFile, $this->page - 1));
+
+        $imagick->setImageFormat($this->determineOutputFormat($pathToImage));
+
+        file_put_contents($pathToImage, $imagick);
+
+        return true;
     }
 
     /**
      * Determine in which format the image must be rendered.
      *
      * @param $pathToImage
+     *
      * @return string
      */
     protected function determineOutputFormat($pathToImage)
@@ -129,7 +147,7 @@ class Pdf
 
         $outputFormat = strtolower($outputFormat);
 
-        if (! $this->isValidOutputFormat($outputFormat)) {
+        if (!$this->isValidOutputFormat($outputFormat)) {
             $outputFormat = 'jpg';
         }
 
