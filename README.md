@@ -35,16 +35,27 @@ $pdf->saveImage($pathToWhereImageShouldBeStored);
 If the path you pass to `saveImage` has the extensions  `jpg`, `jpeg`, or `png` the image will be saved in that format.
 Otherwise the output will be a jpg.
 
+##Other methods
+You can get the number of pages in the pdf:
+```php
+$pdf->getPageCount() //returns an int
+```
+
+By default the first page of the pdf will be rendered. If you want to render another page you can do so:
+```php
+$pdf->setPage(2)
+    ->saveImage($pathToWhereImageShouldBeStored) //saves the second page
+```
+
+You can override the output format:
+```php
+$pdf->setOutputFormat('png')
+    ->saveImage($pathToWhereImageShouldBeStored) //the output wil be a png, no matter what
+```
 
 ## Change log
 
 Please see [CHANGELOG](CHANGELOG.md) for more information what has changed recently.
-
-## Testing
-
-``` bash
-$ composer test
-```
 
 ## Contributing
 
