@@ -24,7 +24,7 @@ $ composer require spatie/pdf-to-image
 
 ## Usage
 
-Converting a pdf to an image is easy!
+Converting a pdf to an image is easy.
 
 ```php
 $pdf = new Spatie\PdfToImage\Pdf($pathToPdf);
@@ -37,19 +37,19 @@ Otherwise the output will be a jpg.
 ##Other methods
 You can get the total number of pages in the pdf:
 ```php
-$pdf->getNumberOfPages() //returns an int
+$pdf->getNumberOfPages(); //returns an int
 ```
 
 By default the first page of the pdf will be rendered. If you want to render another page you can do so:
 ```php
 $pdf->setPage(2)
-    ->saveImage($pathToWhereImageShouldBeStored) //saves the second page
+    ->saveImage($pathToWhereImageShouldBeStored); //saves the second page
 ```
 
 You can override the output format:
 ```php
 $pdf->setOutputFormat('png')
-    ->saveImage($pathToWhereImageShouldBeStored) //the output wil be a png, no matter what
+    ->saveImage($pathToWhereImageShouldBeStored); //the output wil be a png, no matter what
 ```
 
 ## Change log
