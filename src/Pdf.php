@@ -89,7 +89,7 @@ class Pdf
      */
     public function setPage($page)
     {
-        if ($page > $this->getPageCount()) {
+        if ($page > $this->getNumberOfPages()) {
             throw new PageDoesNotExist('Page '.$page.' does not exist');
         }
 
