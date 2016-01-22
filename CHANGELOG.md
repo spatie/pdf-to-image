@@ -2,7 +2,7 @@
 
 All Notable changes to `pdf-to-image` will be documented in this file
 
-## 1.0.2 - 2015-07-03
+## 1.0.3 - 2015-01-22
 
 ### Bugfix
 - Exceptions now live in the right namespace.
@@ -11,7 +11,6 @@ All Notable changes to `pdf-to-image` will be documented in this file
 
 ### Bugfix
 - setPage is now working as excepted.
-
 
 ## 1.0.0 - 2015-07-02
 
