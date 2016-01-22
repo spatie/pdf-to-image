@@ -2,9 +2,9 @@
 
 namespace Spatie\PdfToImage;
 
-use Spatie\ConvertPdfToImage\Exceptions\InvalidFormat;
-use Spatie\ConvertPdfToImage\Exceptions\PageDoesNotExist;
-use Spatie\ConvertPdfToImage\Exceptions\PdfDoesNotExist;
+use Spatie\PdfToImage\Exceptions\InvalidFormat;
+use Spatie\PdfToImage\Exceptions\PageDoesNotExist;
+use Spatie\PdfToImage\Exceptions\PdfDoesNotExist;
 
 class Pdf
 {
@@ -21,7 +21,7 @@ class Pdf
     /**
      * @param string $pdfFile The path to the pdffile.
      *
-     * @throws \Spatie\ConvertPdfToImage\Exceptions\PdfDoesNotExist
+     * @throws \Spatie\PdfToImage\Exceptions\PdfDoesNotExist
      */
     public function __construct($pdfFile)
     {
@@ -53,7 +53,7 @@ class Pdf
      *
      * @return $this
      *
-     * @throws \Spatie\ConvertPdfToImage\Exceptions\InvalidFormat
+     * @throws \Spatie\PdfToImage\Exceptions\InvalidFormat
      */
     public function setOutputFormat($outputFormat)
     {
@@ -85,7 +85,7 @@ class Pdf
      *
      * @return $this
      *
-     * @throws \Spatie\ConvertPdfToImage\Exceptions\PageDoesNotExist
+     * @throws \Spatie\PdfToImage\Exceptions\PageDoesNotExist
      */
     public function setPage($page)
     {

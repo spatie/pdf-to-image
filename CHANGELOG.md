@@ -2,6 +2,11 @@
 
 All Notable changes to `pdf-to-image` will be documented in this file
 
+## 1.0.2 - 2015-07-03
+
+### Bugfix
+- Exceptions now live in the right namespace.
+
 ## 1.0.1 - 2015-07-03
 
 ### Bugfix

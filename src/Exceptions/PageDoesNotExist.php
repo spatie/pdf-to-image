@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\ConvertPdfToImage\Exceptions;
+namespace Spatie\PdfToImage\Exceptions;
 
 class PageDoesNotExist extends \Exception
 {
