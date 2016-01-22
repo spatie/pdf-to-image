@@ -59,6 +59,12 @@ $pdf->setOutputFormat('png')
 
 Please see [CHANGELOG](CHANGELOG.md) for more information what has changed recently.
 
+## Testing
+
+``` bash
+$ composer test
+```
+
 ## Contributing
 
 Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
