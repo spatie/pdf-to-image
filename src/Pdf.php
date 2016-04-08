@@ -117,17 +117,31 @@ class Pdf
      */
     public function saveImage($pathToImage)
     {
+        $imagick = $this->getImageData($pathToImage);
+
+        file_put_contents($pathToImage, $imagick);
+
+        return true;
+    }
+
+    /**
+     * Return raw image data.
+     *
+     * @param  string $pathToImage
+     *
+     * @return \Imagick
+     */
+    public function getImageData($pathToImage)
+    {
         $imagick = new \Imagick();
 
         $imagick->setResolution($this->resolution, $this->resolution);
 
         $imagick->readImage(sprintf('%s[%s]', $this->pdfFile, $this->page - 1));
 
-        $imagick->setImageFormat($this->determineOutputFormat($pathToImage));
+        $imagick->setFormat($this->determineOutputFormat($pathToImage));
 
-        file_put_contents($pathToImage, $imagick);
-
-        return true;
+        return $imagick;
     }
 
     /**
