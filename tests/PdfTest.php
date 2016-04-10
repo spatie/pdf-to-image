@@ -78,12 +78,7 @@ class PdfTest extends \PHPUnit_Framework_TestCase
 
         $imagick = $pdf->getImageData('page-2.jpg');
 
-        $checksum = md5($imagick->getImageBlob());
-
         $this->assertInstanceOf('Imagick', $imagick);
-        $this->assertFalse($checksum === '7bc96f45d2a49c31a688b4e3e4818284'); // Page 1 md5
-        $this->assertTrue($checksum === 'de779171984904e9b8c4addcb2aa5da7'); // Page 2 md5
-        $this->assertFalse($checksum === '62f15a2d102618c3c1a1608ba52f3a68'); // Page 3 md5
     }
 
     /** @test */
