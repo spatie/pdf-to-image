@@ -2,6 +2,9 @@
 
 All Notable changes to `pdf-to-image` will be documented in this file
 
+## 1.1.0 - 2015-04-13
+- added `getImageData`-function
+
 ## 1.0.3 - 2015-01-22
 
 ### Bugfix
