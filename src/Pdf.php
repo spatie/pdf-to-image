@@ -2,6 +2,8 @@
 
 namespace Spatie\PdfToImage;
 
+use Imagick;
+use Spatie\PdfToImage\Exceptions\InvalidColorSpace;
 use Spatie\PdfToImage\Exceptions\InvalidFormat;
 use Spatie\PdfToImage\Exceptions\PageDoesNotExist;
 use Spatie\PdfToImage\Exceptions\PdfDoesNotExist;
@@ -13,6 +15,8 @@ class Pdf
     protected $resolution = 144;
 
     protected $outputFormat = '';
+
+    protected $outputColorSpace = Imagick::COLORSPACE_RGB;
 
     protected $page = 1;
 
@@ -67,6 +71,26 @@ class Pdf
     }
 
     /**
+     * Set the output color space.
+     *
+     * @param string $outputColorSpace
+     *
+     * @return $this
+     *
+     * @throws \Spatie\PdfToImage\Exceptions\InvalidColorspace
+     */
+    public function setOutputColorSpace($outputColorSpace)
+    {        
+        if (!$this->isValidOutputColorSpace($outputColorSpace)) {
+            throw new InvalidColorSpace('Colorspace '.$outputColorSpace.' is not valid');
+        }
+
+        $this->outputColorSpace = constant('Imagick::'.$outputColorSpace);
+
+        return $this;
+    }
+
+    /**
      * Determine if the given format is a valid output format.
      *
      * @param $outputFormat
@@ -76,6 +100,18 @@ class Pdf
     public function isValidOutputFormat($outputFormat)
     {
         return in_array($outputFormat, $this->validOutputFormats);
+    }
+
+    /**
+     * Determine if the given colorspace is a valid.
+     *
+     * @param $outputFormat
+     *
+     * @return bool
+     */
+    public function isValidOutputColorSpace($outputColorSpace)
+    {                
+        return defined('Imagick::'.$outputColorSpace);        
     }
 
     /**
@@ -124,6 +160,8 @@ class Pdf
         $imagick->readImage(sprintf('%s[%s]', $this->pdfFile, $this->page - 1));
 
         $imagick->setImageFormat($this->determineOutputFormat($pathToImage));
+
+        $imagick->transformImageColorspace($this->outputColorSpace);
 
         file_put_contents($pathToImage, $imagick);
 
