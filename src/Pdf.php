@@ -128,7 +128,7 @@ class Pdf
      * Save the file as images to the given path.
      *
      * @param string $storeDirectory
-     * @param string $file_name     
+     * @param string $fileName     
      *
      * @return array $files the full path to the newly created images.
      */
@@ -136,12 +136,11 @@ class Pdf
     {
         $numberOfPages = $this->getNumberOfPages();
         if($numberOfPages === 0) return [];
-        
+
         $files = [];
-        for($i =1; $i <= $numberOfPages; $i++)
-        {
-            $this->setPage($i);
-            $filePath = "{$storeDirectory}/page_{$i}_{$fileName}.{$this->outputFormat}";
+        foreach(range(1,$numberOfPages) as $pageNumber) { 
+            $this->setPage($pageNumber);
+            $filePath = "{$storeDirectory}/page_{$pageNumber}_{$fileName}.{$this->outputFormat}";
             $imageData = $this->getImageData($filePath);
 
             file_put_contents($filePath, $imageData);
