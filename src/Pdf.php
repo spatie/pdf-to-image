@@ -132,7 +132,7 @@ class Pdf
      *
      * @return array $files the full path to the newly created images.
      */
-    public function extractPagesAsImages($storeDirectory, $file_name)
+    public function extractAllPagesAsImages($storeDirectory, $file_name)
     {
         $pages = $this->getNumberOfPages();
         $files = [];
