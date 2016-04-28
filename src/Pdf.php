@@ -137,17 +137,14 @@ class Pdf
         $numberOfPages = $this->getNumberOfPages();
         if($numberOfPages === 0) return [];
 
-        $files = [];
-        foreach(range(1,$numberOfPages) as $pageNumber) { 
+        return array_map(function($pageNumber) use ($storeDirectory, $fileName){
             $this->setPage($pageNumber);
             $filePath = "{$storeDirectory}/page_{$pageNumber}_{$fileName}.{$this->outputFormat}";
             $imageData = $this->getImageData($filePath);
 
             file_put_contents($filePath, $imageData);
-            $files[] = $filePath;
-        }
-
-        return $files;
+            return $filePath;
+        }, range(1,$numberOfPages));
     }
 
     /**
