@@ -134,15 +134,17 @@ class Pdf
      */
     public function extractAllPagesAsImages($storeDirectory, $fileName)
     {
-        $pages = $this->getNumberOfPages();
+        $numberOfPages = $this->getNumberOfPages();
+        if($numberOfPages === 0) return [];
+        
         $files = [];
-        for($i =1; $i <= $pages; $i++)
+        for($i =1; $i <= $numberOfPages; $i++)
         {
             $this->setPage($i);
             $filePath = "{$storeDirectory}/page_{$i}_{$fileName}.{$this->outputFormat}";
-            $imagick = $this->getImageData($filePath);
+            $imageData = $this->getImageData($filePath);
 
-            file_put_contents($filePath, $imagick);
+            file_put_contents($filePath, $imageData);
             $files[] = $filePath;
         }
 
