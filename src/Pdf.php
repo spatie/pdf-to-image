@@ -128,30 +128,33 @@ class Pdf
      * Save the file as images to the given directory.
      *
      * @param string $directory
-     * @param string $prefix     
+     * @param string $prefix
      *
      * @return array $files the full path to the newly created images.
      */
     public function saveAll($directory, $prefix = '')
     {
         $numberOfPages = $this->getNumberOfPages();
-        if($numberOfPages === 0) return [];
+        if ($numberOfPages === 0) {
+            return [];
+        }
 
-        return array_map(function($pageNumber) use ($directory, $prefix){
+        return array_map(function ($pageNumber) use ($directory, $prefix) {
             $this->setPage($pageNumber);
-            
+
             $filePath = "{$directory}/{$prefix}{$pageNumber}.{$this->outputFormat}";
             $imageData = $this->getImageData($filePath);
 
             file_put_contents($filePath, $imageData);
+
             return $filePath;
-        }, range(1,$numberOfPages));
+        }, range(1, $numberOfPages));
     }
 
     /**
      * Return raw image data.
      *
-     * @param  string $pathToImage
+     * @param string $pathToImage
      *
      * @return \Imagick
      */
