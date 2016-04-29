@@ -117,9 +117,9 @@ class Pdf
      */
     public function saveImage($pathToImage)
     {
-        $imagick = $this->getImageData($pathToImage);
+        $imageData = $this->getImageData($pathToImage);
 
-        file_put_contents($pathToImage, $imagick);
+        file_put_contents($pathToImage, $imageData);
 
         return true;
     }
@@ -130,24 +130,26 @@ class Pdf
      * @param string $directory
      * @param string $prefix
      *
-     * @return array $files the full path to the newly created images.
+     * @return array $files the paths to the created images
      */
     public function saveAll($directory, $prefix = '')
     {
         $numberOfPages = $this->getNumberOfPages();
+
         if ($numberOfPages === 0) {
             return [];
         }
 
         return array_map(function ($pageNumber) use ($directory, $prefix) {
+
             $this->setPage($pageNumber);
 
-            $filePath = "{$directory}/{$prefix}{$pageNumber}.{$this->outputFormat}";
-            $imageData = $this->getImageData($filePath);
+            $destination = "{$directory}/{$prefix}{$pageNumber}.{$this->outputFormat}";
 
-            file_put_contents($filePath, $imageData);
+            $this->saveImage($destination);
 
-            return $filePath;
+            return $destination;
+
         }, range(1, $numberOfPages));
     }
 
