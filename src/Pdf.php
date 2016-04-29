@@ -125,21 +125,22 @@ class Pdf
     }
 
     /**
-     * Save the file as images to the given path.
+     * Save the file as images to the given directory.
      *
-     * @param string $storeDirectory
-     * @param string $fileName     
+     * @param string $directory
+     * @param string $prefix     
      *
      * @return array $files the full path to the newly created images.
      */
-    public function extractAllPagesAsImages($storeDirectory, $fileName)
+    public function saveAll($directory, $prefix = '')
     {
         $numberOfPages = $this->getNumberOfPages();
         if($numberOfPages === 0) return [];
 
-        return array_map(function($pageNumber) use ($storeDirectory, $fileName){
+        return array_map(function($pageNumber) use ($directory, $prefix){
             $this->setPage($pageNumber);
-            $filePath = "{$storeDirectory}/page_{$pageNumber}_{$fileName}.{$this->outputFormat}";
+            
+            $filePath = "{$directory}/{$prefix}{$pageNumber}.{$this->outputFormat}";
             $imageData = $this->getImageData($filePath);
 
             file_put_contents($filePath, $imageData);
