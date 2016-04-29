@@ -132,7 +132,7 @@ class Pdf
      *
      * @return array $files the paths to the created images
      */
-    public function saveAll($directory, $prefix = '')
+    public function saveAllPagesAsImages($directory, $prefix = '')
     {
         $numberOfPages = $this->getNumberOfPages();
 
