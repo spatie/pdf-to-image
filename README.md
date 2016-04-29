@@ -13,10 +13,7 @@ Spatie is a webdesign agency in Antwerp, Belgium. You'll find an overview of all
 
 ## Requirements
 
-You should have [Imagick](http://php.net/manual/en/imagick.setresolution.php) installed. On Ubuntu you can install it by issuing this command:
-```bash
-sudo apt-get install imagemagick php5-imagick
-``` 
+You should have [Imagick](http://php.net/manual/en/imagick.setresolution.php) installed.
 
 ## Install
 

@@ -153,6 +153,51 @@ class Pdf
      */
     public function saveImage($pathToImage)
     {
+        $imageData = $this->getImageData($pathToImage);
+
+        file_put_contents($pathToImage, $imageData);
+
+        return true;
+    }
+
+    /**
+     * Save the file as images to the given directory.
+     *
+     * @param string $directory
+     * @param string $prefix
+     *
+     * @return array $files the paths to the created images
+     */
+    public function saveAllPagesAsImages($directory, $prefix = '')
+    {
+        $numberOfPages = $this->getNumberOfPages();
+
+        if ($numberOfPages === 0) {
+            return [];
+        }
+
+        return array_map(function ($pageNumber) use ($directory, $prefix) {
+
+            $this->setPage($pageNumber);
+
+            $destination = "{$directory}/{$prefix}{$pageNumber}.{$this->outputFormat}";
+
+            $this->saveImage($destination);
+
+            return $destination;
+
+        }, range(1, $numberOfPages));
+    }
+
+    /**
+     * Return raw image data.
+     *
+     * @param string $pathToImage
+     *
+     * @return \Imagick
+     */
+    public function getImageData($pathToImage)
+    {
         $imagick = new \Imagick();
 
         $imagick->setResolution($this->resolution, $this->resolution);
@@ -163,9 +208,11 @@ class Pdf
 
         $imagick->transformImageColorspace($this->outputColorSpace);
 
+        $imagick->setFormat($this->determineOutputFormat($pathToImage));
+
         file_put_contents($pathToImage, $imagick);
 
-        return true;
+        return $imagick;
     }
 
     /**
