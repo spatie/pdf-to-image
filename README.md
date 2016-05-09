@@ -13,7 +13,7 @@ Spatie is a webdesign agency in Antwerp, Belgium. You'll find an overview of all
 
 ## Requirements
 
-You should have [Imagick](http://php.net/manual/en/imagick.setresolution.php) installed.
+You should have [Imagick](http://php.net/manual/en/imagick.setresolution.php) and [Ghostscript](http://www.ghostscript.com/) installed.
 
 ## Install
 
