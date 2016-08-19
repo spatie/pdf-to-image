@@ -15,6 +15,8 @@ class Pdf
     protected $outputFormat = '';
 
     protected $page = 1;
+    
+    protected $totalPages = 0;
 
     protected $validOutputFormats = ['jpg', 'jpeg', 'png'];
 
@@ -105,7 +107,10 @@ class Pdf
      */
     public function getNumberOfPages()
     {
-        return (new \Imagick($this->pdfFile))->getNumberImages();
+        if ($this->totalPages === 0 ){
+            $this->totalPages = (new \Imagick($this->pdfFile))->getNumberImages();
+        }
+        return $this->totalPages;
     }
 
     /**
