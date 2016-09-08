@@ -167,6 +167,8 @@ class Pdf
         $imagick->setResolution($this->resolution, $this->resolution);
 
         $imagick->readImage(sprintf('%s[%s]', $this->pdfFile, $this->page - 1));
+        
+        $imagick->mergeImageLayers(\Imagick::LAYERMETHOD_FLATTEN);
 
         $imagick->setFormat($this->determineOutputFormat($pathToImage));
 
