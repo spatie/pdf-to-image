@@ -2,6 +2,9 @@
 
 All Notable changes to `pdf-to-image` will be documented in this file
 
+## 1.2.1 - 2016-09-08
+- fix for pdf's with transparent backgrounds
+
 ## 1.2.0 - 2016-04-29
 - added `saveAllPagesAsImages`-function.
 
