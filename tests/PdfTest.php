@@ -2,10 +2,12 @@
 
 namespace Spatie\PdfToImage\Test;
 
+use Spatie\PdfToImage\Exceptions\InvalidColorSpace;
 use Spatie\PdfToImage\Exceptions\InvalidFormat;
 use Spatie\PdfToImage\Exceptions\PageDoesNotExist;
 use Spatie\PdfToImage\Exceptions\PdfDoesNotExist;
 use Spatie\PdfToImage\Pdf;
+use Imagick;
 
 class PdfTest extends \PHPUnit_Framework_TestCase
 {
@@ -19,6 +21,7 @@ class PdfTest extends \PHPUnit_Framework_TestCase
         parent::setUp();
 
         $this->testFile = __DIR__.'/files/test.pdf';
+        $this->testImage = __DIR__.'/files/test.jpg';
         $this->multipageTestFile = __DIR__.'/files/multipage-test.pdf';
     }
 
@@ -39,6 +42,24 @@ class PdfTest extends \PHPUnit_Framework_TestCase
     }
 
     /** @test */
+    public function setting_colorspace_is_reflected_in_output_image()
+    {
+        $pdf = new Pdf($this->testFile);
+        $pdf->setPage(1)->setResolution('72')->setOutputColorSpace('COLORSPACE_SRGB')->saveImage($this->testImage);
+        $imagick = new Imagick();
+        $imagick->readImage($this->testImage);
+
+        $this->assertEquals(Imagick::COLORSPACE_SRGB, $imagick->getImageColorspace());
+    }
+
+    /** @test */
+    public function it_will_throw_an_exception_when_try_to_use_an_invalid_colorspace()
+    {
+        $this->setExpectedException(InvalidColorSpace::class);
+
+        (new Pdf($this->testImage))->setOutputColorSpace('FOOBAR');
+    }
+
     public function it_will_throw_an_exception_when_passed_an_invalid_page()
     {
         $this->setExpectedException(PageDoesNotExist::class);
