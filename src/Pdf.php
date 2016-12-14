@@ -119,9 +119,7 @@ class Pdf
     {
         $imageData = $this->getImageData($pathToImage);
 
-        file_put_contents($pathToImage, $imageData);
-
-        return true;
+        return file_put_contents($pathToImage, $imageData) === FALSE ? false : true;
     }
 
     /**
