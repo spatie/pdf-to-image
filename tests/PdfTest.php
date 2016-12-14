@@ -2,10 +2,10 @@
 
 namespace Spatie\PdfToImage\Test;
 
-use Spatie\PdfToImage\Exceptions\InvalidFormat;
-use Spatie\PdfToImage\Exceptions\PageDoesNotExist;
-use Spatie\PdfToImage\Exceptions\PdfDoesNotExist;
 use Spatie\PdfToImage\Pdf;
+use Spatie\PdfToImage\Exceptions\InvalidFormat;
+use Spatie\PdfToImage\Exceptions\PdfDoesNotExist;
+use Spatie\PdfToImage\Exceptions\PageDoesNotExist;
 
 class PdfTest extends \PHPUnit_Framework_TestCase
 {

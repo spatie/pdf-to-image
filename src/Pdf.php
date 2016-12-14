@@ -3,8 +3,8 @@
 namespace Spatie\PdfToImage;
 
 use Spatie\PdfToImage\Exceptions\InvalidFormat;
-use Spatie\PdfToImage\Exceptions\PageDoesNotExist;
 use Spatie\PdfToImage\Exceptions\PdfDoesNotExist;
+use Spatie\PdfToImage\Exceptions\PageDoesNotExist;
 
 class Pdf
 {
@@ -119,7 +119,7 @@ class Pdf
     {
         $imageData = $this->getImageData($pathToImage);
 
-        return file_put_contents($pathToImage, $imageData) === FALSE ? false : true;
+        return file_put_contents($pathToImage, $imageData) === false ? false : true;
     }
 
     /**
