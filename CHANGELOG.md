@@ -2,6 +2,9 @@
 
 All Notable changes to `pdf-to-image` will be documented in this file
 
+## 1.2.2 - 2016-12-14
+- improve return value
+
 ## 1.2.1 - 2016-09-08
 - fix for pdf's with transparent backgrounds
 
