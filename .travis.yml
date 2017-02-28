@@ -14,8 +14,6 @@ matrix:
       env: 'COMPOSER_FLAGS="--prefer-stable --prefer-lowest"'
     - php: 7.1
       env: 'COMPOSER_FLAGS="--prefer-stable --prefer-lowest"'
-  allow_failures:
-    - php: hhvm
 
 before_install:
     sudo add-apt-repository -y ppa:moti-p/cc
