@@ -2,6 +2,9 @@
 
 All Notable changes to `pdf-to-image` will be documented in this file
 
+## 1.3.0 - 2017-03-23
+- allow pdf to be loaded from a URL
+
 ## 1.2.2 - 2016-12-14
 - improve return value
 
