@@ -19,13 +19,13 @@ class Pdf
     protected $validOutputFormats = ['jpg', 'jpeg', 'png'];
 
     /**
-     * @param string $pdfFile The path to the pdffile.
+     * @param string $pdfFile The path or url to the pdffile.
      *
      * @throws \Spatie\PdfToImage\Exceptions\PdfDoesNotExist
      */
     public function __construct($pdfFile)
     {
-        if (! file_exists($pdfFile)) {
+        if (! filter_var($pdfFile, FILTER_VALIDATE_URL) && ! file_exists($pdfFile)) {
             throw new PdfDoesNotExist();
         }
 
