@@ -115,6 +115,7 @@ class Pdf
         }
 
         $pages = $this->imagic->getNumberImages();
+
         return $pages;
     }
 
@@ -168,7 +169,6 @@ class Pdf
      */
     public function getImageData($pathToImage)
     {
-
         $this->imagic->setResolution($this->resolution, $this->resolution);
 
         $this->imagic->readImage(sprintf('%s[%s]', $this->pdfFile, $this->page - 1));
