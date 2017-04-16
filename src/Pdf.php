@@ -29,9 +29,10 @@ class Pdf
      */
     public function __construct($pdfFile)
     {
-        if (!filter_var($pdfFile, FILTER_VALIDATE_URL) && !file_exists($pdfFile)) {
+        if (! filter_var($pdfFile, FILTER_VALIDATE_URL) && ! file_exists($pdfFile)) {
             throw new PdfDoesNotExist();
         }
+
         $this->image_obj = new \Imagick($pdfFile);
         $this->pdfFile = $pdfFile;
     }
@@ -61,8 +62,8 @@ class Pdf
      */
     public function setOutputFormat($outputFormat)
     {
-        if (!$this->isValidOutputFormat($outputFormat)) {
-            throw new InvalidFormat('Format ' . $outputFormat . ' is not supported');
+        if (! $this->isValidOutputFormat($outputFormat)) {
+            throw new InvalidFormat('Format '.$outputFormat.' is not supported');
         }
 
         $this->outputFormat = $outputFormat;
@@ -94,7 +95,7 @@ class Pdf
     public function setPage($page)
     {
         if ($page > $this->getNumberOfPages()) {
-            throw new PageDoesNotExist('Page ' . $page . ' does not exist');
+            throw new PageDoesNotExist('Page '.$page.' does not exist');
         }
 
         $this->page = $page;
@@ -196,7 +197,7 @@ class Pdf
 
         $outputFormat = strtolower($outputFormat);
 
-        if (!$this->isValidOutputFormat($outputFormat)) {
+        if (! $this->isValidOutputFormat($outputFormat)) {
             $outputFormat = 'jpg';
         }
 
