@@ -14,11 +14,9 @@ class Pdf
 
     protected $outputFormat = '';
 
-    protected $pages = 0;
-
     protected $page = 1;
 
-    protected $imagic;
+    protected $imagick;
 
     protected $validOutputFormats = ['jpg', 'jpeg', 'png'];
 
@@ -33,7 +31,7 @@ class Pdf
             throw new PdfDoesNotExist();
         }
 
-        $this->imagic = new \Imagick($pdfFile);
+        $this->imagick = new \Imagick($pdfFile);
         $this->pdfFile = $pdfFile;
     }
 
@@ -110,12 +108,7 @@ class Pdf
      */
     public function getNumberOfPages()
     {
-        if ($this->pages != 0) {
-            return $this->pages;
-        }
-
-        $pages = $this->imagic->getNumberImages();
-        return $pages;
+        return $this->imagick->getNumberImages();
     }
 
     /**
@@ -168,16 +161,15 @@ class Pdf
      */
     public function getImageData($pathToImage)
     {
+        $this->imagick->setResolution($this->resolution, $this->resolution);
 
-        $this->imagic->setResolution($this->resolution, $this->resolution);
+        $this->imagick->readImage(sprintf('%s[%s]', $this->pdfFile, $this->page - 1));
 
-        $this->imagic->readImage(sprintf('%s[%s]', $this->pdfFile, $this->page - 1));
+        $this->imagick->mergeImageLayers(\Imagick::LAYERMETHOD_FLATTEN);
 
-        $this->imagic->mergeImageLayers(\Imagick::LAYERMETHOD_FLATTEN);
+        $this->imagick->setFormat($this->determineOutputFormat($pathToImage));
 
-        $this->imagic->setFormat($this->determineOutputFormat($pathToImage));
-
-        return $this->imagic;
+        return $this->imagick;
     }
 
     /**
