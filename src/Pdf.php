@@ -165,8 +165,6 @@ class Pdf
 
         $this->imagick->readImage(sprintf('%s[%s]', $this->pdfFile, $this->page - 1));
 
-        $this->imagick->mergeImageLayers(\Imagick::LAYERMETHOD_FLATTEN);
-
         $this->imagick->setFormat($this->determineOutputFormat($pathToImage));
 
         return $this->imagick;

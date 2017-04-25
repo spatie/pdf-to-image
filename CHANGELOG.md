@@ -2,6 +2,9 @@
 
 All Notable changes to `pdf-to-image` will be documented in this file
 
+## 1.3.3 - 2017-04-25
+- remove use of `Imagick::LAYERMETHOD_FLATTEN` as it messes up the rendering of specific pages
+
 ## 1.3.2 - 2017-04-25
 - set default format
 
