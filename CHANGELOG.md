@@ -2,6 +2,9 @@
 
 All Notable changes to `pdf-to-image` will be documented in this file
 
+## 1.3.2 - 2017-04-25
+- set default format
+
 ## 1.3.1 - 2017-04-16
 - performance improvements
 
