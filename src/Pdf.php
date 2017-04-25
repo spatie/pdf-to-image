@@ -12,7 +12,7 @@ class Pdf
 
     protected $resolution = 144;
 
-    protected $outputFormat = '';
+    protected $outputFormat = 'jpg';
 
     protected $page = 1;
 
