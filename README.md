@@ -24,6 +24,8 @@ All postcards are published [on our website](https://spatie.be/en/opensource/pos
 
 You should have [Imagick](http://php.net/manual/en/imagick.setresolution.php) and [Ghostscript](http://www.ghostscript.com/) installed.
 
+When using this package you are required to send a postcard to: Spatie, Samberstraat 69D, 2060 Antwerp, Belgium
+
 ## Install
 
 The package can be installed via composer:
