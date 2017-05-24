@@ -3,6 +3,7 @@
 namespace Spatie\PdfToImage;
 
 use Spatie\PdfToImage\Exceptions\InvalidFormat;
+use Spatie\PdfToImage\Exceptions\InvalidLayerMethod;
 use Spatie\PdfToImage\Exceptions\PdfDoesNotExist;
 use Spatie\PdfToImage\Exceptions\PageDoesNotExist;
 
@@ -19,6 +20,8 @@ class Pdf
     protected $imagick;
 
     protected $validOutputFormats = ['jpg', 'jpeg', 'png'];
+
+    protected $layerMethod = \Imagick::LAYERMETHOD_FLATTEN;
 
     /**
      * @param string $pdfFile The path or url to the pdffile.
@@ -67,6 +70,32 @@ class Pdf
         $this->outputFormat = $outputFormat;
 
         return $this;
+    }
+
+    /**
+     * Sets the layer method for \Imagicl::mergeImageLayers()
+     * If int, should correspond to a predefined LAYERMETHOD constant.
+     * If null, \Imagicl::mergeImageLayers() will not be called
+     *
+     * @param int|null
+     *
+     * @return $this
+     *
+     * @throws \Spatie\PdfToImage\Exceptions\InvalidLayerMethod
+     *
+     * @see https://secure.php.net/manual/en/imagick.constants.php
+     * @see Pdf::getImageData()
+     */
+    public function setLayerMethod($layerMethod)
+    {
+        if (
+            is_integer($layerMethod) === false &&
+            is_null($layerMethod) === false
+        ) {
+            throw new InvalidLayerMethod('LayerMethod must be integer or null');
+        }
+
+        $this->layerMethod = $layerMethod;
     }
 
     /**
@@ -164,6 +193,10 @@ class Pdf
         $this->imagick->setResolution($this->resolution, $this->resolution);
 
         $this->imagick->readImage(sprintf('%s[%s]', $this->pdfFile, $this->page - 1));
+
+        if (is_integer($this->layerMethod)) {
+            $this->imagick->mergeImageLayers($this->layerMethod);
+        }
 
         $this->imagick->setFormat($this->determineOutputFormat($pathToImage));
 
