@@ -3,9 +3,9 @@
 namespace Spatie\PdfToImage;
 
 use Spatie\PdfToImage\Exceptions\InvalidFormat;
-use Spatie\PdfToImage\Exceptions\InvalidLayerMethod;
 use Spatie\PdfToImage\Exceptions\PdfDoesNotExist;
 use Spatie\PdfToImage\Exceptions\PageDoesNotExist;
+use Spatie\PdfToImage\Exceptions\InvalidLayerMethod;
 
 class Pdf
 {
@@ -75,7 +75,7 @@ class Pdf
     /**
      * Sets the layer method for \Imagicl::mergeImageLayers()
      * If int, should correspond to a predefined LAYERMETHOD constant.
-     * If null, \Imagicl::mergeImageLayers() will not be called
+     * If null, \Imagicl::mergeImageLayers() will not be called.
      *
      * @param int|null
      *
@@ -89,7 +89,7 @@ class Pdf
     public function setLayerMethod($layerMethod)
     {
         if (
-            is_integer($layerMethod) === false &&
+            is_int($layerMethod) === false &&
             is_null($layerMethod) === false
         ) {
             throw new InvalidLayerMethod('LayerMethod must be integer or null');
@@ -194,7 +194,7 @@ class Pdf
 
         $this->imagick->readImage(sprintf('%s[%s]', $this->pdfFile, $this->page - 1));
 
-        if (is_integer($this->layerMethod)) {
+        if (is_int($this->layerMethod)) {
             $this->imagick->mergeImageLayers($this->layerMethod);
         }
 
