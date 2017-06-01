@@ -19,8 +19,3 @@ install:
 
 script:
   - phpunit
-
-branches:
-  only:
-    - master
-    - v5
