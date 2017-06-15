@@ -5,27 +5,22 @@ php:
   - 7.0
   - 7.1
 
-matrix:
-  include:
-    - php: 5.6
-      env: 'COMPOSER_FLAGS="--prefer-stable --prefer-lowest"'
-    - php: 7.0
-      env: 'COMPOSER_FLAGS="--prefer-stable --prefer-lowest"'
-    - php: 7.1
-      env: 'COMPOSER_FLAGS="--prefer-stable --prefer-lowest"'
+env:
+  matrix:
+    - COMPOSER_FLAGS="--prefer-lowest"
+    - COMPOSER_FLAGS=""
 
 before_install:
-    sudo add-apt-repository -y ppa:moti-p/cc
-    sudo apt-get update
-    sudo apt-get -y --reinstall install imagemagick
-    printf "\n" | pecl install imagick-beta
-
-before_script:
+  - sudo apt-get update
   - travis_retry composer self-update
-  - travis_retry composer update ${COMPOSER_FLAGS} --no-interaction --prefer-source
+
+install:
+  - sudo apt-get install -y ffmpeg libavcodec-extra-53
+  - travis_retry composer update --prefer-source $PREFER_LOWEST
+  - travis_retry composer require php-ffmpeg/php-ffmpeg
+  - travis_retry composer require league/flysystem-aws-s3-v3
+  - printf "\n" | pecl install imagick
+  - sudo apt-get install -y ghostscript
 
 script:
-  - vendor/bin/phpunit --coverage-text --coverage-clover=coverage.clover
-
-after_script:
-  - php vendor/bin/ocular code-coverage:upload --format=php-clover coverage.clover
+  - phpunit
