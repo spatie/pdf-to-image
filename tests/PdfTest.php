@@ -2,6 +2,7 @@
 
 namespace Spatie\PdfToImage\Test;
 
+use Imagick;
 use PHPUnit\Framework\TestCase;
 use Spatie\PdfToImage\Pdf;
 use Spatie\PdfToImage\Exceptions\InvalidFormat;
@@ -93,5 +94,20 @@ class PdfTest extends TestCase
 
         $this->assertSame($imagick->getFormat(), 'png');
         $this->assertNotSame($imagick->getFormat(), 'jpg');
+    }
+
+    /** @test */
+    public function it_can_accept_a_layer()
+    {
+        $image = (new Pdf($this->testFile))
+            ->setLayerMethod(Imagick::LAYERMETHOD_FLATTEN)
+            ->setResolution(72)
+            ->getImageData('test.jpg')
+            ->getImageResolution();
+
+        $this->assertEquals($image['x'], 72);
+        $this->assertEquals($image['y'], 72);
+        $this->assertNotEquals($image['x'], 144);
+        $this->assertNotEquals($image['y'], 144);
     }
 }

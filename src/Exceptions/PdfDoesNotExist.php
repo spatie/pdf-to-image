@@ -2,6 +2,8 @@
 
 namespace Spatie\PdfToImage\Exceptions;
 
-class PdfDoesNotExist extends \Exception
+use Exception;
+
+class PdfDoesNotExist extends Exception
 {
 }

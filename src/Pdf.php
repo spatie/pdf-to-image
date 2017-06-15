@@ -64,7 +64,7 @@ class Pdf
     public function setOutputFormat($outputFormat)
     {
         if (! $this->isValidOutputFormat($outputFormat)) {
-            throw new InvalidFormat('Format '.$outputFormat.' is not supported');
+            throw new InvalidFormat("Format {$outputFormat} is not supported");
         }
 
         $this->outputFormat = $outputFormat;
@@ -73,9 +73,9 @@ class Pdf
     }
 
     /**
-     * Sets the layer method for \Imagicl::mergeImageLayers()
+     * Sets the layer method for Imagick::mergeImageLayers()
      * If int, should correspond to a predefined LAYERMETHOD constant.
-     * If null, \Imagicl::mergeImageLayers() will not be called.
+     * If null, Imagick::mergeImageLayers() will not be called.
      *
      * @param int|null
      *
@@ -88,14 +88,13 @@ class Pdf
      */
     public function setLayerMethod($layerMethod)
     {
-        if (
-            is_int($layerMethod) === false &&
-            is_null($layerMethod) === false
-        ) {
-            throw new InvalidLayerMethod('LayerMethod must be integer or null');
+        if (! is_int($layerMethod)) {
+            throw new InvalidLayerMethod('LayerMethod must be an integer');
         }
 
         $this->layerMethod = $layerMethod;
+
+        return $this;
     }
 
     /**
@@ -122,7 +121,7 @@ class Pdf
     public function setPage($page)
     {
         if ($page > $this->getNumberOfPages()) {
-            throw new PageDoesNotExist('Page '.$page.' does not exist');
+            throw new PageDoesNotExist("Page {$page} does not exist");
         }
 
         $this->page = $page;
@@ -151,7 +150,7 @@ class Pdf
     {
         $imageData = $this->getImageData($pathToImage);
 
-        return file_put_contents($pathToImage, $imageData) === false ? false : true;
+        return file_put_contents($pathToImage, $imageData) !== false;
     }
 
     /**

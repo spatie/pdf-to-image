@@ -2,6 +2,8 @@
 
 namespace Spatie\PdfToImage\Exceptions;
 
-class InvalidLayerMethod extends \Exception
+use Exception;
+
+class InvalidLayerMethod extends Exception
 {
 }

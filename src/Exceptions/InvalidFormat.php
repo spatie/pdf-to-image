@@ -2,6 +2,8 @@
 
 namespace Spatie\PdfToImage\Exceptions;
 
-class InvalidFormat extends \Exception
+use Exception;
+
+class InvalidFormat extends Exception
 {
 }
