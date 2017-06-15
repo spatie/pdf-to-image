@@ -10,10 +10,10 @@ env:
     - COMPOSER_FLAGS=""
 
 before_install:
-  - sudo apt-get update
-  - travis_retry composer self-update
+  - sudo apt-get -qq update
   - sudo apt-get install -y imagick
   - sudo apt-get install -y ghostscript
+  - travis_retry composer self-update
 
 install:
   - travis_retry composer update --prefer-source $PREFER_LOWEST
