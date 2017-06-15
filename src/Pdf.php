@@ -12,7 +12,6 @@ class Pdf
     /** @var \Org_Heigl\Ghostscript\Ghostscript */
     protected $ghostscript;
 
-
     /** @var string */
     protected $outputFormat = '';
 
@@ -23,7 +22,7 @@ class Pdf
 
     public function __construct(string $pdfFile)
     {
-        if (!filter_var($pdfFile, FILTER_VALIDATE_URL) && !file_exists($pdfFile)) {
+        if (! filter_var($pdfFile, FILTER_VALIDATE_URL) && ! file_exists($pdfFile)) {
             throw new PdfDoesNotExist();
         }
 
@@ -41,7 +40,7 @@ class Pdf
 
     public function setOutputFormat(string $outputFormat): self
     {
-        if (!$this->isValidOutputFormat($outputFormat)) {
+        if (! $this->isValidOutputFormat($outputFormat)) {
             throw new InvalidFormat("Format {$outputFormat} is not supported");
         }
 
@@ -95,7 +94,7 @@ class Pdf
 
         $outputFormat = strtolower($outputFormat);
 
-        if (!$this->isValidOutputFormat($outputFormat)) {
+        if (! $this->isValidOutputFormat($outputFormat)) {
             $outputFormat = 'jpeg';
         }
 
@@ -105,5 +104,4 @@ class Pdf
 
         return $outputFormat;
     }
-
 }
