@@ -2,25 +2,44 @@
 
 namespace Spatie\PdfToImage\Test;
 
-use Imagick;
 use PHPUnit\Framework\TestCase;
 use Spatie\PdfToImage\Pdf;
 use Spatie\PdfToImage\Exceptions\InvalidFormat;
 use Spatie\PdfToImage\Exceptions\PdfDoesNotExist;
 use Spatie\PdfToImage\Exceptions\PageDoesNotExist;
+use Spatie\TemporaryDirectory\TemporaryDirectory;
 
 class PdfTest extends TestCase
 {
     /** @var string */
     protected $testFile;
 
+    /** @var string */
+    protected $multipageTestFile;
+
+    /** @var \Spatie\TemporaryDirectory\TemporaryDirectory */
+    protected $temporaryDirectory;
+
     public function setUp()
     {
         parent::setUp();
 
-        $this->testFile = __DIR__.'/files/test.pdf';
+        $this->testFile = __DIR__ . '/files/test.pdf';
 
-        $this->multipageTestFile = __DIR__.'/files/multipage-test.pdf';
+        $this->multipageTestFile = __DIR__ . '/files/multipage-test.pdf';
+
+        $this->temporaryDirectory = new TemporaryDirectory(__DIR__ . '/temp');
+
+        $this->temporaryDirectory
+            ->force()
+            ->empty();
+    }
+
+    /** @test */
+    public function it_can_convert_a_pdf()
+    {
+        $image = (new pdf($this->multipageTestFile))
+            ->saveImage($this->temporaryDirectory->path('image.jpg'));
     }
 
     /** @test */
@@ -47,57 +66,5 @@ class PdfTest extends TestCase
         (new Pdf($this->testFile))->setPage(5);
     }
 
-    /** @test */
-    public function it_will_correctly_return_the_number_of_pages_in_pdf_file()
-    {
-        $pdf = new Pdf($this->multipageTestFile);
 
-        $this->assertTrue($pdf->getNumberOfPages() === 3);
-    }
-
-    /** @test */
-    public function it_will_accept_a_custom_specified_resolution()
-    {
-        $image = (new Pdf($this->testFile))
-            ->setResolution(72)
-            ->getImageData('test.jpg')
-            ->getImageResolution();
-
-        $this->assertEquals($image['x'], 72);
-        $this->assertEquals($image['y'], 72);
-    }
-
-    /** @test */
-    public function it_will_convert_a_specified_page()
-    {
-        $imagick = (new Pdf($this->multipageTestFile))
-            ->setPage(2)
-            ->getImageData('page-2.jpg');
-
-        $this->assertInstanceOf('Imagick', $imagick);
-    }
-
-    /** @test */
-    public function it_will_accept_a_specified_file_type_and_convert_to_it()
-    {
-        $imagick = (new pdf($this->testFile))
-            ->setOutputFormat('png')
-            ->getImageData('test.png');
-
-        $this->assertSame($imagick->getFormat(), 'png');
-        $this->assertNotSame($imagick->getFormat(), 'jpg');
-    }
-
-    /** @test */
-    public function it_can_accept_a_layer()
-    {
-        $image = (new Pdf($this->testFile))
-            ->setLayerMethod(Imagick::LAYERMETHOD_FLATTEN)
-            ->setResolution(72)
-            ->getImageData('test.jpg')
-            ->getImageResolution();
-
-        $this->assertEquals($image['x'], 72);
-        $this->assertEquals($image['y'], 72);
-    }
 }

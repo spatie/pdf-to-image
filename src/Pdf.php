@@ -2,68 +2,46 @@
 
 namespace Spatie\PdfToImage;
 
+use Org_Heigl\Ghostscript\Ghostscript;
 use Spatie\PdfToImage\Exceptions\InvalidFormat;
 use Spatie\PdfToImage\Exceptions\PdfDoesNotExist;
 use Spatie\PdfToImage\Exceptions\PageDoesNotExist;
-use Spatie\PdfToImage\Exceptions\InvalidLayerMethod;
 
 class Pdf
 {
-    protected $pdfFile;
+    /** @var \Org_Heigl\Ghostscript\Ghostscript */
+    protected $ghostscript;
 
-    protected $resolution = 144;
 
-    protected $outputFormat = 'jpg';
+    /** @var string */
+    protected $outputFormat = '';
 
+    /** @var int */
     protected $page = 1;
-
-    protected $imagick;
 
     protected $validOutputFormats = ['jpg', 'jpeg', 'png'];
 
-    protected $layerMethod = \Imagick::LAYERMETHOD_FLATTEN;
-
-    /**
-     * @param string $pdfFile The path or url to the pdffile.
-     *
-     * @throws \Spatie\PdfToImage\Exceptions\PdfDoesNotExist
-     */
-    public function __construct($pdfFile)
+    public function __construct(string $pdfFile)
     {
-        if (! filter_var($pdfFile, FILTER_VALIDATE_URL) && ! file_exists($pdfFile)) {
+        if (!filter_var($pdfFile, FILTER_VALIDATE_URL) && !file_exists($pdfFile)) {
             throw new PdfDoesNotExist();
         }
 
-        $this->imagick = new \Imagick($pdfFile);
-        $this->pdfFile = $pdfFile;
+        $this->ghostscript = (new Ghostscript())
+            ->setInputFile($pdfFile)
+            ->setResolution(144);
     }
 
-    /**
-     * Set the raster resolution.
-     *
-     * @param int $resolution
-     *
-     * @return $this
-     */
-    public function setResolution($resolution)
+    public function setResolution(int $resolution): self
     {
-        $this->resolution = $resolution;
+        $this->ghostscript->setResolution($resolution);
 
         return $this;
     }
 
-    /**
-     * Set the output format.
-     *
-     * @param string $outputFormat
-     *
-     * @return $this
-     *
-     * @throws \Spatie\PdfToImage\Exceptions\InvalidFormat
-     */
-    public function setOutputFormat($outputFormat)
+    public function setOutputFormat(string $outputFormat): self
     {
-        if (! $this->isValidOutputFormat($outputFormat)) {
+        if (!$this->isValidOutputFormat($outputFormat)) {
             throw new InvalidFormat("Format {$outputFormat} is not supported");
         }
 
@@ -72,157 +50,60 @@ class Pdf
         return $this;
     }
 
-    /**
-     * Sets the layer method for Imagick::mergeImageLayers()
-     * If int, should correspond to a predefined LAYERMETHOD constant.
-     * If null, Imagick::mergeImageLayers() will not be called.
-     *
-     * @param int|null
-     *
-     * @return $this
-     *
-     * @throws \Spatie\PdfToImage\Exceptions\InvalidLayerMethod
-     *
-     * @see https://secure.php.net/manual/en/imagick.constants.php
-     * @see Pdf::getImageData()
-     */
-    public function setLayerMethod($layerMethod)
+    public function setPage(int $pageNumber): self
     {
-        if (! is_int($layerMethod)) {
-            throw new InvalidLayerMethod('LayerMethod must be an integer');
-        }
+        $this->ghostscript->setPages($pageNumber);
 
-        $this->layerMethod = $layerMethod;
+        if ($pageNumber > $this->getNumberOfPages()) {
+            throw new PageDoesNotExist("Page {$pageNumber} does not exist");
+        }
 
         return $this;
     }
 
-    /**
-     * Determine if the given format is a valid output format.
-     *
-     * @param $outputFormat
-     *
-     * @return bool
-     */
-    public function isValidOutputFormat($outputFormat)
+    public function getNumberOfPages(): int
+    {
+        return 1;
+    }
+
+    public function getGhostscript(): Ghostscript
+    {
+        return $this->ghostscript;
+    }
+
+    public function saveImage($pathToImage)
+    {
+        if ($this->outputFormat === '') {
+            $this->outputFormat = $this->determineOutputFormat($pathToImage);
+        }
+
+        $this->ghostscript->setDevice($this->outputFormat);
+
+        $this->ghostscript->setOutputFile($pathToImage);
+
+        $this->ghostscript->render();
+    }
+
+    protected function isValidOutputFormat(string $outputFormat): bool
     {
         return in_array($outputFormat, $this->validOutputFormats);
     }
 
-    /**
-     * Set the page number that should be rendered.
-     *
-     * @param int $page
-     *
-     * @return $this
-     *
-     * @throws \Spatie\PdfToImage\Exceptions\PageDoesNotExist
-     */
-    public function setPage($page)
-    {
-        if ($page > $this->getNumberOfPages()) {
-            throw new PageDoesNotExist("Page {$page} does not exist");
-        }
-
-        $this->page = $page;
-
-        return $this;
-    }
-
-    /**
-     * Get the number of pages in the pdf file.
-     *
-     * @return int
-     */
-    public function getNumberOfPages()
-    {
-        return $this->imagick->getNumberImages();
-    }
-
-    /**
-     * Save the image to the given path.
-     *
-     * @param string $pathToImage
-     *
-     * @return bool
-     */
-    public function saveImage($pathToImage)
-    {
-        $imageData = $this->getImageData($pathToImage);
-
-        return file_put_contents($pathToImage, $imageData) !== false;
-    }
-
-    /**
-     * Save the file as images to the given directory.
-     *
-     * @param string $directory
-     * @param string $prefix
-     *
-     * @return array $files the paths to the created images
-     */
-    public function saveAllPagesAsImages($directory, $prefix = '')
-    {
-        $numberOfPages = $this->getNumberOfPages();
-
-        if ($numberOfPages === 0) {
-            return [];
-        }
-
-        return array_map(function ($pageNumber) use ($directory, $prefix) {
-            $this->setPage($pageNumber);
-
-            $destination = "{$directory}/{$prefix}{$pageNumber}.{$this->outputFormat}";
-
-            $this->saveImage($destination);
-
-            return $destination;
-        }, range(1, $numberOfPages));
-    }
-
-    /**
-     * Return raw image data.
-     *
-     * @param string $pathToImage
-     *
-     * @return \Imagick
-     */
-    public function getImageData($pathToImage)
-    {
-        $this->imagick->setResolution($this->resolution, $this->resolution);
-
-        $this->imagick->readImage(sprintf('%s[%s]', $this->pdfFile, $this->page - 1));
-
-        if (is_int($this->layerMethod)) {
-            $this->imagick->mergeImageLayers($this->layerMethod);
-        }
-
-        $this->imagick->setFormat($this->determineOutputFormat($pathToImage));
-
-        return $this->imagick;
-    }
-
-    /**
-     * Determine in which format the image must be rendered.
-     *
-     * @param $pathToImage
-     *
-     * @return string
-     */
-    protected function determineOutputFormat($pathToImage)
+    protected function determineOutputFormat(string $pathToImage): string
     {
         $outputFormat = pathinfo($pathToImage, PATHINFO_EXTENSION);
 
-        if ($this->outputFormat != '') {
-            $outputFormat = $this->outputFormat;
-        }
-
         $outputFormat = strtolower($outputFormat);
 
-        if (! $this->isValidOutputFormat($outputFormat)) {
-            $outputFormat = 'jpg';
+        if (!$this->isValidOutputFormat($outputFormat)) {
+            $outputFormat = 'jpeg';
+        }
+
+        if ($outputFormat == 'jpg') {
+            $outputFormat = 'jpeg';
         }
 
         return $outputFormat;
     }
+
 }

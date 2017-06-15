@@ -22,11 +22,12 @@ All postcards are published [on our website](https://spatie.be/en/opensource/pos
 
 ## Requirements
 
-You should have [Imagick](http://php.net/manual/en/imagick.setresolution.php) and [Ghostscript](http://www.ghostscript.com/) installed.
+You should have [Ghostscript](http://www.ghostscript.com/) installed.
 
 ## Install
 
 The package can be installed via composer:
+
 ``` bash
 $ composer require spatie/pdf-to-image
 ```
