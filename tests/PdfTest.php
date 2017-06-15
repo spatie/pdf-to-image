@@ -2,12 +2,13 @@
 
 namespace Spatie\PdfToImage\Test;
 
+use PHPUnit\Framework\TestCase;
 use Spatie\PdfToImage\Pdf;
 use Spatie\PdfToImage\Exceptions\InvalidFormat;
 use Spatie\PdfToImage\Exceptions\PdfDoesNotExist;
 use Spatie\PdfToImage\Exceptions\PageDoesNotExist;
 
-class PdfTest extends \PHPUnit_Framework_TestCase
+class PdfTest extends TestCase
 {
     /**
      * @var string
@@ -25,7 +26,7 @@ class PdfTest extends \PHPUnit_Framework_TestCase
     /** @test */
     public function it_will_throw_an_exception_when_try_to_convert_a_non_existing_file()
     {
-        $this->setExpectedException(PdfDoesNotExist::class);
+        $this->expectException(PdfDoesNotExist::class);
 
         new Pdf('pdfdoesnotexists.pdf');
     }
@@ -33,7 +34,7 @@ class PdfTest extends \PHPUnit_Framework_TestCase
     /** @test */
     public function it_will_throw_an_exception_when_try_to_convert_to_an_invalid_file_type()
     {
-        $this->setExpectedException(InvalidFormat::class);
+        $this->expectException(InvalidFormat::class);
 
         (new Pdf($this->testFile))->setOutputFormat('bla');
     }
@@ -41,7 +42,7 @@ class PdfTest extends \PHPUnit_Framework_TestCase
     /** @test */
     public function it_will_throw_an_exception_when_passed_an_invalid_page()
     {
-        $this->setExpectedException(PageDoesNotExist::class);
+        $this->expectException(PageDoesNotExist::class);
 
         (new Pdf($this->testFile))->setPage(5);
     }
