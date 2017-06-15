@@ -3,8 +3,8 @@
 namespace Spatie\PdfToImage\Test;
 
 use Imagick;
-use PHPUnit\Framework\TestCase;
 use Spatie\PdfToImage\Pdf;
+use PHPUnit\Framework\TestCase;
 use Spatie\PdfToImage\Exceptions\InvalidFormat;
 use Spatie\PdfToImage\Exceptions\PdfDoesNotExist;
 use Spatie\PdfToImage\Exceptions\PageDoesNotExist;
