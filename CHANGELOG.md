@@ -2,6 +2,10 @@
 
 All Notable changes to `pdf-to-image` will be documented in this file
 
+## 1.4.0 - 2017-06-15
+
+- add `setLayerMethod` method
+
 ## 1.3.3 - 2017-04-25
 - remove use of `Imagick::LAYERMETHOD_FLATTEN` as it messes up the rendering of specific pages
 
