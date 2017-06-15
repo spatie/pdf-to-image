@@ -74,11 +74,9 @@ class PdfTest extends TestCase
     /** @test */
     public function it_will_convert_a_specified_page()
     {
-        $pdf = new Pdf($this->multipageTestFile);
-
-        $pdf->setPage(2);
-
-        $imagick = $pdf->getImageData('page-2.jpg');
+        $imagick = (new Pdf($this->multipageTestFile))
+            ->setPage(2)
+            ->getImageData('page-2.jpg');
 
         $this->assertInstanceOf('Imagick', $imagick);
     }
