@@ -86,11 +86,9 @@ class PdfTest extends TestCase
     /** @test */
     public function it_will_accept_a_specified_file_type_and_convert_to_it()
     {
-        $pdf = new pdf($this->testFile);
-
-        $pdf->setOutputFormat('png');
-
-        $imagick = $pdf->getImageData('test.png');
+        $imagick = (new pdf($this->testFile))
+            ->setOutputFormat('png')
+            ->getImageData('test.png');
 
         $this->assertSame($imagick->getFormat(), 'png');
         $this->assertNotSame($imagick->getFormat(), 'jpg');
