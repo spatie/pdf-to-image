@@ -11,9 +11,7 @@ use Spatie\PdfToImage\Exceptions\PageDoesNotExist;
 
 class PdfTest extends TestCase
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $testFile;
 
     public function setUp()
@@ -21,6 +19,7 @@ class PdfTest extends TestCase
         parent::setUp();
 
         $this->testFile = __DIR__.'/files/test.pdf';
+
         $this->multipageTestFile = __DIR__.'/files/multipage-test.pdf';
     }
 
@@ -59,16 +58,13 @@ class PdfTest extends TestCase
     /** @test */
     public function it_will_accept_a_custom_specified_resolution()
     {
-        $pdf = new Pdf($this->testFile);
-
-        $pdf->setResolution(72);
-
-        $image = $pdf->getImageData('test.jpg')->getImageResolution();
+        $image = (new Pdf($this->testFile))
+            ->setResolution(72)
+            ->getImageData('test.jpg')
+            ->getImageResolution();
 
         $this->assertEquals($image['x'], 72);
         $this->assertEquals($image['y'], 72);
-        $this->assertNotEquals($image['x'], 144);
-        $this->assertNotEquals($image['y'], 144);
     }
 
     /** @test */
@@ -103,7 +99,5 @@ class PdfTest extends TestCase
 
         $this->assertEquals($image['x'], 72);
         $this->assertEquals($image['y'], 72);
-        $this->assertNotEquals($image['x'], 144);
-        $this->assertNotEquals($image['y'], 144);
     }
 }
