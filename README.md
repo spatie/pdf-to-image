@@ -40,7 +40,7 @@ $pdf = new Spatie\PdfToImage\Pdf($pathToPdf);
 $pdf->saveImage($pathToWhereImageShouldBeStored);
 ```
 
-If the path you pass to `saveImage` has the extensions  `jpg`, `jpeg`, or `png` the image will be saved in that format.
+If the path you pass to `saveImage` has the extensions `jpg`, `jpeg`, or `png` the image will be saved in that format.
 Otherwise the output will be a jpg.
 
 ## Other methods
