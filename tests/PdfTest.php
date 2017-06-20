@@ -2,12 +2,12 @@
 
 namespace Spatie\PdfToImage\Test;
 
-use PHPUnit\Framework\TestCase;
 use Spatie\PdfToImage\Pdf;
+use PHPUnit\Framework\TestCase;
 use Spatie\PdfToImage\Exceptions\InvalidFormat;
 use Spatie\PdfToImage\Exceptions\PdfDoesNotExist;
-use Spatie\PdfToImage\Exceptions\PageDoesNotExist;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
+use Spatie\PdfToImage\Exceptions\PageDoesNotExist;
 
 class PdfTest extends TestCase
 {
@@ -24,11 +24,11 @@ class PdfTest extends TestCase
     {
         parent::setUp();
 
-        $this->testFile = __DIR__ . '/files/test.pdf';
+        $this->testFile = __DIR__.'/files/test.pdf';
 
-        $this->multipageTestFile = __DIR__ . '/files/multipage-test.pdf';
+        $this->multipageTestFile = __DIR__.'/files/multipage-test.pdf';
 
-        $this->temporaryDirectory = new TemporaryDirectory(__DIR__ . '/temp');
+        $this->temporaryDirectory = new TemporaryDirectory(__DIR__.'/temp');
 
         $this->temporaryDirectory
             ->force()
@@ -65,6 +65,4 @@ class PdfTest extends TestCase
 
         (new Pdf($this->testFile))->setPage(5);
     }
-
-
 }
