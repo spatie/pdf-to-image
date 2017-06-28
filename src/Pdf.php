@@ -88,8 +88,11 @@ class Pdf
      */
     public function setLayerMethod($layerMethod)
     {
-        if (! is_int($layerMethod)) {
-            throw new InvalidLayerMethod('LayerMethod must be an integer');
+        if (
+            is_int($layerMethod) === false &&
+            is_null($layerMethod) === false
+        ) {
+            throw new InvalidLayerMethod('LayerMethod must be an integer or null');
         }
 
         $this->layerMethod = $layerMethod;
