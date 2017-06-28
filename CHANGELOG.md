@@ -2,6 +2,9 @@
 
 All notable changes to `pdf-to-image` will be documented in this file
 
+## 1.4.1 - 2017-06-28
+- fix `setLayerMethod` method
+
 ## 1.4.0 - 2017-06-15
 - add `setLayerMethod` method
 
