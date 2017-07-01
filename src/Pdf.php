@@ -34,7 +34,7 @@ class Pdf
             throw new PdfDoesNotExist();
         }
 
-        $this->imagick = new \Imagick($pdfFile);
+        $this->imagick = new \Imagick();
         $this->pdfFile = $pdfFile;
     }
 
