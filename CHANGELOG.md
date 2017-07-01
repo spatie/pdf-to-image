@@ -2,6 +2,9 @@
 
 All notable changes to `pdf-to-image` will be documented in this file
 
+## 1.4.2 - 2017-07-01
+- fix for setting custom resolution
+
 ## 1.4.1 - 2017-06-28
 - fix `setLayerMethod` method
 
