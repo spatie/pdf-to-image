@@ -194,6 +194,10 @@ class Pdf
      */
     public function getImageData($pathToImage)
     {
+        /**
+         * Reinitialize imagick because the target resolution must be set
+         * before reading the actual image.
+         */
         $this->imagick = new Imagick();
 
         $this->imagick->setResolution($this->resolution, $this->resolution);
