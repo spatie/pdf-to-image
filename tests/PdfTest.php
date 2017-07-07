@@ -59,12 +59,12 @@ class PdfTest extends TestCase
     public function it_will_accept_a_custom_specified_resolution()
     {
         $image = (new Pdf($this->testFile))
-            ->setResolution(72)
+            ->setResolution(150)
             ->getImageData('test.jpg')
             ->getImageResolution();
 
-        $this->assertEquals($image['x'], 72);
-        $this->assertEquals($image['y'], 72);
+        $this->assertEquals($image['x'], 150);
+        $this->assertEquals($image['y'], 150);
     }
 
     /** @test */
