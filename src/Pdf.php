@@ -2,6 +2,7 @@
 
 namespace Spatie\PdfToImage;
 
+use Imagick;
 use Spatie\PdfToImage\Exceptions\InvalidFormat;
 use Spatie\PdfToImage\Exceptions\PdfDoesNotExist;
 use Spatie\PdfToImage\Exceptions\PageDoesNotExist;
@@ -21,7 +22,7 @@ class Pdf
 
     protected $validOutputFormats = ['jpg', 'jpeg', 'png'];
 
-    protected $layerMethod = \Imagick::LAYERMETHOD_FLATTEN;
+    protected $layerMethod = Imagick::LAYERMETHOD_FLATTEN;
 
     /**
      * @param string $pdfFile The path or url to the pdffile.
@@ -34,7 +35,8 @@ class Pdf
             throw new PdfDoesNotExist();
         }
 
-        $this->imagick = new \Imagick();
+        $this->imagick = new Imagick($pdfFile);
+
         $this->pdfFile = $pdfFile;
     }
 
@@ -192,6 +194,8 @@ class Pdf
      */
     public function getImageData($pathToImage)
     {
+        $this->imagick = new Imagick();
+
         $this->imagick->setResolution($this->resolution, $this->resolution);
 
         $this->imagick->readImage(sprintf('%s[%s]', $this->pdfFile, $this->page - 1));
