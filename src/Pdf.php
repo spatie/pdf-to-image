@@ -145,7 +145,7 @@ class Pdf
      */
     public function getNumberOfPages()
     {
-      return $this->numberOfPages;
+        return $this->numberOfPages;
     }
 
     /**
@@ -198,7 +198,7 @@ class Pdf
      */
     public function getImageData($pathToImage)
     {
-        /**
+        /*
          * Reinitialize imagick because the target resolution must be set
          * before reading the actual image.
          */
