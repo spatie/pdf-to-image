@@ -38,6 +38,7 @@ class Pdf
         }
 
         $this->imagick = new Imagick($pdfFile);
+
         $this->numberOfPages = $this->imagick->getNumberImages();
 
         $this->pdfFile = $pdfFile;
