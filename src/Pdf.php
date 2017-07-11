@@ -20,6 +20,8 @@ class Pdf
 
     protected $imagick;
 
+    protected $numberOfPages;
+
     protected $validOutputFormats = ['jpg', 'jpeg', 'png'];
 
     protected $layerMethod = Imagick::LAYERMETHOD_FLATTEN;
@@ -36,6 +38,8 @@ class Pdf
         }
 
         $this->imagick = new Imagick($pdfFile);
+
+        $this->numberOfPages = $this->imagick->getNumberImages();
 
         $this->pdfFile = $pdfFile;
     }
@@ -141,7 +145,7 @@ class Pdf
      */
     public function getNumberOfPages()
     {
-        return $this->imagick->getNumberImages();
+      return $this->numberOfPages;
     }
 
     /**
