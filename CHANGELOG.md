@@ -2,6 +2,9 @@
 
 All notable changes to `pdf-to-image` will be documented in this file
 
+## 1.4.5 - 2017-07-18
+- fix flattening of pdf
+
 ## 1.4.4 - 2017-07-07
 - fix where `getNumberOfPages` would report the wrong number when looping through the pdf
 
