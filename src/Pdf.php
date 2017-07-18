@@ -209,7 +209,7 @@ class Pdf
         $this->imagick->readImage(sprintf('%s[%s]', $this->pdfFile, $this->page - 1));
 
         if (is_int($this->layerMethod)) {
-            $this->imagick->mergeImageLayers($this->layerMethod);
+            $this->imagick = $this->imagick->mergeImageLayers($this->layerMethod);
         }
 
         $this->imagick->setFormat($this->determineOutputFormat($pathToImage));
