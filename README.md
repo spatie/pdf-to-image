@@ -62,6 +62,23 @@ $pdf->setOutputFormat('png')
     ->saveImage($pathToWhereImageShouldBeStored); //the output wil be a png, no matter what
 ```
 
+## Mac users: can't read file error
+
+Mac users can face problems when Apache isn't able to access Ghotscript. In order to fix this issue you must symlink Ghostscript to a directory accessable to Apache:
+
+`sudo ln -s /usr/local/bin/gs /usr/bin/gs`
+
+If you are on Mac OSx 10.11 or higher, you might run into permission problems to do so. Follow the steps below:
+
+```
+1. Reboot to Recovery Mode. Reboot and hold "Cmd + R" after start sound.
+2. In Recovery Mode go to Utilities -> Terminal.
+3. Run: csrutil disable
+4. Reboot in Normal Mode.
+5. Do the "sudo ln -s /usr/local/bin/gs /usr/bin/gs" in terminal.
+6. Do the 1 and 2 step. In terminal enable back csrutil by run: csrutil enable
+```
+
 ## Change log
 
 Please see [CHANGELOG](CHANGELOG.md) for more information what has changed recently.
