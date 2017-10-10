@@ -54,13 +54,13 @@ $pdf->setOutputFormat('png')
     ->saveImage($pathToWhereImageShouldBeStored); //the output wil be a png, no matter what
 ```
 
-### Testing
+## Testing
 
 ``` bash
 $ composer test
 ```
 
-### Changelog
+## Changelog
 
 Please see [CHANGELOG](CHANGELOG.md) for more information what has changed recently.
 
@@ -68,7 +68,7 @@ Please see [CHANGELOG](CHANGELOG.md) for more information what has changed recen
 
 Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
 
-### Security
+## Security
 
 If you discover any security related issues, please email freek@spatie.be instead of using the issue tracker.
 
