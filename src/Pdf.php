@@ -206,7 +206,16 @@ class Pdf
 
         $this->imagick->setResolution($this->resolution, $this->resolution);
 
-        $this->imagick->readImage(sprintf('%s[%s]', $this->pdfFile, $this->page - 1));
+        if (filter_var($this->pdfFile, FILTER_VALIDATE_URL)) {
+            $handle = fopen('php://temp', 'r+');
+            fwrite($handle, file_get_contents($this->pdfFile));
+            rewind($handle);
+            $this->imagick->readImageFile($handle);
+            fclose($handle);
+
+        } else {
+            $this->imagick->readImage(sprintf('%s[%s]', $this->pdfFile, $this->page - 1));
+        }
 
         if (is_int($this->layerMethod)) {
             $this->imagick = $this->imagick->mergeImageLayers($this->layerMethod);
