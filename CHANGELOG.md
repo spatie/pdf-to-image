@@ -2,6 +2,9 @@
 
 All notable changes to `pdf-to-image` will be documented in this file
 
+## 1.4.6 - 2017-10-11
+- fix remote pdf handling
+
 ## 1.4.5 - 2017-07-18
 - fix flattening of pdf
 
