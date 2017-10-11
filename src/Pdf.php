@@ -207,7 +207,7 @@ class Pdf
         $this->imagick->setResolution($this->resolution, $this->resolution);
 
         if (filter_var($this->pdfFile, FILTER_VALIDATE_URL)) {
-            return $this->convertRemoteFile($pathToImage);
+            return $this->getRemoteImageData($pathToImage);
         }
 
         $this->imagick->readImage(sprintf('%s[%s]', $this->pdfFile, $this->page - 1));
@@ -222,12 +222,13 @@ class Pdf
     }
 
     /**
-     * Return raw image data.
+     * Return remote raw image data.
+     *
      * @param string $pathToImage
      *
      * @return \Imagick
      */
-    public function convertRemoteFile($pathToImage)
+    protected function getRemoteImageData($pathToImage)
     {
         $this->imagick->readImage($this->pdfFile);
 
