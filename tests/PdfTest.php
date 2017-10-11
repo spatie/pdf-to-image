@@ -14,6 +14,12 @@ class PdfTest extends TestCase
     /** @var string */
     protected $testFile;
 
+    /** @var string */
+    protected $multipageTestFile;
+
+    /** @var string */
+    protected $remoteFileUrl;
+
     public function setUp()
     {
         parent::setUp();
@@ -21,6 +27,8 @@ class PdfTest extends TestCase
         $this->testFile = __DIR__.'/files/test.pdf';
 
         $this->multipageTestFile = __DIR__.'/files/multipage-test.pdf';
+
+        $this->remoteFileUrl = 'https://tcd.blackboard.com/webapps/dur-browserCheck-BBLEARN/samples/sample.pdf';
     }
 
     /** @test */
@@ -99,5 +107,13 @@ class PdfTest extends TestCase
 
         $this->assertEquals($image['x'], 72);
         $this->assertEquals($image['y'], 72);
+    }
+
+    /** @test */
+    public function it_will_convert_a_remote_file()
+    {
+        $imagick = (new Pdf($this->remoteFileUrl))->getImageData('remote.jpg');
+
+        $this->assertInstanceOf('Imagick', $imagick);
     }
 }

@@ -206,7 +206,33 @@ class Pdf
 
         $this->imagick->setResolution($this->resolution, $this->resolution);
 
+        if (filter_var($this->pdfFile, FILTER_VALIDATE_URL)) {
+            return $this->getRemoteImageData($pathToImage);
+        }
+
         $this->imagick->readImage(sprintf('%s[%s]', $this->pdfFile, $this->page - 1));
+
+        if (is_int($this->layerMethod)) {
+            $this->imagick = $this->imagick->mergeImageLayers($this->layerMethod);
+        }
+
+        $this->imagick->setFormat($this->determineOutputFormat($pathToImage));
+
+        return $this->imagick;
+    }
+
+    /**
+     * Return remote raw image data.
+     *
+     * @param string $pathToImage
+     *
+     * @return \Imagick
+     */
+    protected function getRemoteImageData($pathToImage)
+    {
+        $this->imagick->readImage($this->pdfFile);
+
+        $this->imagick->setIteratorIndex($this->page - 1);
 
         if (is_int($this->layerMethod)) {
             $this->imagick = $this->imagick->mergeImageLayers($this->layerMethod);
