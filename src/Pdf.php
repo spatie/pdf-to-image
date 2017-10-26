@@ -25,7 +25,7 @@ class Pdf
     protected $validOutputFormats = ['jpg', 'jpeg', 'png'];
 
     protected $layerMethod = Imagick::LAYERMETHOD_FLATTEN;
-    
+
     protected $colorspace;
 
     /**
@@ -207,7 +207,7 @@ class Pdf
         $this->imagick = new Imagick();
 
         $this->imagick->setResolution($this->resolution, $this->resolution);
-        
+
         if ($this->colorspace !== null) {
             $this->imagick->setColorspace($this->colorspace);
         }
@@ -228,12 +228,12 @@ class Pdf
     }
     
     /**
-    * Example on colorspace connstant: imagick::COLORSPACE_RGB
-    *
-    * @param int $colorspace
-    *
-    * @return $this
-    */
+     * Example on colorspace connstant: imagick::COLORSPACE_RGB
+     *
+     * @param int $colorspace
+     *
+     * @return $this
+     */
     public function setColorspace($colorspace)
     {
         $this->colorspace = (int) $colorspace;
