@@ -26,6 +26,8 @@ class Pdf
 
     protected $layerMethod = Imagick::LAYERMETHOD_FLATTEN;
 
+    protected $colorspace;
+
     /**
      * @param string $pdfFile The path or url to the pdffile.
      *
@@ -206,6 +208,10 @@ class Pdf
 
         $this->imagick->setResolution($this->resolution, $this->resolution);
 
+        if ($this->colorspace !== null) {
+            $this->imagick->setColorspace($this->colorspace);
+        }
+
         if (filter_var($this->pdfFile, FILTER_VALIDATE_URL)) {
             return $this->getRemoteImageData($pathToImage);
         }
@@ -219,6 +225,20 @@ class Pdf
         $this->imagick->setFormat($this->determineOutputFormat($pathToImage));
 
         return $this->imagick;
+    }
+
+    /**
+     * Example on colorspace connstant: imagick::COLORSPACE_RGB.
+     *
+     * @param int $colorspace
+     *
+     * @return $this
+     */
+    public function setColorspace($colorspace)
+    {
+        $this->colorspace = (int) $colorspace;
+
+        return $this;
     }
 
     /**
