@@ -2,6 +2,9 @@
 
 All notable changes to `pdf-to-image` will be documented in this file
 
+## 1.5.0- 2017-10-11
+- add `setColorspace`
+
 ## 1.4.6 - 2017-10-11
 - fix remote pdf handling
 

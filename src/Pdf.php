@@ -228,15 +228,13 @@ class Pdf
     }
 
     /**
-     * Example on colorspace connstant: imagick::COLORSPACE_RGB.
-     *
      * @param int $colorspace
      *
      * @return $this
      */
-    public function setColorspace($colorspace)
+    public function setColorspace(int $colorspace)
     {
-        $this->colorspace = (int) $colorspace;
+        $this->colorspace = $colorspace;
 
         return $this;
     }
