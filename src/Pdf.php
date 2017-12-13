@@ -215,7 +215,7 @@ class Pdf
         }
 
         if ($this->colorspace !== null) {
-          $this->imagick->setCompressionQuality($this->compressionQuality);
+            $this->imagick->setCompressionQuality($this->compressionQuality);
         }
 
         if (filter_var($this->pdfFile, FILTER_VALIDATE_URL)) {
@@ -245,16 +245,16 @@ class Pdf
         return $this;
     }
 
-  /**
-   * @param int $compressionQuality
-   *
-   * @return $this
-   */
+    /**
+     * @param int $compressionQuality
+     *
+     * @return $this
+     */
     public function setCompressionQuality(int $compressionQuality)
     {
-      $this->compressionQuality = $compressionQuality;
+        $this->compressionQuality = $compressionQuality;
 
-      return $this;
+        return $this;
     }
 
     /**
