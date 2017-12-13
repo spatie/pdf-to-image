@@ -28,6 +28,8 @@ class Pdf
 
     protected $colorspace;
 
+    protected $compressionQuality;
+
     /**
      * @param string $pdfFile The path or url to the pdffile.
      *
@@ -212,6 +214,10 @@ class Pdf
             $this->imagick->setColorspace($this->colorspace);
         }
 
+        if ($this->colorspace !== null) {
+          $this->imagick->setCompressionQuality($this->compressionQuality);
+        }
+
         if (filter_var($this->pdfFile, FILTER_VALIDATE_URL)) {
             return $this->getRemoteImageData($pathToImage);
         }
@@ -237,6 +243,18 @@ class Pdf
         $this->colorspace = $colorspace;
 
         return $this;
+    }
+
+  /**
+   * @param int $compressionQuality
+   *
+   * @return $this
+   */
+    public function setCompressionQuality(int $compressionQuality)
+    {
+      $this->compressionQuality = $compressionQuality;
+
+      return $this;
     }
 
     /**
