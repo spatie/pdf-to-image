@@ -54,6 +54,11 @@ $pdf->setOutputFormat('png')
     ->saveImage($pathToWhereImageShouldBeStored); //the output wil be a png, no matter what
 ```
 
+You can set the quality of compression from 0 to 100:
+```php
+$pdf->setCompressionQuality(100); // sets the compression quality to maximum
+```
+
 ## Issues regarding Ghostscript
 
 This package uses Ghostscript through Imagick. For this to work Ghostscripts `gs` command should be accessible from the PHP process. For the PHP CLI process (e.g. Laravel's asynchronous jobs, commands, etc...) this is usually already the case. 
