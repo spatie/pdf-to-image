@@ -2,6 +2,9 @@
 
 All notable changes to `pdf-to-image` will be documented in this file
 
+## 1.6.0 - 2017-12-20
+- add `setCompressionQuality`
+
 ## 1.5.0- 2017-10-11
 - add `setColorspace`
 
