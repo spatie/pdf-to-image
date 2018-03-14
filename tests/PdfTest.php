@@ -116,4 +116,14 @@ class PdfTest extends TestCase
 
         $this->assertInstanceOf('Imagick', $imagick);
     }
+
+    /** @test */
+    public function it_will_set_compression_quality()
+    {
+        $imagick = (new Pdf($this->remoteFileUrl))
+            ->setCompressionQuality(99)
+            ->getImageData('test.jpg');
+
+        $this->assertEquals(99, $imagick->getCompressionQuality());
+    }
 }
