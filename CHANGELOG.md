@@ -2,6 +2,9 @@
 
 All notable changes to `pdf-to-image` will be documented in this file
 
+## 1.6.1 - 2018-03-14
+- fix bug around `setCompressionQuality`
+
 ## 1.6.0 - 2017-12-20
 - add `setCompressionQuality`
 
