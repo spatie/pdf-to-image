@@ -214,7 +214,7 @@ class Pdf
             $this->imagick->setColorspace($this->colorspace);
         }
 
-        if ($this->colorspace !== null) {
+        if ($this->compressionQuality !== null) {
             $this->imagick->setCompressionQuality($this->compressionQuality);
         }
 
