@@ -18,7 +18,7 @@ class Pdf
 
     protected $page = 1;
 
-    protected $imagick;
+    public $imagick;
 
     protected $numberOfPages;
 
