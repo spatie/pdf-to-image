@@ -73,6 +73,7 @@ class Pdf
      */
     public function setOutputFormat($outputFormat)
     {
+        $outputFormat = strtolower($outputFormat);
         if (! $this->isValidOutputFormat($outputFormat)) {
             throw new InvalidFormat("Format {$outputFormat} is not supported");
         }
@@ -282,24 +283,23 @@ class Pdf
     /**
      * Determine in which format the image must be rendered.
      *
-     * @param $pathToImage
+     * @param string $pathToImage
      *
      * @return string
      */
     protected function determineOutputFormat($pathToImage)
     {
-        $outputFormat = pathinfo($pathToImage, PATHINFO_EXTENSION);
-
-        if ($this->outputFormat != '') {
+        if ($this->outputFormat) {
             $outputFormat = $this->outputFormat;
+        } else {
+            if ($outputFormat = pathinfo($pathToImage, PATHINFO_EXTENSION)) {
+                $outputFormat = strtolower($outputFormat);
+            }
+            if (! $this->isValidOutputFormat($outputFormat)) {
+                $outputFormat = $this->validOutputFormats[0];
+            }
         }
-
-        $outputFormat = strtolower($outputFormat);
-
-        if (! $this->isValidOutputFormat($outputFormat)) {
-            $outputFormat = 'jpg';
-        }
-
+        
         return $outputFormat;
     }
 }
