@@ -91,7 +91,7 @@ class Pdf
     {
         return $this->outputFormat;
     }
-    
+
     /**
      * Sets the layer method for Imagick::mergeImageLayers()
      * If int, should correspond to a predefined LAYERMETHOD constant.
@@ -172,9 +172,9 @@ class Pdf
     public function saveImage($pathToImage)
     {
         if (is_dir($pathToImage)) {
-            $pathToImage = rtrim($pathToImage, '\/') . DIRECTORY_SEPARATOR . $this->page . '.' . $this->outputFormat;
+            $pathToImage = rtrim($pathToImage, '\/').DIRECTORY_SEPARATOR.$this->page.'.'.$this->outputFormat;
         }
-        
+
         $imageData = $this->getImageData($pathToImage);
 
         return file_put_contents($pathToImage, $imageData) !== false;
