@@ -83,6 +83,16 @@ class Pdf
     }
 
     /**
+     * Get the output format.
+     *
+     * @return string
+     */
+    public function getOutputFormat()
+    {
+        return $this->outputFormat;
+    }
+    
+    /**
      * Sets the layer method for Imagick::mergeImageLayers()
      * If int, should correspond to a predefined LAYERMETHOD constant.
      * If null, Imagick::mergeImageLayers() will not be called.
@@ -161,6 +171,10 @@ class Pdf
      */
     public function saveImage($pathToImage)
     {
+        if (is_dir($pathToImage)) {
+            $pathToImage = rtrim($pathToImage, '\/') . DIRECTORY_SEPARATOR . $this->page . '.' . $this->outputFormat;
+        }
+        
         $imageData = $this->getImageData($pathToImage);
 
         return file_put_contents($pathToImage, $imageData) !== false;
