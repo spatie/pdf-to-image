@@ -15,7 +15,7 @@ before_install:
   - sudo apt-get install -y ghostscript
   - sudo pear config-set preferred_state beta
   - sudo pecl channel-update pecl.php.net
-  - sudo pecl install imagick
+  - printf "\n" |sudo pecl install imagick
   - travis_retry composer self-update
 
 install:
