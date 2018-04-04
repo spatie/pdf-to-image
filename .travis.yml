@@ -13,9 +13,8 @@ before_install:
   - sudo apt-get -qq update
   - sudo apt-get install -y php-pear
   - sudo apt-get install -y ghostscript
-  - sudo pear config-set preferred_state beta
   - sudo pecl channel-update pecl.php.net
-  - printf "\n" |sudo pecl install imagick
+  - printf "\n" | sudo pecl install imagick
   - travis_retry composer self-update
 
 install:
