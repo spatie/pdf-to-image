@@ -11,7 +11,7 @@ env:
 
 before_install:
   - sudo apt-get -qq update
-  - sudo apt-get install -y imagick
+  - yes | pecl install imagick
   - sudo apt-get install -y ghostscript
   - travis_retry composer self-update
 
