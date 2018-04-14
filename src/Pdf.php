@@ -7,6 +7,7 @@ use Spatie\PdfToImage\Exceptions\InvalidFormat;
 use Spatie\PdfToImage\Exceptions\PdfDoesNotExist;
 use Spatie\PdfToImage\Exceptions\PageDoesNotExist;
 use Spatie\PdfToImage\Exceptions\InvalidLayerMethod;
+use Spatie\PdfToImage\Exceptions\TempFileDoesNotExist;
 
 class Pdf
 {
@@ -30,6 +31,8 @@ class Pdf
 
     protected $compressionQuality;
 
+    protected $isRemoteFile = false;
+
     /**
      * @param string $pdfFile The path or url to the pdffile.
      *
@@ -39,13 +42,21 @@ class Pdf
     {
         if (! filter_var($pdfFile, FILTER_VALIDATE_URL) && ! file_exists($pdfFile)) {
             throw new PdfDoesNotExist();
-        }
-
-        $this->imagick = new Imagick($pdfFile);
-
-        $this->numberOfPages = $this->imagick->getNumberImages();
+        }       
 
         $this->pdfFile = $pdfFile;
+
+        if (filter_var($this->pdfFile, FILTER_VALIDATE_URL)) {
+            $this->pdfFile = $this->fetchRemoteFile();
+
+            $this->isRemoteFile = true;
+        } 
+
+        $this->imagick = new Imagick();
+
+        $this->imagick->pingImage($this->pdfFile);
+
+        $this->numberOfPages = $this->imagick->getNumberImages();        
     }
 
     /**
@@ -177,7 +188,15 @@ class Pdf
 
         $imageData = $this->getImageData($pathToImage);
 
-        return file_put_contents($pathToImage, $imageData) !== false;
+        if ($this->isRemoteFile) {
+            $this->deleteTempFile();
+        }
+
+        $status = file_put_contents($pathToImage, $imageData) !== false;
+        
+        $this->imagick->clear();
+
+        return $status;
     }
 
     /**
@@ -232,10 +251,6 @@ class Pdf
             $this->imagick->setCompressionQuality($this->compressionQuality);
         }
 
-        if (filter_var($this->pdfFile, FILTER_VALIDATE_URL)) {
-            return $this->getRemoteImageData($pathToImage);
-        }
-
         $this->imagick->readImage(sprintf('%s[%s]', $this->pdfFile, $this->page - 1));
 
         if (is_int($this->layerMethod)) {
@@ -272,25 +287,51 @@ class Pdf
     }
 
     /**
-     * Return remote raw image data.
-     *
-     * @param string $pathToImage
-     *
-     * @return \Imagick
+     * Get remote file and save temporally on image dir.
+     * 
+     * @return string
      */
-    protected function getRemoteImageData($pathToImage)
+    protected function fetchRemoteFile()
     {
-        $this->imagick->readImage($this->pdfFile);
+        $source = $this->pdfFile;
 
-        $this->imagick->setIteratorIndex($this->page - 1);
+        $tempPath = tempnam(sys_get_temp_dir(), 'pdf');
 
-        if (is_int($this->layerMethod)) {
-            $this->imagick = $this->imagick->mergeImageLayers($this->layerMethod);
+        $remote = curl_init($source);
+
+        $local = fopen($tempPath, 'w');
+        
+        curl_setopt($remote, CURLOPT_FILE, $local);
+        
+        curl_setopt($remote, CURLOPT_TIMEOUT, 60);
+
+        curl_setopt($remote, CURLOPT_FOLLOWLOCATION, true);
+
+        curl_exec($remote);
+        
+        curl_close($remote);
+        
+        fclose($local);   
+
+        return $tempPath;
+    }
+
+    /**
+     * Delete temporally pdf file.
+     *
+     * @throws \Spatie\PdfToImage\Exceptions\TempFileDoesNotExist
+     * 
+     * @return bool
+     */
+    protected function deleteTempFile()
+    {
+        $tempPath = $this->pdfFile;
+
+        if (!file_exists($tempPath)) {
+            throw new TempFileDoesNotExist("Temporally file {$tempPath} does not exist");
         }
 
-        $this->imagick->setFormat($this->determineOutputFormat($pathToImage));
-
-        return $this->imagick;
+        return unlink($tempPath);
     }
 
     /**
