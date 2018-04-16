@@ -8,6 +8,8 @@ use Spatie\PdfToImage\Exceptions\PdfDoesNotExist;
 use Spatie\PdfToImage\Exceptions\PageDoesNotExist;
 use Spatie\PdfToImage\Exceptions\InvalidLayerMethod;
 use Spatie\PdfToImage\Exceptions\TempFileDoesNotExist;
+use Spatie\PdfToImage\Exceptions\TempPathNotWritable;
+use Spatie\PdfToImage\Exceptions\RemoteFileFetchFailed;
 
 class Pdf
 {
@@ -44,19 +46,19 @@ class Pdf
             throw new PdfDoesNotExist();
         }       
 
-        $this->pdfFile = $pdfFile;
-
-        if (filter_var($this->pdfFile, FILTER_VALIDATE_URL)) {
-            $this->pdfFile = $this->fetchRemoteFile();
+        if (filter_var($pdfFile, FILTER_VALIDATE_URL)) {
+            $this->pdfFile = $this->fetchRemoteFile($pdfFile);
 
             $this->isRemoteFile = true;
-        } 
+        } else {
+            $this->pdfFile = $pdfFile;
+        }
 
         $this->imagick = new Imagick();
 
         $this->imagick->pingImage($this->pdfFile);
 
-        $this->numberOfPages = $this->imagick->getNumberImages();        
+        $this->numberOfPages = $this->imagick->getNumberImages();
     }
 
     /**
@@ -177,10 +179,11 @@ class Pdf
      * Save the image to the given path.
      *
      * @param string $pathToImage
+     * @param bool $clear 
      *
      * @return bool
      */
-    public function saveImage($pathToImage)
+    public function saveImage($pathToImage, $clear = true)
     {
         if (is_dir($pathToImage)) {
             $pathToImage = rtrim($pathToImage, '\/').DIRECTORY_SEPARATOR.$this->page.'.'.$this->outputFormat;
@@ -188,13 +191,11 @@ class Pdf
 
         $imageData = $this->getImageData($pathToImage);
 
-        if ($this->isRemoteFile) {
-            $this->deleteTempFile();
-        }
-
         $status = file_put_contents($pathToImage, $imageData) !== false;
         
-        $this->imagick->clear();
+        if ($clear) {
+            $this->clear();
+        }        
 
         return $status;
     }
@@ -209,6 +210,7 @@ class Pdf
      */
     public function saveAllPagesAsImages($directory, $prefix = '')
     {
+        
         $numberOfPages = $this->getNumberOfPages();
 
         if ($numberOfPages === 0) {
@@ -220,10 +222,12 @@ class Pdf
 
             $destination = "{$directory}/{$prefix}{$pageNumber}.{$this->outputFormat}";
 
-            $this->saveImage($destination);
+            $this->saveImage($destination, false);
 
             return $destination;
         }, range(1, $numberOfPages));
+
+        $this->clear();
     }
 
     /**
@@ -284,55 +288,7 @@ class Pdf
         $this->compressionQuality = $compressionQuality;
 
         return $this;
-    }
-
-    /**
-     * Get remote file and save temporally on image dir.
-     * 
-     * @return string
-     */
-    protected function fetchRemoteFile()
-    {
-        $source = $this->pdfFile;
-
-        $tempPath = tempnam(sys_get_temp_dir(), 'pdf');
-
-        $remote = curl_init($source);
-
-        $local = fopen($tempPath, 'w');
-        
-        curl_setopt($remote, CURLOPT_FILE, $local);
-        
-        curl_setopt($remote, CURLOPT_TIMEOUT, 60);
-
-        curl_setopt($remote, CURLOPT_FOLLOWLOCATION, true);
-
-        curl_exec($remote);
-        
-        curl_close($remote);
-        
-        fclose($local);   
-
-        return $tempPath;
-    }
-
-    /**
-     * Delete temporally pdf file.
-     *
-     * @throws \Spatie\PdfToImage\Exceptions\TempFileDoesNotExist
-     * 
-     * @return bool
-     */
-    protected function deleteTempFile()
-    {
-        $tempPath = $this->pdfFile;
-
-        if (!file_exists($tempPath)) {
-            throw new TempFileDoesNotExist("Temporally file {$tempPath} does not exist");
-        }
-
-        return unlink($tempPath);
-    }
+    }   
 
     /**
      * Determine in which format the image must be rendered.
@@ -357,4 +313,76 @@ class Pdf
 
         return $outputFormat;
     }
+
+    /**
+     * Fetch remote file and save temporary on image dir.
+     * 
+     * @throws \Spatie\PdfToImage\Exceptions\TempPathNotWritable
+     * @throws \Spatie\PdfToImage\Exceptions\RemoteFileFetchFailed
+     * 
+     * @return string
+     */
+    protected function fetchRemoteFile($source)
+    {
+        $pathToTemp = tempnam(sys_get_temp_dir(), 'pdf');
+
+        if (!is_writable($pathToTemp)) {
+            throw new TempPathNotWritable();
+        }
+
+        $remote = curl_init($source);
+
+        $local = fopen($pathToTemp, 'w');
+        
+        curl_setopt($remote, CURLOPT_FILE, $local);
+        
+        curl_setopt($remote, CURLOPT_TIMEOUT, 60);
+
+        curl_setopt($remote, CURLOPT_FOLLOWLOCATION, true);
+
+        curl_exec($remote);
+
+        if (curl_error($remote)) {
+            throw new RemoteFileFetchFailed("Remote file fetch failed. Error ".curl_error($remote));
+        }
+        
+        curl_close($remote);
+        
+        fclose($local);   
+
+        return $pathToTemp;
+    }
+
+    /**
+     * Delete Temporary pdf file.
+     *
+     * @throws \Spatie\PdfToImage\Exceptions\TempFileDoesNotExist
+     * 
+     * @return bool
+     */
+    protected function deleteTempFile()
+    {
+        $tempPath = $this->pdfFile;
+
+        if (!file_exists($tempPath)) {
+            throw new TempFileDoesNotExist("Temporary file {$tempPath} does not exist");
+        }
+
+        return unlink($tempPath);
+    }
+
+    /**
+     * Remove temp file and clear Imagick object
+     *
+     * @return bool
+     */
+    protected function clear()
+    {
+        if ($this->isRemoteFile) {
+            $this->deleteTempFile();
+        }
+
+        return $this->imagick->clear();
+    }
+
 }
