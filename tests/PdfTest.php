@@ -132,25 +132,10 @@ class PdfTest extends TestCase
     }
 
     /** @test */
-    public function it_will_throw_an_exception_when_try_to_write_on_non_permited_path()
-    {
-        $this->expectException(TempPathNotWritable::class);        
-    }
-    
-    /** @test */
     public function it_will_throw_an_exception_when_try_to_fetch_non_existing_remote_file()
     {
-        $this->expectException(RemoteFileFetchFailed::class);    
-        new Pdf('https://pdfdoesnotexists.com/pdfdoesnotexists.pdf');   
-    }
-
-    /** @test */
-    public function it_will_throw_an_exception_when_try_to_delete_a_non_existing_local_file()
-    {
-        $this->expectException(TempFileDoesNotExist::class);        
-        (new Pdf($this->remoteFileUrl))
-            ->saveImage('test.jpg')
-            ->saveImage('test.jpg');
-    }
+        $this->expectException(RemoteFileFetchFailed::class);
+        new Pdf('https://pdfdoesnotexists.com/pdfdoesnotexists.pdf');
+    }   
 
 }

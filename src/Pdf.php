@@ -348,7 +348,7 @@ class Pdf
         
         curl_close($remote);
         
-        fclose($local);   
+        fclose($local);
 
         return $pathToTemp;
     }
