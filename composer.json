@@ -20,8 +20,7 @@
     ],
     "require": {
         "php" : "^7.0",
-        "ext-imagick" : "*",
-        "calcinai/php-imagick": "^0.1.2"
+        "ext-imagick" : "*"
     },
     "require-dev": {
         "phpunit/phpunit" : "^6.2"
