@@ -12,7 +12,6 @@ use Spatie\PdfToImage\Exceptions\TempFileDoesNotExist;
 use Spatie\PdfToImage\Exceptions\TempPathNotWritable;
 use Spatie\PdfToImage\Exceptions\RemoteFileFetchFailed;
 
-
 class PdfTest extends TestCase
 {
     /** @var string */
@@ -136,6 +135,5 @@ class PdfTest extends TestCase
     {
         $this->expectException(RemoteFileFetchFailed::class);
         new Pdf('https://pdfdoesnotexists.com/pdfdoesnotexists.pdf');
-    }   
-
+    }
 }

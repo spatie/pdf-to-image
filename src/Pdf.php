@@ -44,7 +44,7 @@ class Pdf
     {
         if (! filter_var($pdfFile, FILTER_VALIDATE_URL) && ! file_exists($pdfFile)) {
             throw new PdfDoesNotExist();
-        }       
+        }
 
         if (filter_var($pdfFile, FILTER_VALIDATE_URL)) {
             $this->pdfFile = $this->fetchRemoteFile($pdfFile);
@@ -179,7 +179,7 @@ class Pdf
      * Save the image to the given path.
      *
      * @param string $pathToImage
-     * @param bool $clear 
+     * @param bool $clear
      *
      * @return bool
      */
@@ -195,7 +195,7 @@ class Pdf
         
         if ($clear) {
             $this->clear();
-        }        
+        }
 
         return $status;
     }
@@ -210,7 +210,6 @@ class Pdf
      */
     public function saveAllPagesAsImages($directory, $prefix = '')
     {
-        
         $numberOfPages = $this->getNumberOfPages();
 
         if ($numberOfPages === 0) {
@@ -288,7 +287,7 @@ class Pdf
         $this->compressionQuality = $compressionQuality;
 
         return $this;
-    }   
+    }
 
     /**
      * Determine in which format the image must be rendered.
@@ -316,10 +315,10 @@ class Pdf
 
     /**
      * Fetch remote file and save temporary on image dir.
-     * 
+     *
      * @throws \Spatie\PdfToImage\Exceptions\TempPathNotWritable
      * @throws \Spatie\PdfToImage\Exceptions\RemoteFileFetchFailed
-     * 
+     *
      * @return string
      */
     protected function fetchRemoteFile($source)
@@ -357,7 +356,7 @@ class Pdf
      * Delete Temporary pdf file.
      *
      * @throws \Spatie\PdfToImage\Exceptions\TempFileDoesNotExist
-     * 
+     *
      * @return bool
      */
     protected function deleteTempFile()
@@ -384,5 +383,4 @@ class Pdf
 
         return $this->imagick->clear();
     }
-
 }
