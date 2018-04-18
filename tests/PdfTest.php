@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 use Spatie\PdfToImage\Exceptions\InvalidFormat;
 use Spatie\PdfToImage\Exceptions\PdfDoesNotExist;
 use Spatie\PdfToImage\Exceptions\PageDoesNotExist;
+use Spatie\PdfToImage\Exceptions\RemoteFileFetchFailed;
 
 class PdfTest extends TestCase
 {
@@ -125,5 +126,12 @@ class PdfTest extends TestCase
             ->getImageData('test.jpg');
 
         $this->assertEquals(99, $imagick->getCompressionQuality());
+    }
+
+    /** @test */
+    public function it_will_throw_an_exception_when_try_to_fetch_non_existing_remote_file()
+    {
+        $this->expectException(RemoteFileFetchFailed::class);
+        new Pdf('https://pdfdoesnotexists.com/pdfdoesnotexists.pdf');
     }
 }
