@@ -47,12 +47,15 @@ class PdfTest extends TestCase
         (new Pdf($this->testFile))->setOutputFormat('bla');
     }
 
-    /** @test */
-    public function it_will_throw_an_exception_when_passed_an_invalid_page()
+    /**
+     * @test
+     * @dataProvider invalid_page_number_provider
+     */
+    public function it_will_throw_an_exception_when_passed_an_invalid_page($invalidPage)
     {
         $this->expectException(PageDoesNotExist::class);
 
-        (new Pdf($this->testFile))->setPage(5);
+        (new Pdf($this->testFile))->setPage($invalidPage);
     }
 
     /** @test */
@@ -125,5 +128,10 @@ class PdfTest extends TestCase
             ->getImageData('test.jpg');
 
         $this->assertEquals(99, $imagick->getCompressionQuality());
+    }
+
+    public function invalid_page_number_provider()
+    {
+        return [[5], [0], [-1]];
     }
 }
