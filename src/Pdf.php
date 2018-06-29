@@ -33,8 +33,6 @@ class Pdf
     //Setting the default storage to local. Checks storage/app/ for file
     protected $pdfDisk = 'local';
 
-    protected $imageDisk = 'local';    
-
     /**
      * @param string $pdfFile The path or url to the pdffile.
      *
@@ -43,10 +41,10 @@ class Pdf
     public function __construct($pdfFile)
     {
         $pdfStorage = Storage::disk($this->pdfDisk);
-        if(!$pdfStorage->exists($this->pdfFile)){
-            throw new PdfDoesNotExist($this->pdfFile." does not exists");
+        if(!$pdfStorage->exists($pdfFile)){
+            throw new PdfDoesNotExist($pdfFile." does not exists");
         }
-        $pdfFilePath = $pdfStorage->path($this->pdfFile);        
+        $pdfFilePath = $pdfStorage->path($pdfFile);        
 
         $this->imagick = new Imagick($pdfFilePath);
 
