@@ -30,6 +30,9 @@ class Pdf
 
     protected $compressionQuality;
 
+    //Setting the default storage to local. Checks storage/app/ for file
+    protected $pdfDisk = 'local';
+
     /**
      * @param string $pdfFile The path or url to the pdffile.
      *
@@ -37,11 +40,13 @@ class Pdf
      */
     public function __construct($pdfFile)
     {
-        if (! filter_var($pdfFile, FILTER_VALIDATE_URL) && ! file_exists($pdfFile)) {
-            throw new PdfDoesNotExist();
+        $pdfStorage = Storage::disk($this->pdfDisk);
+        if(!$pdfStorage->exists($pdfFile)){
+            throw new PdfDoesNotExist($pdfFile." does not exists");
         }
+        $pdfFilePath = $pdfStorage->path($pdfFile);        
 
-        $this->imagick = new Imagick($pdfFile);
+        $this->imagick = new Imagick($pdfFilePath);
 
         $this->numberOfPages = $this->imagick->getNumberImages();
 
