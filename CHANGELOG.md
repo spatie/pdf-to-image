@@ -2,6 +2,9 @@
 
 All notable changes to `pdf-to-image` will be documented in this file
 
+## 1.8.1 - 2018-06-02
+- throw exception when trying to fetch a negative page number
+
 ## 1.8.0 - 2018-04-03
 - add method getOutputFormat and update saveImage for auto set filename
 
