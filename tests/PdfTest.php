@@ -79,6 +79,16 @@ class PdfTest extends TestCase
     }
 
     /** @test */
+    public function it_will_define_custom_file_name()
+    {
+        $fileName = (new Pdf($this->testFile))
+            ->setFileName('myFile')
+            ->getFileName();
+
+        $this->assertEquals($fileName, 'myFile');
+    }
+
+    /** @test */
     public function it_will_convert_a_specified_page()
     {
         $imagick = (new Pdf($this->multipageTestFile))
