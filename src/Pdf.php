@@ -164,9 +164,8 @@ class Pdf
         return $this->numberOfPages;
     }
 
-
     /**
-     * Defines a custom name to save the file
+     * Defines a custom name to save the file.
      *
      * @return $this
      */
@@ -178,7 +177,7 @@ class Pdf
     }
 
     /**
-     * Returns the current file name that is going to be used to save the file
+     * Returns the current file name that is going to be used to save the file.
      *
      * @return string|null
      */
