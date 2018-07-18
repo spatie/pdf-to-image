@@ -30,6 +30,8 @@ class Pdf
 
     protected $compressionQuality;
 
+    protected $fileName;
+
     /**
      * @param string $pdfFile The path or url to the pdffile.
      *
@@ -162,6 +164,29 @@ class Pdf
         return $this->numberOfPages;
     }
 
+
+    /**
+     * Defines a custom name to save the file
+     *
+     * @return $this
+     */
+    public function setFileName($fileName)
+    {
+        $this->fileName = $fileName;
+
+        return $this;
+    }
+
+    /**
+     * Returns the current file name that is going to be used to save the file
+     *
+     * @return string|null
+     */
+    public function getFileName()
+    {
+        return $this->fileName;
+    }
+
     /**
      * Save the image to the given path.
      *
@@ -172,7 +197,9 @@ class Pdf
     public function saveImage($pathToImage)
     {
         if (is_dir($pathToImage)) {
-            $pathToImage = rtrim($pathToImage, '\/').DIRECTORY_SEPARATOR.$this->page.'.'.$this->outputFormat;
+            $fileName = $this->fileName ? $this->fileName : $this->page;
+
+            $pathToImage = rtrim($pathToImage, '\/').DIRECTORY_SEPARATOR.$fileName.'.'.$this->outputFormat;
         }
 
         $imageData = $this->getImageData($pathToImage);
