@@ -69,7 +69,7 @@ However for PHP on FPM (e.g. when running this package "in the browser") you mig
 Uncaught ImagickException: FailedToExecuteCommand 'gs'
 ```
 
-This can be fixed by adding the following line at the end of your `php-fpm.conf` file and restarting PHP FPM. If you're unsure where the `php-fpm.conf` file is located you can check `phpinfo()`.
+This can be fixed by adding the following line at the end of your `php-fpm.conf` file and restarting PHP FPM. If you're unsure where the `php-fpm.conf` file is located you can check `phpinfo()`. If you are using Laravel Valet the `php-fpm.conf` file will be located in the `/usr/local/etc/php/YOUR-PHP-VERSION` directory.
 
 ```
 env[PATH] = /usr/local/bin:/usr/bin:/bin
