@@ -121,6 +121,17 @@ class PdfTest extends TestCase
     }
 
     /** @test */
+    public function it_will_save_image_with_a_specified_filename()
+    {
+        $pdf = new Pdf($this->testFile);
+
+        $pdf->saveImage(dirname($this->testFile), 'myfile');
+
+        $this->assertFileExists(dirname($this->testFile).'/myfile.jpg');
+        unlink(dirname($this->testFile).'/myfile.jpg');
+    }
+
+    /** @test */
     public function it_will_set_compression_quality()
     {
         $imagick = (new Pdf($this->remoteFileUrl))
