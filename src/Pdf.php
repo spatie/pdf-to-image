@@ -166,13 +166,15 @@ class Pdf
      * Save the image to the given path.
      *
      * @param string $pathToImage
+     * @param string $filename
      *
      * @return bool
      */
-    public function saveImage($pathToImage)
+    public function saveImage($pathToImage, $filename = null)
     {
         if (is_dir($pathToImage)) {
-            $pathToImage = rtrim($pathToImage, '\/').DIRECTORY_SEPARATOR.$this->page.'.'.$this->outputFormat;
+            $filename = ($filename) ? $filename : $this->page;
+            $pathToImage = rtrim($pathToImage, '\/').DIRECTORY_SEPARATOR.$filename.'.'.$this->outputFormat;
         }
 
         $imageData = $this->getImageData($pathToImage);
