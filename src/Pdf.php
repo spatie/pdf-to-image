@@ -38,7 +38,7 @@ class Pdf
     public function __construct($pdfFile)
     {
         if (! filter_var($pdfFile, FILTER_VALIDATE_URL) && ! file_exists($pdfFile)) {
-            throw new PdfDoesNotExist("File {$pdfFile} does not exist");
+            throw new PdfDoesNotExist("File `{$pdfFile}` does not exist");
         }
 
         $this->imagick = new Imagick($pdfFile);
