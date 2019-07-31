@@ -2,6 +2,10 @@
 
 All notable changes to `pdf-to-image` will be documented in this file
 
+## 1.8.2 - 2019-07-31
+
+- add exception message to `PdfDoesNotExist`
+
 ## 1.8.1 - 2018-06-02
 - throw exception when trying to fetch a negative page number
 
