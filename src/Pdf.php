@@ -30,14 +30,9 @@ class Pdf
 
     protected $compressionQuality;
 
-    /**
-     * @param string $pdfFile The path or url to the pdffile.
-     *
-     * @throws \Spatie\PdfToImage\Exceptions\PdfDoesNotExist
-     */
-    public function __construct($pdfFile)
+    public function __construct(string $pdfFile)
     {
-        if (! filter_var($pdfFile, FILTER_VALIDATE_URL) && ! file_exists($pdfFile)) {
+        if (! file_exists($pdfFile)) {
             throw new PdfDoesNotExist("File `{$pdfFile}` does not exist");
         }
 
@@ -48,30 +43,14 @@ class Pdf
         $this->pdfFile = $pdfFile;
     }
 
-    /**
-     * Set the raster resolution.
-     *
-     * @param int $resolution
-     *
-     * @return $this
-     */
-    public function setResolution($resolution)
+    public function setResolution(int $resolution)
     {
         $this->resolution = $resolution;
 
         return $this;
     }
 
-    /**
-     * Set the output format.
-     *
-     * @param string $outputFormat
-     *
-     * @return $this
-     *
-     * @throws \Spatie\PdfToImage\Exceptions\InvalidFormat
-     */
-    public function setOutputFormat($outputFormat)
+    public function setOutputFormat(string $outputFormat)
     {
         if (! $this->isValidOutputFormat($outputFormat)) {
             throw new InvalidFormat("Format {$outputFormat} is not supported");
@@ -82,12 +61,7 @@ class Pdf
         return $this;
     }
 
-    /**
-     * Get the output format.
-     *
-     * @return string
-     */
-    public function getOutputFormat()
+    public function getOutputFormat(): string
     {
         return $this->outputFormat;
     }
@@ -106,42 +80,19 @@ class Pdf
      * @see https://secure.php.net/manual/en/imagick.constants.php
      * @see Pdf::getImageData()
      */
-    public function setLayerMethod($layerMethod)
+    public function setLayerMethod(?int $layerMethod)
     {
-        if (
-            is_int($layerMethod) === false &&
-            is_null($layerMethod) === false
-        ) {
-            throw new InvalidLayerMethod('LayerMethod must be an integer or null');
-        }
-
         $this->layerMethod = $layerMethod;
 
         return $this;
     }
 
-    /**
-     * Determine if the given format is a valid output format.
-     *
-     * @param $outputFormat
-     *
-     * @return bool
-     */
-    public function isValidOutputFormat($outputFormat)
+    public function isValidOutputFormat(string $outputFormat): bool
     {
         return in_array($outputFormat, $this->validOutputFormats);
     }
 
-    /**
-     * Set the page number that should be rendered.
-     *
-     * @param int $page
-     *
-     * @return $this
-     *
-     * @throws \Spatie\PdfToImage\Exceptions\PageDoesNotExist
-     */
-    public function setPage($page)
+    public function setPage(int $page)
     {
         if ($page > $this->getNumberOfPages() || $page < 1) {
             throw new PageDoesNotExist("Page {$page} does not exist");
@@ -152,24 +103,12 @@ class Pdf
         return $this;
     }
 
-    /**
-     * Get the number of pages in the pdf file.
-     *
-     * @return int
-     */
-    public function getNumberOfPages()
+    public function getNumberOfPages(): int
     {
         return $this->numberOfPages;
     }
 
-    /**
-     * Save the image to the given path.
-     *
-     * @param string $pathToImage
-     *
-     * @return bool
-     */
-    public function saveImage($pathToImage)
+    public function saveImage(string $pathToImage): bool
     {
         if (is_dir($pathToImage)) {
             $pathToImage = rtrim($pathToImage, '\/').DIRECTORY_SEPARATOR.$this->page.'.'.$this->outputFormat;
@@ -180,15 +119,7 @@ class Pdf
         return file_put_contents($pathToImage, $imageData) !== false;
     }
 
-    /**
-     * Save the file as images to the given directory.
-     *
-     * @param string $directory
-     * @param string $prefix
-     *
-     * @return array $files the paths to the created images
-     */
-    public function saveAllPagesAsImages($directory, $prefix = '')
+    public function saveAllPagesAsImages(string $directory, string $prefix = ''): array
     {
         $numberOfPages = $this->getNumberOfPages();
 
@@ -207,14 +138,7 @@ class Pdf
         }, range(1, $numberOfPages));
     }
 
-    /**
-     * Return raw image data.
-     *
-     * @param string $pathToImage
-     *
-     * @return \Imagick
-     */
-    public function getImageData($pathToImage)
+    public function getImageData(string $pathToImage): Imagick
     {
         /*
          * Reinitialize imagick because the target resolution must be set
@@ -247,11 +171,6 @@ class Pdf
         return $this->imagick;
     }
 
-    /**
-     * @param int $colorspace
-     *
-     * @return $this
-     */
     public function setColorspace(int $colorspace)
     {
         $this->colorspace = $colorspace;
@@ -259,11 +178,6 @@ class Pdf
         return $this;
     }
 
-    /**
-     * @param int $compressionQuality
-     *
-     * @return $this
-     */
     public function setCompressionQuality(int $compressionQuality)
     {
         $this->compressionQuality = $compressionQuality;
@@ -271,14 +185,7 @@ class Pdf
         return $this;
     }
 
-    /**
-     * Return remote raw image data.
-     *
-     * @param string $pathToImage
-     *
-     * @return \Imagick
-     */
-    protected function getRemoteImageData($pathToImage)
+    protected function getRemoteImageData(string $pathToImage): Imagick
     {
         $this->imagick->readImage($this->pdfFile);
 
@@ -293,14 +200,7 @@ class Pdf
         return $this->imagick;
     }
 
-    /**
-     * Determine in which format the image must be rendered.
-     *
-     * @param $pathToImage
-     *
-     * @return string
-     */
-    protected function determineOutputFormat($pathToImage)
+    protected function determineOutputFormat(string $pathToImage): string
     {
         $outputFormat = pathinfo($pathToImage, PATHINFO_EXTENSION);
 

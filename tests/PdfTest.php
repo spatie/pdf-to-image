@@ -113,17 +113,9 @@ class PdfTest extends TestCase
     }
 
     /** @test */
-    public function it_will_convert_a_remote_file()
-    {
-        $imagick = (new Pdf($this->remoteFileUrl))->getImageData('remote.jpg');
-
-        $this->assertInstanceOf('Imagick', $imagick);
-    }
-
-    /** @test */
     public function it_will_set_compression_quality()
     {
-        $imagick = (new Pdf($this->remoteFileUrl))
+        $imagick = (new Pdf($this->testFile))
             ->setCompressionQuality(99)
             ->getImageData('test.jpg');
 
