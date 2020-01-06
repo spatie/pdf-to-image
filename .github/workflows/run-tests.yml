@@ -31,7 +31,7 @@ jobs:
               uses: actions/cache@v1
               with:
                   path: ~/.composer/cache/files
-                  key: dependencies-laravel-${{ matrix.laravel }}-php-${{ matrix.php }}-composer-${{ hashFiles('composer.json') }}
+                  key: dependencies-php-${{ matrix.php }}-composer-${{ hashFiles('composer.json') }}
 
             - name: Setup PHP
               uses: shivammathur/setup-php@v1
@@ -42,7 +42,7 @@ jobs:
 
             - name: Install dependencies
               run: |
-                  composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
+                  composer require "laravel/framework:${{ matrix.laravel }}" "phpunit/phpunit:${{ matrix.phpunit }}" --no-interaction --no-update
                   composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction --no-suggest
 
             - name: Execute tests
