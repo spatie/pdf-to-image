@@ -3,11 +3,11 @@
 namespace Spatie\PdfToImage\Test;
 
 use Imagick;
-use Spatie\PdfToImage\Pdf;
 use PHPUnit\Framework\TestCase;
 use Spatie\PdfToImage\Exceptions\InvalidFormat;
-use Spatie\PdfToImage\Exceptions\PdfDoesNotExist;
 use Spatie\PdfToImage\Exceptions\PageDoesNotExist;
+use Spatie\PdfToImage\Exceptions\PdfDoesNotExist;
+use Spatie\PdfToImage\Pdf;
 
 class PdfTest extends TestCase
 {
