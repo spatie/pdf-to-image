@@ -2,6 +2,11 @@
 
 All notable changes to `pdf-to-image` will be documented in this file
 
+## 2.0.0 (unreleased) - 2020-0X-XX
+
+- added typehints
+- removal of ability of loading pdfs via URLs
+
 ## 1.8.2 - 2019-07-31
 
 - add exception message to `PdfDoesNotExist`
