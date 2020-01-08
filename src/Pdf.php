@@ -4,9 +4,8 @@ namespace Spatie\PdfToImage;
 
 use Imagick;
 use Spatie\PdfToImage\Exceptions\InvalidFormat;
-use Spatie\PdfToImage\Exceptions\PdfDoesNotExist;
 use Spatie\PdfToImage\Exceptions\PageDoesNotExist;
-use Spatie\PdfToImage\Exceptions\InvalidLayerMethod;
+use Spatie\PdfToImage\Exceptions\PdfDoesNotExist;
 
 class Pdf
 {
