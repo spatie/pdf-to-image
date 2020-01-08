@@ -2,7 +2,7 @@
 
 All notable changes to `pdf-to-image` will be documented in this file
 
-## 2.0.0 (unreleased) - 2020-0X-XX
+## 2.0.0 - 2020-01-08
 
 - added typehints
 - removal of ability of loading pdfs via URLs
