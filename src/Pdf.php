@@ -37,7 +37,7 @@ class Pdf
 
         $this->imagick = new Imagick($pdfFile);
 
-        $this->numberOfPages = $this->imagick->getNumberImages();
+        $this->numberOfPages = $this->fetchNumberPages($pdfFile);
 
         $this->pdfFile = $pdfFile;
     }
@@ -214,5 +214,27 @@ class Pdf
         }
 
         return $outputFormat;
+    }
+
+    private function fetchNumberPages(string $pdfFile)
+    {
+        $stream = fopen($pdfFile, "r");
+        $content = fread($stream, filesize($pdfFile));
+
+        if(!$stream || !$content) {
+            throw new PdfDoesNotExist("File `{$pdfFile}` does not exist");
+        }
+
+        $count = 0;
+
+        $regex  = "/\/Count\s+(\d+)/";
+
+        if(preg_match_all($regex, $content, $matches)) {
+            $count = max($matches);
+
+            return $count[0];
+        } else {
+            throw new InvalidFormat('Cannot read page count from pdf');
+        }
     }
 }
