@@ -20,7 +20,8 @@
     ],
     "require": {
         "php" : "^7.2",
-        "ext-imagick" : "*"
+        "ext-imagick" : "*",
+        "smalot/pdfparser": "^0.14.0"
     },
     "require-dev": {
         "phpunit/phpunit" : "^8.0"

@@ -18,6 +18,9 @@ class PdfTest extends TestCase
     protected $multipageTestFile;
 
     /** @var string */
+    protected $bigMultipageTestFile;
+
+    /** @var string */
     protected $remoteFileUrl;
 
     public function setUp(): void
@@ -27,6 +30,7 @@ class PdfTest extends TestCase
         $this->testFile = __DIR__.'/files/test.pdf';
 
         $this->multipageTestFile = __DIR__.'/files/multipage-test.pdf';
+        $this->bigMultipageTestFile = __DIR__.'/files/A17_FlightPlan.pdf';
 
         $this->remoteFileUrl = 'https://tcd.blackboard.com/webapps/dur-browserCheck-BBLEARN/samples/sample.pdf';
     }
@@ -64,6 +68,14 @@ class PdfTest extends TestCase
         $pdf = new Pdf($this->multipageTestFile);
 
         $this->assertTrue($pdf->getNumberOfPages() === 3);
+    }
+
+    /** @test */
+    public function it_will_quickly_parse_big_multipage_file()
+    {
+        $pdf = new Pdf($this->bigMultipageTestFile);
+
+        $this->assertTrue($pdf->getNumberOfPages() === 618);
     }
 
     /** @test */

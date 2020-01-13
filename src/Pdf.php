@@ -3,6 +3,7 @@
 namespace Spatie\PdfToImage;
 
 use Imagick;
+use Smalot\PdfParser\Parser;
 use Spatie\PdfToImage\Exceptions\InvalidFormat;
 use Spatie\PdfToImage\Exceptions\PageDoesNotExist;
 use Spatie\PdfToImage\Exceptions\PdfDoesNotExist;
@@ -35,11 +36,20 @@ class Pdf
             throw new PdfDoesNotExist("File `{$pdfFile}` does not exist");
         }
 
-        $this->imagick = new Imagick($pdfFile);
+        $this->imagick = new Imagick();
 
-        $this->numberOfPages = $this->imagick->getNumberImages();
+        $this->numberOfPages = $this->fetchNumberPages($pdfFile);
 
         $this->pdfFile = $pdfFile;
+    }
+
+    public function fetchNumberPages(string $pdfFile)
+    {
+        $parser = new Parser();
+
+        $document = $parser->parseFile($pdfFile);
+
+        return count($document->getPages());
     }
 
     public function setResolution(int $resolution)
