@@ -225,8 +225,6 @@ class Pdf
             throw new PdfDoesNotExist("File `{$pdfFile}` does not exist");
         }
 
-        $count = 0;
-
         $regex = "/\/Count\s+(\d+)/";
 
         if (preg_match_all($regex, $content, $matches)) {
