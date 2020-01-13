@@ -218,18 +218,18 @@ class Pdf
 
     private function fetchNumberPages(string $pdfFile)
     {
-        $stream = fopen($pdfFile, "r");
+        $stream = fopen($pdfFile, 'r');
         $content = fread($stream, filesize($pdfFile));
 
-        if(!$stream || !$content) {
+        if (! $stream || ! $content) {
             throw new PdfDoesNotExist("File `{$pdfFile}` does not exist");
         }
 
         $count = 0;
 
-        $regex  = "/\/Count\s+(\d+)/";
+        $regex = "/\/Count\s+(\d+)/";
 
-        if(preg_match_all($regex, $content, $matches)) {
+        if (preg_match_all($regex, $content, $matches)) {
             $count = max($matches);
 
             return $count[0];
