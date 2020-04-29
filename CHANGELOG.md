@@ -2,7 +2,7 @@
 
 All notable changes to `pdf-to-image` will be documented in this file
 
-## 2.0.1 - 2020-01-08
+## 2.0.1 - 2020-04-29
 
 - add usage of Imagick `pingImage` to speedup the page count
 
