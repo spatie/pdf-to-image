@@ -2,7 +2,7 @@
 
 namespace Spatie\PdfToImage;
 
-use Imagick;
+use Jcupitt\Vips;
 use Spatie\PdfToImage\Exceptions\InvalidFormat;
 use Spatie\PdfToImage\Exceptions\PageDoesNotExist;
 use Spatie\PdfToImage\Exceptions\PdfDoesNotExist;
@@ -17,31 +17,24 @@ class Pdf
 
     protected $page = 1;
 
-    public $imagick;
-
     protected $numberOfPages;
 
     protected $validOutputFormats = ['jpg', 'jpeg', 'png'];
-
-    protected $layerMethod = Imagick::LAYERMETHOD_FLATTEN;
-
-    protected $colorspace;
 
     protected $compressionQuality;
 
     public function __construct(string $pdfFile)
     {
-        if (! file_exists($pdfFile)) {
-            throw new PdfDoesNotExist("File `{$pdfFile}` does not exist");
+        $this->pdfFile = $pdfFile;
+
+        if (! file_exists($this->pdfFile)) {
+            throw new PdfDoesNotExist("File `{$this->pdfFile}` does not exist");
         }
 
-        $this->imagick = new Imagick();
-
-        $this->imagick->pingImage($pdfFile);
-
-        $this->numberOfPages = $this->imagick->getNumberImages();
-
-        $this->pdfFile = $pdfFile;
+        // php-vips will just read the header and not decode the whole file, so
+        // this is quick
+        $image = Vips\Image::newFromFile($this->pdfFile);
+        $this->numberOfPages = $image->get("n-pages");
     }
 
     public function setResolution(int $resolution)
@@ -83,9 +76,8 @@ class Pdf
      */
     public function setLayerMethod(?int $layerMethod)
     {
-        $this->layerMethod = $layerMethod;
-
-        return $this;
+        // not needed by php-vips, I think
+        return null;
     }
 
     public function isValidOutputFormat(string $outputFormat): bool
@@ -115,9 +107,18 @@ class Pdf
             $pathToImage = rtrim($pathToImage, '\/').DIRECTORY_SEPARATOR.$this->page.'.'.$this->outputFormat;
         }
 
-        $imageData = $this->getImageData($pathToImage);
+        $page = $this->getImageData($pathToImage);
 
-        return file_put_contents($pathToImage, $imageData) !== false;
+        $compression = $this->compressionQuality !== null ?
+            $this->compressionQuality : 75;
+
+        // php-vips will set the image format from the suffix
+        $page->writeToFile($pathToImage, [
+            "Q" => $compression
+        ]);
+
+        // php-vips will throw an exception in writeToFile if there's an error
+        return TRUE;
     }
 
     public function saveAllPagesAsImages(string $directory, string $prefix = ''): array
@@ -139,44 +140,23 @@ class Pdf
         }, range(1, $numberOfPages));
     }
 
-    public function getImageData(string $pathToImage): Imagick
+    public function getImageData(string $pathToImage): Vips\Image
     {
-        /*
-         * Reinitialize imagick because the target resolution must be set
-         * before reading the actual image.
-         */
-        $this->imagick = new Imagick();
+        $page = Vips\Image::newFromFile($this->pdfFile, [
+            "dpi" => $this->resolution,
+            "page" => $this->page - 1,
+            # this enables image streaming
+            "access" => "sequential"
+        ]);
 
-        $this->imagick->setResolution($this->resolution, $this->resolution);
-
-        if ($this->colorspace !== null) {
-            $this->imagick->setColorspace($this->colorspace);
-        }
-
-        if ($this->compressionQuality !== null) {
-            $this->imagick->setCompressionQuality($this->compressionQuality);
-        }
-
-        if (filter_var($this->pdfFile, FILTER_VALIDATE_URL)) {
-            return $this->getRemoteImageData($pathToImage);
-        }
-
-        $this->imagick->readImage(sprintf('%s[%s]', $this->pdfFile, $this->page - 1));
-
-        if (is_int($this->layerMethod)) {
-            $this->imagick = $this->imagick->mergeImageLayers($this->layerMethod);
-        }
-
-        $this->imagick->setFormat($this->determineOutputFormat($pathToImage));
-
-        return $this->imagick;
+        return $page;
     }
 
     public function setColorspace(int $colorspace)
     {
-        $this->colorspace = $colorspace;
-
-        return $this;
+        // php-vips always renders PDFs as RGB ... you'll need to use imagick if
+        // you want CMYK
+        return null;
     }
 
     public function setCompressionQuality(int $compressionQuality)
@@ -184,21 +164,6 @@ class Pdf
         $this->compressionQuality = $compressionQuality;
 
         return $this;
-    }
-
-    protected function getRemoteImageData(string $pathToImage): Imagick
-    {
-        $this->imagick->readImage($this->pdfFile);
-
-        $this->imagick->setIteratorIndex($this->page - 1);
-
-        if (is_int($this->layerMethod)) {
-            $this->imagick = $this->imagick->mergeImageLayers($this->layerMethod);
-        }
-
-        $this->imagick->setFormat($this->determineOutputFormat($pathToImage));
-
-        return $this->imagick;
     }
 
     protected function determineOutputFormat(string $pathToImage): string
