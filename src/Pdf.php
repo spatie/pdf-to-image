@@ -24,8 +24,10 @@ class Pdf
     protected $validOutputFormats = ['jpg', 'jpeg', 'png'];
 
     protected $layerMethod = Imagick::LAYERMETHOD_FLATTEN;
-    
+
     protected $alphaChannel;
+
+    protected $backgroundColor;
 
     protected $colorspace;
 
@@ -89,11 +91,17 @@ class Pdf
 
         return $this;
     }
-    
+
     public function setAlphaChannel(?int $alphaChannel)
     {
         $this->alphaChannel = $alphaChannel;
-        
+
+        return $this;
+    }
+
+    public function setBackgroundColor(?string $backgroundColor) {
+        $this->backgroundColor = $backgroundColor;
+
         return $this;
     }
 
@@ -161,7 +169,11 @@ class Pdf
         if ($this->colorspace !== null) {
             $this->imagick->setColorspace($this->colorspace);
         }
-        
+
+        if ($this->backgroundColor !== null) {
+            $this->imagick->setImageBackgroundColor($this->backgroundColor);
+        }
+
         if ($this->alphaChannel !== null) {
             $this->imagick->setImageAlphaChannel($this->alphaChannel);
         }
