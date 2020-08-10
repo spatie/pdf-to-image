@@ -24,6 +24,8 @@ class Pdf
     protected $validOutputFormats = ['jpg', 'jpeg', 'png'];
 
     protected $layerMethod = Imagick::LAYERMETHOD_FLATTEN;
+    
+    protected $alphaChannel;
 
     protected $colorspace;
 
@@ -85,6 +87,13 @@ class Pdf
     {
         $this->layerMethod = $layerMethod;
 
+        return $this;
+    }
+    
+    public function setAlphaChannel(?int $alphaChannel)
+    {
+        $this->alphaChannel = $alphaChannel;
+        
         return $this;
     }
 
@@ -151,6 +160,10 @@ class Pdf
 
         if ($this->colorspace !== null) {
             $this->imagick->setColorspace($this->colorspace);
+        }
+        
+        if ($this->alphaChannel !== null) {
+            $this->imagick->setImageAlphaChannel($this->alphaChannel);
         }
 
         if ($this->compressionQuality !== null) {
