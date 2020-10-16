@@ -1,5 +1,5 @@
 {
-    "name": "spatie/pdf-to-image",
+    "name": "cdt-team/pdf-to-image",
     "description": "Convert a pdf to an image",
     "keywords": [
         "spatie",
@@ -8,13 +8,13 @@
         "convert",
         "image"
     ],
-    "homepage": "https://github.com/spatie/pdf-to-image",
+    "homepage": "https://github.com/cdt-team/pdf-to-image",
     "license": "MIT",
     "authors": [
         {
-            "name": "Freek Van der Herten",
-            "email": "freek@spatie.be",
-            "homepage": "https://spatie.be",
+            "name": "Roberto Muzzano",
+            "email": "webdev@mediati.ch",
+            "homepage": "https://gruppocdt.ch",
             "role": "Developer"
         }
     ],
