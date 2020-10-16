@@ -39,7 +39,7 @@ class Pdf
     }
 
 
-    public function setCropBox(string $box): self
+    public function setBox(string $box): self
     {
         $this->ghostscript->setBox($box);
         return $this;
