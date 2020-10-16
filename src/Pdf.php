@@ -38,6 +38,13 @@ class Pdf
         return $this;
     }
 
+
+    public function setCropBox(string $box): self
+    {
+        $this->ghostscript->setBox($box);
+        return $this;
+    }
+
     public function setOutputFormat(string $outputFormat): self
     {
         if (! $this->isValidOutputFormat($outputFormat)) {
