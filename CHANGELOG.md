@@ -2,6 +2,9 @@
 
 All notable changes to `pdf-to-image` will be documented in this file
 
+## 2.1.0 - 2020-11-12
+- add support for PHP 8
+
 ## 2.0.1 - 2020-04-29
 
 - add usage of Imagick `pingImage` to speedup the page count
