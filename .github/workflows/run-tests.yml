@@ -1,52 +1,40 @@
 name: run-tests
 
-on:
-    push:
-    schedule:
-        - cron: '0 0 * * *'
+on: [push, pull_request]
 
 jobs:
     test:
         runs-on: ${{ matrix.os }}
         strategy:
+            fail-fast: true
             matrix:
-                php: [7.4, 7.3, 7.2]
+                php: [8.0, 7.4, 7.3, 7.2]
                 dependency-version: [prefer-lowest, prefer-stable]
                 os: [ubuntu-latest]
-                include:
-                    - php: 7.4
-                      phpunit: 8.*
-                    - php: 7.3
-                      phpunit: 8.*
-                    - php: 7.2
-                      phpunit: 8.*
 
-        name: P${{ matrix.php }} - PU${{ matrix.phpunit }} - ${{ matrix.dependency-version }} - ${{ matrix.os }}
+        name: P${{ matrix.php }} - ${{ matrix.dependency-version }} - ${{ matrix.os }}
 
         steps:
             - name: Checkout code
-              uses: actions/checkout@v1
-
-            - name: Cache dependencies
-              uses: actions/cache@v1
-              with:
-                  path: ~/.composer/cache/files
-                  key: dependencies-php-${{ matrix.php }}-composer-${{ hashFiles('composer.json') }}
+              uses: actions/checkout@v2
 
             - name: Setup PHP
-              uses: shivammathur/setup-php@v1
+              uses: shivammathur/setup-php@v2
               with:
                   php-version: ${{ matrix.php }}
                   extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, mysql, mysqli, pdo_mysql, bcmath, soap, intl, gd, exif, iconv, imagick
                   coverage: none
-                  
+
             - name: Fix Imagick Policy
               run: sudo sed -i 's/none/read|write/g' /etc/ImageMagick-6/policy.xml
 
             - name: Install dependencies
+              run: composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction
+
+            - name: Setup Problem Matches
               run: |
-                  composer require "phpunit/phpunit:${{ matrix.phpunit }}" --no-interaction --no-update
-                  composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction --no-suggest
+                  echo "::add-matcher::${{ runner.tool_cache }}/php.json"
+                  echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
 
             - name: Execute tests
               run: vendor/bin/phpunit
