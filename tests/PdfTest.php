@@ -20,7 +20,7 @@ class PdfTest extends TestCase
     /** @var string */
     protected $remoteFileUrl;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
