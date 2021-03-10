@@ -35,11 +35,7 @@ class Pdf
             throw new PdfDoesNotExist("File `{$pdfFile}` does not exist");
         }
 
-        $this->imagick = new Imagick();
-
-        $this->imagick->pingImage($pdfFile);
-
-        $this->numberOfPages = $this->imagick->getNumberImages();
+        $this->numberOfPages = $this->getPdfPageCount($pdfFile);
 
         $this->pdfFile = $pdfFile;
     }
@@ -216,5 +212,31 @@ class Pdf
         }
 
         return $outputFormat;
+    }
+
+    protected function getPdfPageCount(string $pdfFile): int
+    {
+        $cmd = sprintf('gs -q -dNODISPLAY -c "(%s) (r) file runpdfbegin pdfpagecount = quit"', addslashes($pdfFile));
+
+        try{
+            $result = exec($cmd, $output, $return);
+
+            if ($return === 0) {
+                return (int) $result;
+            }
+
+            return $this->getImagickPdfPageCount($pdfFile);
+        } catch (\Exception $e) {
+            return $this->getImagickPdfPageCount($pdfFile);
+        }
+    }
+
+    protected function getImagickPdfPageCount(string $pdfFile): int
+    {
+        $this->imagick = new Imagick();
+
+        $this->imagick->pingImage($pdfFile);
+
+        return $this->imagick->getNumberImages();
     }
 }
