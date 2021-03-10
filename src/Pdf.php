@@ -218,7 +218,7 @@ class Pdf
     {
         $cmd = sprintf('gs -q -dNODISPLAY -c "(%s) (r) file runpdfbegin pdfpagecount = quit"', addslashes($pdfFile));
 
-        try{
+        try {
             $result = exec($cmd, $output, $return);
 
             if ($return === 0) {
