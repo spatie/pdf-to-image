@@ -122,6 +122,21 @@ class PdfTest extends TestCase
         $this->assertEquals(99, $imagick->getCompressionQuality());
     }
 
+    /** @test */
+    public function it_will_correctly_return_the_number_of_pages_in_pdf_with_imagick_file()
+    {
+        $reflection = new \ReflectionMethod(Pdf::class, 'getImagickPdfPageCount');
+        $reflection->setAccessible(true);
+
+        $mock = $this->getMockBuilder(Pdf::class)
+                     ->disableOriginalConstructor()
+                     ->getMock();
+
+        $count = $reflection->invokeArgs($mock, [$this->multipageTestFile]);
+
+        $this->assertTrue($count === 3);
+    }
+
     public function invalid_page_number_provider()
     {
         return [[5], [0], [-1]];
