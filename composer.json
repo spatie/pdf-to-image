@@ -23,7 +23,7 @@
         "ext-imagick" : "*"
     },
     "require-dev": {
-        "phpunit/phpunit" : "^8.0|^9.0"
+        "phpunit/phpunit" : "^9.4"
     },
     "autoload": {
         "psr-4": {
