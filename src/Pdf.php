@@ -40,11 +40,7 @@ class Pdf
 
         $this->pdfFile = $pdfFile;
 
-        $this->imagick = new Imagick();
-
-        $this->imagick->pingImage($pdfFile);
-
-        $this->numberOfPages = $this->imagick->getNumberImages();
+        $this->imagick = new Imagick($pdfFile);
     }
 
     public function setResolution(int $resolution)
@@ -109,6 +105,16 @@ class Pdf
 
     public function getNumberOfPages(): int
     {
+        if ($this->numberOfPages === null) {
+            try {
+                $this->imagick->pingImage($this->pdfFile);
+            } catch (\ImagickException $e){
+                // Sometimes ping image just fails...
+            }
+
+            $this->numberOfPages = $this->imagick->getNumberImages();
+        }
+
         return $this->numberOfPages;
     }
 
