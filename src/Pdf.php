@@ -19,8 +19,6 @@ class Pdf
 
     public $imagick;
 
-    protected $numberOfPages;
-
     protected $validOutputFormats = ['jpg', 'jpeg', 'png'];
 
     protected $layerMethod = Imagick::LAYERMETHOD_FLATTEN;
@@ -29,18 +27,15 @@ class Pdf
 
     protected $compressionQuality;
 
+    private $numberOfPages = null;
+
     public function __construct(string $pdfFile)
     {
         if (! file_exists($pdfFile)) {
             throw new PdfDoesNotExist("File `{$pdfFile}` does not exist");
         }
 
-        $this->imagick = new Imagick();
-
-        $this->imagick->pingImage($pdfFile);
-
-        $this->numberOfPages = $this->imagick->getNumberImages();
-
+        $this->imagick = new Imagick($pdfFile);
         $this->pdfFile = $pdfFile;
     }
 
@@ -106,6 +101,16 @@ class Pdf
 
     public function getNumberOfPages(): int
     {
+        if ($this->numberOfPages === null) {
+            try {
+                $this->imagick->pingImage($pdfFile);
+            } catch (\ImagickException $e){
+                // Sometimes ping image just fails...
+            }
+
+            $this->numberOfPages = $this->imagick->getNumberImages();
+        }
+
         return $this->numberOfPages;
     }
 

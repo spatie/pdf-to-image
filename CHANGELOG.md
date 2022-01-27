@@ -2,7 +2,13 @@
 
 All notable changes to `pdf-to-image` will be documented in this file
 
+## Unreleased
+
+- Silently ignore failure of Imagick `pingImage` method
+- Lazy load number of pages to speed up usage when not needed
+
 ## 2.1.0 - 2020-11-12
+
 - add support for PHP 8
 
 ## 2.0.1 - 2020-04-29
