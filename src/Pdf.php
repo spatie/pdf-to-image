@@ -29,6 +29,8 @@ class Pdf
 
     protected $compressionQuality;
 
+    protected $thumbnailWidth;
+
     public function __construct(string $pdfFile)
     {
         if (! file_exists($pdfFile)) {
@@ -120,7 +122,7 @@ class Pdf
         return file_put_contents($pathToImage, $imageData) !== false;
     }
 
-    public function saveAllPagesAsImages(string $directory, string $prefix = ''): array
+        public function saveAllPagesAsImages(string $directory, string $prefix = ''): array
     {
         $numberOfPages = $this->getNumberOfPages();
 
@@ -166,9 +168,13 @@ class Pdf
         if (is_int($this->layerMethod)) {
             $this->imagick = $this->imagick->mergeImageLayers($this->layerMethod);
         }
+        
+        if ($this->thumbnailWidth !== null) {
+            $this->imagick->thumbnailImage($this->thumbnailWidth, 0);
+        }
 
         $this->imagick->setFormat($this->determineOutputFormat($pathToImage));
-
+        
         return $this->imagick;
     }
 
@@ -182,6 +188,13 @@ class Pdf
     public function setCompressionQuality(int $compressionQuality)
     {
         $this->compressionQuality = $compressionQuality;
+
+        return $this;
+    }
+
+    public function setThumbnailWidth(int $thumbnailWidth)
+    {
+        $this->thumbnailWidth = $thumbnailWidth;
 
         return $this;
     }

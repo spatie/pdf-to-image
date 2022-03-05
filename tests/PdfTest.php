@@ -122,6 +122,17 @@ class PdfTest extends TestCase
         $this->assertEquals(99, $imagick->getCompressionQuality());
     }
 
+    /** @test */
+    public function it_will_create_a_thumbnail_at_specified_width()
+    {
+        $imagick = (new Pdf($this->multipageTestFile))
+            ->setThumbnailWidth(400)
+            ->getImageData('test.jpg')
+            ->getImageGeometry();
+
+        $this->assertEquals(400, $imagick['width']);
+    }
+
     public function invalid_page_number_provider()
     {
         return [[5], [0], [-1]];

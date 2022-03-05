@@ -66,6 +66,12 @@ You can set the quality of compression from 0 to 100:
 $pdf->setCompressionQuality(100); // sets the compression quality to maximum
 ```
 
+You can create a thumbnail of the pdf:
+```php
+$pdf->setThumbnailWidth(400)
+    ->saveImage($pathToWhereImageShouldBeStored);
+```
+
 ## Issues regarding Ghostscript
 
 This package uses Ghostscript through Imagick. For this to work Ghostscripts `gs` command should be accessible from the PHP process. For the PHP CLI process (e.g. Laravel's asynchronous jobs, commands, etc...) this is usually already the case. 
