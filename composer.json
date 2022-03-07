@@ -23,7 +23,7 @@
         "ext-imagick" : "*"
     },
     "require-dev": {
-        "phpunit/phpunit" : "^9.4"
+        "pestphp/pest": "^1.21"
     },
     "autoload": {
         "psr-4": {
@@ -36,6 +36,6 @@
         }
     },
     "scripts": {
-        "test": "phpunit"
+        "test": "vendor/bin/pest"
     }
 }
