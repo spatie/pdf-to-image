@@ -26,6 +26,8 @@ class Pdf
     protected $colorspace;
 
     protected $compressionQuality;
+  
+    protected $thumbnailWidth;
 
     private $numberOfPages = null;
 
@@ -125,7 +127,7 @@ class Pdf
         return file_put_contents($pathToImage, $imageData) !== false;
     }
 
-    public function saveAllPagesAsImages(string $directory, string $prefix = ''): array
+        public function saveAllPagesAsImages(string $directory, string $prefix = ''): array
     {
         $numberOfPages = $this->getNumberOfPages();
 
@@ -172,6 +174,10 @@ class Pdf
             $this->imagick = $this->imagick->mergeImageLayers($this->layerMethod);
         }
 
+        if ($this->thumbnailWidth !== null) {
+            $this->imagick->thumbnailImage($this->thumbnailWidth, 0);
+        }
+
         $this->imagick->setFormat($this->determineOutputFormat($pathToImage));
 
         return $this->imagick;
@@ -187,6 +193,13 @@ class Pdf
     public function setCompressionQuality(int $compressionQuality)
     {
         $this->compressionQuality = $compressionQuality;
+
+        return $this;
+    }
+
+    public function width(int $thumbnailWidth)
+    {
+        $this->thumbnailWidth = $thumbnailWidth;
 
         return $this;
     }
