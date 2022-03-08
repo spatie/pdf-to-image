@@ -25,6 +25,11 @@ jobs:
                   extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, mysql, mysqli, pdo_mysql, bcmath, soap, intl, gd, exif, iconv, imagick
                   coverage: none
 
+            - name: Install Ghostscript
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install ghostscript -y
+
             - name: Fix Imagick Policy
               run: sudo sed -i 's/none/read|write/g' /etc/ImageMagick-6/policy.xml
 
