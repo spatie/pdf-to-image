@@ -66,10 +66,11 @@ You can set the quality of compression from 0 to 100:
 $pdf->setCompressionQuality(100); // sets the compression quality to maximum
 ```
 
-You can create a thumbnail of the pdf:
+You can specify the width of the resulting image:
 ```php
-$pdf->setThumbnailWidth(400)
-    ->saveImage($pathToWhereImageShouldBeStored);
+$pdf
+   ->width(400)
+   ->saveImage($pathToWhereImageShouldBeStored);
 ```
 
 ## Issues regarding Ghostscript

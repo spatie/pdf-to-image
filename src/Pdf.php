@@ -168,13 +168,13 @@ class Pdf
         if (is_int($this->layerMethod)) {
             $this->imagick = $this->imagick->mergeImageLayers($this->layerMethod);
         }
-        
+
         if ($this->thumbnailWidth !== null) {
             $this->imagick->thumbnailImage($this->thumbnailWidth, 0);
         }
 
         $this->imagick->setFormat($this->determineOutputFormat($pathToImage));
-        
+
         return $this->imagick;
     }
 
@@ -192,7 +192,7 @@ class Pdf
         return $this;
     }
 
-    public function setThumbnailWidth(int $thumbnailWidth)
+    public function width(int $thumbnailWidth)
     {
         $this->thumbnailWidth = $thumbnailWidth;
 

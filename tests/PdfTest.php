@@ -54,7 +54,7 @@ it('will accpect a specified file type and convert to it', function () {
     $imagick = (new Pdf($this->testFile))
         ->setOutputFormat('png')
         ->getImageData('test.png');
-    
+
     expect($imagick->getFormat())->toEqual('png');
     expect($imagick->getFormat())->not->toEqual('jpg');
 });
@@ -65,7 +65,7 @@ it('can accepct a layer', function () {
         ->setResolution(72)
         ->getImageData('test.jpg')
         ->getImageResolution();
-    
+
     expect($image['x'])->toEqual(72);
     expect($image['y'])->toEqual(72);
 });
@@ -80,7 +80,7 @@ it('will set compression quality', function () {
 
 it('will create a thumbnail at specified width', function()  {
    $imagick = (new Pdf($this->multipageTestFile))
-      ->setThumbnailWidth(400)
+      ->width(400)
       ->getImageData('test.jpg')
       ->getImageGeometry();
 
