@@ -106,12 +106,6 @@ class Pdf
     public function getNumberOfPages(): int
     {
         if ($this->numberOfPages === null) {
-            try {
-                $this->imagick->pingImage($this->pdfFile);
-            } catch (\ImagickException $e){
-                // Sometimes ping image just fails...
-            }
-
             $this->numberOfPages = $this->imagick->getNumberImages();
         }
 
