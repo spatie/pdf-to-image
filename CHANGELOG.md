@@ -2,6 +2,7 @@
 
 All notable changes to `pdf-to-image` will be documented in this file
 
+
 ## 2.2.0 - 2022-03-08
 
 ## What's Changed
