@@ -3,6 +3,7 @@
 namespace Spatie\PdfToImage;
 
 use Imagick;
+use ImagickException;
 use Spatie\PdfToImage\Exceptions\InvalidFormat;
 use Spatie\PdfToImage\Exceptions\PageDoesNotExist;
 use Spatie\PdfToImage\Exceptions\PdfDoesNotExist;
@@ -26,7 +27,7 @@ class Pdf
     protected $colorspace;
 
     protected $compressionQuality;
-  
+
     protected $thumbnailWidth;
 
     private $numberOfPages = null;
@@ -37,8 +38,13 @@ class Pdf
             throw new PdfDoesNotExist("File `{$pdfFile}` does not exist");
         }
 
-        $this->imagick = new Imagick($pdfFile);
         $this->pdfFile = $pdfFile;
+
+        $this->imagick = new Imagick();
+
+        $this->imagick->pingImage($pdfFile);
+
+        $this->numberOfPages = $this->imagick->getNumberImages();
     }
 
     public function setResolution(int $resolution)
@@ -103,16 +109,6 @@ class Pdf
 
     public function getNumberOfPages(): int
     {
-        if ($this->numberOfPages === null) {
-            try {
-                $this->imagick->pingImage($pdfFile);
-            } catch (\ImagickException $e){
-                // Sometimes ping image just fails...
-            }
-
-            $this->numberOfPages = $this->imagick->getNumberImages();
-        }
-
         return $this->numberOfPages;
     }
 
