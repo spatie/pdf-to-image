@@ -78,3 +78,11 @@ it('will set compression quality', function () {
     expect($imagick->getCompressionQuality())->toEqual(99);
 });
 
+it('will create a thumbnail at specified width', function()  {
+   $imagick = (new Pdf($this->multipageTestFile))
+      ->setThumbnailWidth(400)
+      ->getImageData('test.jpg')
+      ->getImageGeometry();
+
+    expect($imagick['width'])->toBe(400);
+});
