@@ -106,7 +106,7 @@ class Pdf
 
         return $this;
     }
-    
+
     public function getNumberOfPages(): int
     {
         return $this->numberOfPages;
