@@ -3,7 +3,6 @@
 namespace Spatie\PdfToImage;
 
 use Imagick;
-use ImagickException;
 use Spatie\PdfToImage\Exceptions\InvalidFormat;
 use Spatie\PdfToImage\Exceptions\PageDoesNotExist;
 use Spatie\PdfToImage\Exceptions\PdfDoesNotExist;
@@ -126,23 +125,23 @@ class Pdf
     }
 
         public function saveAllPagesAsImages(string $directory, string $prefix = ''): array
-    {
-        $numberOfPages = $this->getNumberOfPages();
+        {
+            $numberOfPages = $this->getNumberOfPages();
 
-        if ($numberOfPages === 0) {
-            return [];
+            if ($numberOfPages === 0) {
+                return [];
+            }
+
+            return array_map(function ($pageNumber) use ($directory, $prefix) {
+                $this->setPage($pageNumber);
+
+                $destination = "{$directory}/{$prefix}{$pageNumber}.{$this->outputFormat}";
+
+                $this->saveImage($destination);
+
+                return $destination;
+            }, range(1, $numberOfPages));
         }
-
-        return array_map(function ($pageNumber) use ($directory, $prefix) {
-            $this->setPage($pageNumber);
-
-            $destination = "{$directory}/{$prefix}{$pageNumber}.{$this->outputFormat}";
-
-            $this->saveImage($destination);
-
-            return $destination;
-        }, range(1, $numberOfPages));
-    }
 
     public function getImageData(string $pathToImage): Imagick
     {

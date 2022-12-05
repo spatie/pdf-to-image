@@ -1,9 +1,9 @@
 <?php
 
-use Spatie\PdfToImage\Pdf;
 use Spatie\PdfToImage\Exceptions\InvalidFormat;
-use Spatie\PdfToImage\Exceptions\PdfDoesNotExist;
 use Spatie\PdfToImage\Exceptions\PageDoesNotExist;
+use Spatie\PdfToImage\Exceptions\PdfDoesNotExist;
+use Spatie\PdfToImage\Pdf;
 
 beforeEach(function () {
     $this->testFile = __DIR__.'/files/test.pdf';
@@ -78,11 +78,11 @@ it('will set compression quality', function () {
     expect($imagick->getCompressionQuality())->toEqual(99);
 });
 
-it('will create a thumbnail at specified width', function()  {
-   $imagick = (new Pdf($this->multipageTestFile))
-      ->width(400)
-      ->getImageData('test.jpg')
-      ->getImageGeometry();
+it('will create a thumbnail at specified width', function () {
+    $imagick = (new Pdf($this->multipageTestFile))
+       ->width(400)
+       ->getImageData('test.jpg')
+       ->getImageGeometry();
 
     expect($imagick['width'])->toBe(400);
 });
