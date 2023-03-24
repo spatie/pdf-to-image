@@ -37,6 +37,10 @@ class Pdf
             throw new PdfDoesNotExist("File `{$pdfFile}` does not exist");
         }
 
+        if (! is_file($pdfFile)) {
+            throw new PdfDoesNotExist("Path `{$pdfFile}` exists but is not a file");
+        }
+
         $this->pdfFile = $pdfFile;
 
         $this->imagick = new Imagick();

@@ -14,7 +14,11 @@ beforeEach(function () {
 
 it('will throw an exception when try to convert a non existing file', function () {
     new Pdf('pdfdoesnotexists.pdf');
-})->throws(PdfDoesNotExist::class);
+})->throws(PdfDoesNotExist::class, 'File `pdfdoesnotexists.pdf` does not exist');
+
+it('will throw an exception when try to convert a directory', function () {
+    new Pdf('.');
+})->throws(PdfDoesNotExist::class, 'Path `.` exists but is not a file');
 
 it('will throw an exception when trying to convert an invalid file type', function () {
     (new Pdf($this->testFile))->setOutputFormat('bla');
