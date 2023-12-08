@@ -124,24 +124,24 @@ class Pdf
         return file_put_contents($pathToImage, $imageData) !== false;
     }
 
-        public function saveAllPagesAsImages(string $directory, string $prefix = ''): array
-        {
-            $numberOfPages = $this->getNumberOfPages();
+    public function saveAllPagesAsImages(string $directory, string $prefix = ''): array
+    {
+        $numberOfPages = $this->getNumberOfPages();
 
-            if ($numberOfPages === 0) {
-                return [];
-            }
-
-            return array_map(function ($pageNumber) use ($directory, $prefix) {
-                $this->setPage($pageNumber);
-
-                $destination = "{$directory}/{$prefix}{$pageNumber}.{$this->outputFormat}";
-
-                $this->saveImage($destination);
-
-                return $destination;
-            }, range(1, $numberOfPages));
+        if ($numberOfPages === 0) {
+            return [];
         }
+
+        return array_map(function ($pageNumber) use ($directory, $prefix) {
+            $this->setPage($pageNumber);
+
+            $destination = "{$directory}/{$prefix}{$pageNumber}.{$this->outputFormat}";
+
+            $this->saveImage($destination);
+
+            return $destination;
+        }, range(1, $numberOfPages));
+    }
 
     public function getImageData(string $pathToImage): Imagick
     {
