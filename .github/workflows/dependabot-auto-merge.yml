@@ -18,22 +18,15 @@ jobs:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           compat-lookup: true
 
-      - name: Auto-merge Dependabot PRs for semver-minor updates
-        if: ${{steps.metadata.outputs.update-type == 'version-update:semver-minor'}}
+      - name: Auto-merge Dependabot PRs for semver-minor/patch updates
+        if: ${{steps.metadata.outputs.update-type != 'version-update:semver-major'}}
         run: gh pr merge --auto --merge "$PR_URL"
         env:
           PR_URL: ${{github.event.pull_request.html_url}}
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
-      - name: Auto-merge Dependabot PRs for semver-patch updates
-        if: ${{steps.metadata.outputs.update-type == 'version-update:semver-patch'}}
-        run: gh pr merge --auto --merge "$PR_URL"
-        env:
-          PR_URL: ${{github.event.pull_request.html_url}}
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-
-      - name: Auto-merge Dependabot PRs for Action major versions when compatibility is higher than 90%
-        if: ${{steps.metadata.outputs.package-ecosystem == 'github_actions' && steps.metadata.outputs.update-type == 'version-update:semver-major' && steps.metadata.outputs.compatibility-score >= 90}}
+      - name: Auto-merge Dependabot PRs for GitHub Actions (compatibility >= 90%)
+        if: ${{steps.metadata.outputs.package-ecosystem == 'github_actions' && steps.metadata.outputs.compatibility-score >= 90}}
         run: gh pr merge --auto --merge "$PR_URL"
         env:
           PR_URL: ${{github.event.pull_request.html_url}}
