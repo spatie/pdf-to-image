@@ -50,7 +50,7 @@ it('will convert a specified page', function () {
     expect($imagick)->toBeInstanceOf(Imagick::class);
 });
 
-it('will accpect a specified file type and convert to it', function () {
+it('will accept a specified file type and convert to it', function () {
     $imagick = (new Pdf($this->testFile))
         ->setOutputFormat('png')
         ->getImageData('test.png');
@@ -59,7 +59,16 @@ it('will accpect a specified file type and convert to it', function () {
     expect($imagick->getFormat())->not->toEqual('jpg');
 });
 
-it('can accepct a layer', function () {
+it('will save an image in webp format', function () {
+    $image = (new Pdf($this->testFile))
+        ->setOutputFormat('webp')
+        ->getImageData('test.webp');
+
+    expect($image->getFormat())->toEqual('webp');
+    expect($image)->not->toEqual('jpg');
+});
+
+it('can accept a layer', function () {
     $image = (new Pdf($this->testFile))
         ->setLayerMethod(Imagick::LAYERMETHOD_FLATTEN)
         ->setResolution(72)
