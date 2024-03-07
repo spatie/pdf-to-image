@@ -19,7 +19,7 @@ class Pdf
 
     public $imagick;
 
-    protected $validOutputFormats = ['jpg', 'jpeg', 'png'];
+    protected $validOutputFormats = ['jpg', 'jpeg', 'png', 'webp'];
 
     protected $layerMethod = Imagick::LAYERMETHOD_FLATTEN;
 
