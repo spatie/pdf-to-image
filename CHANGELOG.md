@@ -2,6 +2,26 @@
 
 All notable changes to `pdf-to-image` will be documented in this file
 
+## 2.3.0 - 2024-03-07
+
+### What's Changed
+
+* Silently ignore pingImage failure and load number of pages lazily by @bobvandevijver in https://github.com/spatie/pdf-to-image/pull/187
+* Add Dependabot Automation by @patinthehat in https://github.com/spatie/pdf-to-image/pull/203
+* Fix failing tests by @patinthehat in https://github.com/spatie/pdf-to-image/pull/205
+* Add PHP 8.2 Support by @patinthehat in https://github.com/spatie/pdf-to-image/pull/202
+* Fix php-cs-fixer workflow by @patinthehat in https://github.com/spatie/pdf-to-image/pull/206
+* Minor dependabot auto-merge workflow improvements by @patinthehat in https://github.com/spatie/pdf-to-image/pull/220
+* Adding webp to the validOutputFormats by @ntaylor-86 in https://github.com/spatie/pdf-to-image/pull/221
+* Add PHP 8.3 to the test run workflow by @patinthehat in https://github.com/spatie/pdf-to-image/pull/223
+
+### New Contributors
+
+* @bobvandevijver made their first contribution in https://github.com/spatie/pdf-to-image/pull/187
+* @patinthehat made their first contribution in https://github.com/spatie/pdf-to-image/pull/203
+* @dependabot made their first contribution in https://github.com/spatie/pdf-to-image/pull/204
+
+**Full Changelog**: https://github.com/spatie/pdf-to-image/compare/2.2.0...2.3.0
 
 ## 2.2.0 - 2022-03-08
 
