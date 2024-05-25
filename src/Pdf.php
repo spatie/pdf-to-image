@@ -3,6 +3,8 @@
 namespace Spatie\PdfToImage;
 
 use Imagick;
+use Spatie\PdfToImage\DTOs\PdfPage;
+use Spatie\PdfToImage\Enums\OutputFormat;
 use Spatie\PdfToImage\Exceptions\InvalidFormat;
 use Spatie\PdfToImage\Exceptions\PageDoesNotExist;
 use Spatie\PdfToImage\Exceptions\PdfDoesNotExist;
@@ -11,15 +13,13 @@ class Pdf
 {
     protected $pdfFile;
 
-    protected $resolution = 144;
+    protected int $resolution = 144;
 
-    protected $outputFormat = 'jpg';
+    protected OutputFormat $outputFormat = OutputFormat::Jpg;
 
-    protected $page = 1;
+    protected array $pages = [1];
 
     public $imagick;
-
-    protected $validOutputFormats = ['jpg', 'jpeg', 'png', 'webp'];
 
     protected $layerMethod = Imagick::LAYERMETHOD_FLATTEN;
 
@@ -34,7 +34,7 @@ class Pdf
     public function __construct(string $pdfFile)
     {
         if (! file_exists($pdfFile)) {
-            throw new PdfDoesNotExist("File `{$pdfFile}` does not exist");
+            throw PdfDoesNotExist::forFile($pdfFile);
         }
 
         $this->pdfFile = $pdfFile;
@@ -44,25 +44,21 @@ class Pdf
         $this->imagick->readImage($this->pdfFile);
     }
 
-    public function setResolution(int $resolution)
+    public function resolution(int $dpiResolution)
     {
-        $this->resolution = $resolution;
+        $this->resolution = $dpiResolution;
 
         return $this;
     }
 
-    public function setOutputFormat(string $outputFormat)
+    public function format(OutputFormat $outputFormat)
     {
-        if (! $this->isValidOutputFormat($outputFormat)) {
-            throw new InvalidFormat("Format {$outputFormat} is not supported");
-        }
-
         $this->outputFormat = $outputFormat;
 
         return $this;
     }
 
-    public function getOutputFormat(): string
+    public function getFormat(): OutputFormat
     {
         return $this->outputFormat;
     }
@@ -81,30 +77,47 @@ class Pdf
      * @see https://secure.php.net/manual/en/imagick.constants.php
      * @see Pdf::getImageData()
      */
-    public function setLayerMethod(?int $layerMethod)
+    public function mergeLayerMethod(?int $method)
     {
-        $this->layerMethod = $layerMethod;
+        $this->layerMethod = $method;
 
         return $this;
     }
 
-    public function isValidOutputFormat(string $outputFormat): bool
+    /**
+     * Expects a string or OutputFormat enum. If a string, expects the file extension of the format,
+     * without a leading period.
+     * @param string|null|OutputFormat $outputFormat
+     * @return bool
+     */
+    public function isValidOutputFormat(null|string|OutputFormat $outputFormat): bool
     {
-        return in_array($outputFormat, $this->validOutputFormats);
-    }
-
-    public function setPage(int $page)
-    {
-        if ($page > $this->getNumberOfPages() || $page < 1) {
-            throw new PageDoesNotExist("Page {$page} does not exist");
+        if ($outputFormat === null) {
+            return false;
         }
 
-        $this->page = $page;
+        if ($outputFormat instanceof OutputFormat) {
+            return true;
+        }
+
+        return OutputFormat::tryFrom(strtolower($outputFormat)) !== null;
+    }
+
+    public function selectPage(int $page)
+    {
+        return $this->selectPages($page);
+    }
+
+    public function selectPages(int ...$pages)
+    {
+        $this->validatePageNumbers(...$pages);
+
+        $this->pages = $pages;
 
         return $this;
     }
 
-    public function getNumberOfPages(): int
+    public function pageCount(): int
     {
         if ($this->numberOfPages === null) {
             $this->numberOfPages = $this->imagick->getNumberImages();
@@ -113,37 +126,55 @@ class Pdf
         return $this->numberOfPages;
     }
 
-    public function saveImage(string $pathToImage): bool
+    /**
+     * Saves the PDF as an image. Expects a path to save the image to, which should be
+     * a directory if multiple pages have been selected (otherwise the image will be overwritten).
+     * Returns either a string with a single filename that was written, or an array of paths to the saved images.
+     * @param string $pathToImage
+     * @param string $prefix
+     * @return array|string
+     */
+    public function saveImage(string $pathToImage, string $prefix = ''): array|string
     {
+        $pages = [PdfPage::make($this->pages[0], $this->outputFormat, $prefix, $pathToImage)];
+
         if (is_dir($pathToImage)) {
-            $pathToImage = rtrim($pathToImage, '\/').DIRECTORY_SEPARATOR.$this->page.'.'.$this->outputFormat;
+            $pages = array_map(fn($page) =>
+                PdfPage::make($page, $this->outputFormat, $prefix, rtrim($pathToImage, '\/').DIRECTORY_SEPARATOR.$page.'.'.$this->outputFormat->value), $this->pages);
         }
 
-        $imageData = $this->getImageData($pathToImage);
+        $result = [];
 
-        return file_put_contents($pathToImage, $imageData) !== false;
+        foreach($pages as $page) {
+            $path = $page->getFilename();
+            $imageData = $this->getImageData($path, $page->number);
+
+            if (file_put_contents($path, $imageData) !== false) {
+                $result[] = $path;
+            }
+        }
+
+        if (count($result) === 1) {
+            return $result[0];
+        }
+
+        return $result;
     }
 
-    public function saveAllPagesAsImages(string $directory, string $prefix = ''): array
+    public function saveAllPagesAsImages(string $directory, string $prefix = ''): bool
     {
-        $numberOfPages = $this->getNumberOfPages();
+        $numberOfPages = $this->pageCount();
 
         if ($numberOfPages === 0) {
-            return [];
+            return false;
         }
 
-        return array_map(function ($pageNumber) use ($directory, $prefix) {
-            $this->setPage($pageNumber);
+        $this->selectPages(...range(1, $numberOfPages));
 
-            $destination = "{$directory}/{$prefix}{$pageNumber}.{$this->outputFormat}";
-
-            $this->saveImage($destination);
-
-            return $destination;
-        }, range(1, $numberOfPages));
+        return $this->saveImage($directory, $prefix);
     }
 
-    public function getImageData(string $pathToImage): Imagick
+    public function getImageData(string $pathToImage, int $pageNumber): Imagick
     {
         /*
          * Reinitialize imagick because the target resolution must be set
@@ -162,10 +193,10 @@ class Pdf
         }
 
         if (filter_var($this->pdfFile, FILTER_VALIDATE_URL)) {
-            return $this->getRemoteImageData($pathToImage);
+            return $this->getRemoteImageData($pathToImage, $pageNumber);
         }
 
-        $this->imagick->readImage(sprintf('%s[%s]', $this->pdfFile, $this->page - 1));
+        $this->imagick->readImage(sprintf('%s[%s]', $this->pdfFile, $pageNumber - 1));
 
         if (is_int($this->layerMethod)) {
             $this->imagick = $this->imagick->mergeImageLayers($this->layerMethod);
@@ -175,19 +206,19 @@ class Pdf
             $this->imagick->thumbnailImage($this->thumbnailWidth, 0);
         }
 
-        $this->imagick->setFormat($this->determineOutputFormat($pathToImage));
+        $this->imagick->setFormat($this->determineOutputFormat($pathToImage)->value);
 
         return $this->imagick;
     }
 
-    public function setColorspace(int $colorspace)
+    public function colorspace(int $colorspace)
     {
         $this->colorspace = $colorspace;
 
         return $this;
     }
 
-    public function setCompressionQuality(int $compressionQuality)
+    public function quality(int $compressionQuality)
     {
         $this->compressionQuality = $compressionQuality;
 
@@ -201,35 +232,42 @@ class Pdf
         return $this;
     }
 
-    protected function getRemoteImageData(string $pathToImage): Imagick
+    protected function getRemoteImageData(string $pathToImage, int $pageNumber): Imagick
     {
         $this->imagick->readImage($this->pdfFile);
 
-        $this->imagick->setIteratorIndex($this->page - 1);
+        $this->imagick->setIteratorIndex($pageNumber - 1);
 
         if (is_int($this->layerMethod)) {
             $this->imagick = $this->imagick->mergeImageLayers($this->layerMethod);
         }
 
-        $this->imagick->setFormat($this->determineOutputFormat($pathToImage));
+        $this->imagick->setFormat($this->determineOutputFormat($pathToImage)->value);
 
         return $this->imagick;
     }
 
-    protected function determineOutputFormat(string $pathToImage): string
+    protected function determineOutputFormat(string $pathToImage): OutputFormat
     {
-        $outputFormat = pathinfo($pathToImage, PATHINFO_EXTENSION);
+        $outputFormat = OutputFormat::tryFrom(pathinfo($pathToImage, PATHINFO_EXTENSION));
 
-        if ($this->outputFormat != '') {
+        if (!empty($this->outputFormat)) {
             $outputFormat = $this->outputFormat;
         }
 
-        $outputFormat = strtolower($outputFormat);
-
         if (! $this->isValidOutputFormat($outputFormat)) {
-            $outputFormat = 'jpg';
+            $outputFormat = OutputFormat::Jpg;
         }
 
         return $outputFormat;
+    }
+
+    protected function validatePageNumbers(int ...$pageNumbers)
+    {
+        foreach($pageNumbers as $page) {
+            if ($page > $this->pageCount() || $page < 1) {
+                throw PageDoesNotExist::forPage($page);
+            }
+        }
     }
 }
