@@ -19,11 +19,11 @@
         }
     ],
     "require": {
-        "php" : "^7.2|^8.0",
+        "php" : "^8.2",
         "ext-imagick" : "*"
     },
     "require-dev": {
-        "pestphp/pest": "^1.21"
+        "pestphp/pest": "^1.23"
     },
     "autoload": {
         "psr-4": {
