@@ -14,7 +14,7 @@ use Spatie\PdfToImage\Exceptions\PdfDoesNotExist;
 
 class Pdf
 {
-    protected string $pdfFile;
+    protected string $filename;
 
     protected int $resolution = 144;
 
@@ -36,17 +36,13 @@ class Pdf
 
     private ?int $numberOfPages = null;
 
-    public function __construct(string $pdfFile)
+    public function __construct(string $filename)
     {
-        if (! file_exists($pdfFile)) {
-            throw PdfDoesNotExist::for($pdfFile);
+        if (! file_exists($filename)) {
+            throw PdfDoesNotExist::for($filename);
         }
 
-        $this->pdfFile = $pdfFile;
-
-        $this->imagick = new Imagick();
-
-        $this->imagick->readImage($this->pdfFile);
+        $this->filename = $filename;
     }
 
     public function resolution(int $dpiResolution): static
@@ -126,6 +122,11 @@ class Pdf
 
     public function pageCount(): int
     {
+        if ($this->imagick === null) {
+            $this->imagick = new Imagick();
+            $this->imagick->readImage($this->filename);
+        }
+
         if ($this->numberOfPages === null) {
             $this->numberOfPages = $this->imagick->getNumberImages();
         }
@@ -195,7 +196,7 @@ class Pdf
             $this->imagick->setCompressionQuality($this->compressionQuality);
         }
 
-        $this->imagick->readImage(sprintf('%s[%s]', $this->pdfFile, $pageNumber - 1));
+        $this->imagick->readImage(sprintf('%s[%s]', $this->filename, $pageNumber - 1));
 
         if ($this->layerMethod !== LayerMethod::None) {
             $this->imagick = $this->imagick->mergeImageLayers($this->layerMethod->value);
