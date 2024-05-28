@@ -25,11 +25,13 @@ See [issues regarding Ghostscript](#issues-regarding-ghostscript) and [Imagick I
 
 ## Installation
 
-The package can be installed via composer and requires PHP 8.2+.:
+The package can be installed via composer and requires PHP 8.2+:
 
 ```bash
 composer require spatie/pdf-to-image
 ```
+
+> If you are using PHP < 8.2, use version 2.0 of this package.
 
 ## Usage
 
@@ -41,6 +43,8 @@ $pdf->saveImage($pathToWhereImageShouldBeStored);
 ```
 
 If the filename you pass to `saveImage` has the extensions `jpg`, `jpeg`, `png`, or `webp` the image will be saved in that format; otherwise the output format will be `jpg`.
+
+The `saveImage()` method returns an array with the filenames of the saved images if multiple images are saved, otherwise returns a string with the path to the saved image.
 
 ## Other methods
 
