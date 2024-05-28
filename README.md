@@ -1,4 +1,4 @@
-# Convert a pdf to an image
+# Convert a PDF to an image
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/spatie/pdf-to-image.svg?style=flat-square)](https://packagist.org/packages/spatie/pdf-to-image)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](.github/LICENSE.md)
@@ -6,7 +6,7 @@
 [![StyleCI](https://styleci.io/repos/38419604/shield?branch=master)](https://styleci.io/repos/38419604)
 [![Total Downloads](https://img.shields.io/packagist/dt/spatie/pdf-to-image.svg?style=flat-square)](https://packagist.org/packages/spatie/pdf-to-image)
 
-This package provides an easy to work with class to convert PDF's to images.
+This package provides an easy-to-work-with class to convert a PDF to one or more image.
 
 Spatie is a webdesign agency in Antwerp, Belgium. You'll find an overview of all our open source projects [on our website](https://spatie.be/opensource).
 
@@ -20,56 +20,105 @@ We highly appreciate you sending us a postcard from your hometown, mentioning wh
 
 ## Requirements
 
-You should have [Imagick](http://php.net/manual/en/imagick.setresolution.php) and [Ghostscript](http://www.ghostscript.com/) installed. See [issues regarding Ghostscript](#issues-regarding-ghostscript).
+You should have [Imagick](http://php.net/manual/en/imagick.setresolution.php) and [Ghostscript](http://www.ghostscript.com/) installed. 
+See [issues regarding Ghostscript](#issues-regarding-ghostscript) and [Imagick Issues](#imagick-issues) for more information.
 
 ## Installation
 
-The package can be installed via composer:
-``` bash
+The package can be installed via composer and requires PHP 8.2+.:
+
+```bash
 composer require spatie/pdf-to-image
 ```
 
 ## Usage
 
-Converting a pdf to an image is easy.
+Converting a PDF to an image is easy.
 
 ```php
-$pdf = new Spatie\PdfToImage\Pdf($pathToPdf);
+$pdf = new \Spatie\PdfToImage\Pdf($pathToPdf);
 $pdf->saveImage($pathToWhereImageShouldBeStored);
 ```
 
-If the path you pass to `saveImage` has the extensions `jpg`, `jpeg`, or `png` the image will be saved in that format.
-Otherwise the output will be a jpg.
+If the filename you pass to `saveImage` has the extensions `jpg`, `jpeg`, `png`, or `webp` the image will be saved in that format; otherwise the output format will be `jpg`.
 
 ## Other methods
 
-You can get the total number of pages in the pdf:
+Get the total number of pages in the pdf:
+
 ```php
-$pdf->getNumberOfPages(); //returns an int
+/** @var int $numberOfPages */
+$numberOfPages = $pdf->pageCount();
 ```
 
-By default the first page of the pdf will be rendered. If you want to render another page you can do so:
+Check if a file type is a supported output format:
+
 ```php
-$pdf->setPage(2)
+/** @var bool $isSupported */
+$isSupported = $pdf->isValidOutputFormat('jpg');
+```
+
+By default, only the first page of the PDF will be rendered. To render another page, call the `selectPage()` method:
+
+```php
+$pdf->selectPage(2)
     ->saveImage($pathToWhereImageShouldBeStored); //saves the second page
 ```
 
-You can override the output format:
+Or, select multiple pages with the `selectPages()` method:
+
 ```php
-$pdf->setOutputFormat('png')
-    ->saveImage($pathToWhereImageShouldBeStored); //the output wil be a png, no matter what
+$pdf->selectPages(2, 4, 5)
+    ->saveImage($directoryToWhereImageShouldBeStored); //saves the 2nd, 4th and 5th pages
 ```
 
-You can set the quality of compression from 0 to 100:
+Change the output format:
+
 ```php
-$pdf->setCompressionQuality(100); // sets the compression quality to maximum
+$pdf->format(\Spatie\PdfToImage\Enums\OutputFormat::Webp)
+    ->saveImage($pathToWhereImageShouldBeStored); //the saved image will be in webp format
 ```
 
-You can specify the width of the resulting image:
+Set the output quality _(the compression quality)_ from 0 to 100:
+
+```php
+$pdf->quality(90) // set an output quality of 90%
+    ->saveImage($pathToWhereImageShouldBeStored);
+```
+
+Set the output resolution DPI:
+
+```php
+$pdf->resolution(300) // resolution of 300 dpi
+    ->saveImage($pathToWhereImageShouldBeStored);
+```
+
+Specify the thumbnail size of the output image:
+
 ```php
 $pdf
-   ->width(400)
+   ->thumbnailSize(400) // set thumbnail width to 400px; height is calculated automatically
    ->saveImage($pathToWhereImageShouldBeStored);
+
+// or:
+$pdf
+   ->thumbnailSize(400, 300) // set thumbnail width to 400px and the height to 300px
+   ->saveImage($pathToWhereImageShouldBeStored);
+```
+
+Save all pages to images:
+
+```php
+$pdf->saveAllPagesAsImages($directoryToWhereImagesShouldBeStored);
+```
+
+Set the Merge Layer Method for Imagick:
+
+```php
+$pdf->layerMethod(\Spatie\PdfToImage\Enums\LayerMethod::Merge);
+
+// or disable layer merging:
+$pdf->layerMethod(\Spatie\PdfToImage\Enums\LayerMethod::None);
 ```
 
 ## Issues regarding Ghostscript
@@ -90,37 +139,40 @@ env[PATH] = /usr/local/bin:/usr/bin:/bin
 
 This will instruct PHP FPM to look for the `gs` binary in the right places.
 
+## Imagick Issues
+
+If you receive an error with the message `attempt to perform an operation not allowed by the security policy 'PDF'`, you may need to add the following line to your `policy.xml` file. This file is usually located in `/etc/ImageMagick-[VERSION]/policy.xml`, such as `/etc/ImageMagick-7/policy.xml`.
+
+```xml
+<policy domain="coder" rights="read | write" pattern="PDF" />
+```
+
 ## Testing
 
+`spatie/pdf-to-image` uses the PEST framework for unit tests. They can be run with the following command:
+
 ``` bash
-composer test
+./vendor/bin/pest
 ```
 
 ## Changelog
 
-Please see [CHANGELOG](CHANGELOG.md) for more information what has changed recently.
+Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
 
 ## Contributing
 
 Please see [CONTRIBUTING](https://github.com/spatie/.github/blob/main/CONTRIBUTING.md) for details.
 
-## Security
+## Security Vulnerabilities
 
-If you've found a bug regarding security please mail [security@spatie.be](mailto:security@spatie.be) instead of using the issue tracker.
-
-## Postcardware
-
-You're free to use this package, but if it makes it to your production environment we highly appreciate you sending us a postcard from your hometown, mentioning which of our package(s) you are using.
-
-Our address is: Spatie, Kruikstraat 22, 2018 Antwerp, Belgium.
-
-We publish all received postcards [on our company website](https://spatie.be/en/opensource/postcards).
+Please review [our security policy](../../security/policy) on how to report security vulnerabilities.
 
 ## Credits
 
-- [Freek Van der Herten](https://github.com/spatie)
+- [Freek Van der Herten](https://github.com/freekmurze)
+- [Patrick Organ](https://github.com/patinthehat)
 - [All Contributors](../../contributors)
 
 ## License
 
-The MIT License (MIT). Please see [License File](.github/LICENSE.md) for more information.
+The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
