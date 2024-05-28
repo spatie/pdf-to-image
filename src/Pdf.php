@@ -35,7 +35,7 @@ class Pdf
     public function __construct(string $pdfFile)
     {
         if (! file_exists($pdfFile)) {
-            throw PdfDoesNotExist::forFile($pdfFile);
+            throw PdfDoesNotExist::for($pdfFile);
         }
 
         $this->pdfFile = $pdfFile;
@@ -162,7 +162,7 @@ class Pdf
         return $result;
     }
 
-    public function saveAllPagesAsImages(string $directory, string $prefix = ''): bool
+    public function saveAllPagesAsImages(string $directory, string $prefix = ''): array|string
     {
         $numberOfPages = $this->pageCount();
 
@@ -191,10 +191,6 @@ class Pdf
 
         if ($this->compressionQuality !== null) {
             $this->imagick->setCompressionQuality($this->compressionQuality);
-        }
-
-        if (filter_var($this->pdfFile, FILTER_VALIDATE_URL)) {
-            return $this->getRemoteImageData($pathToImage, $pageNumber);
         }
 
         $this->imagick->readImage(sprintf('%s[%s]', $this->pdfFile, $pageNumber - 1));
@@ -237,21 +233,6 @@ class Pdf
         return $this;
     }
 
-    protected function getRemoteImageData(string $pathToImage, int $pageNumber): Imagick
-    {
-        $this->imagick->readImage($this->pdfFile);
-
-        $this->imagick->setIteratorIndex($pageNumber - 1);
-
-        if (is_int($this->layerMethod)) {
-            $this->imagick = $this->imagick->mergeImageLayers($this->layerMethod);
-        }
-
-        $this->imagick->setFormat($this->determineOutputFormat($pathToImage)->value);
-
-        return $this->imagick;
-    }
-
     protected function determineOutputFormat(string $pathToImage): OutputFormat
     {
         $outputFormat = OutputFormat::tryFrom(pathinfo($pathToImage, PATHINFO_EXTENSION));
@@ -271,7 +252,7 @@ class Pdf
     {
         foreach($pageNumbers as $page) {
             if ($page > $this->pageCount() || $page < 1) {
-                throw PageDoesNotExist::forPage($page);
+                throw PageDoesNotExist::for($page);
             }
         }
     }

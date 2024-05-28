@@ -6,7 +6,7 @@ use Exception;
 
 class PdfDoesNotExist extends Exception
 {
-    public static function forFile(string $pdfFile): self
+    public static function for(string $pdfFile): self
     {
         return new static("File '{$pdfFile}' does not exist.");
     }
