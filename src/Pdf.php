@@ -8,7 +8,7 @@ use Spatie\PdfToImage\Enums\LayerMethod;
 use Spatie\PdfToImage\Enums\OutputFormat;
 use Spatie\PdfToImage\Exceptions\InvalidLayerMethod;
 use Spatie\PdfToImage\Exceptions\InvalidQuality;
-use Spatie\PdfToImage\Exceptions\InvalidThumbnailSize;
+use Spatie\PdfToImage\Exceptions\InvalidSize;
 use Spatie\PdfToImage\Exceptions\PageDoesNotExist;
 use Spatie\PdfToImage\Exceptions\PdfDoesNotExist;
 
@@ -33,6 +33,10 @@ class Pdf
     protected ?int $thumbnailWidth = null;
 
     protected ?int $thumbnailHeight = null;
+
+    protected ?int $resizeWidth = null;
+
+    protected ?int $resizeHeight = null;
 
     private ?int $numberOfPages = null;
 
@@ -198,6 +202,10 @@ class Pdf
 
         $this->imagick->readImage(sprintf('%s[%s]', $this->filename, $pageNumber - 1));
 
+        if ($this->resizeWidth !== null) {
+            $this->imagick->resizeImage($this->resizeWidth, $this->resizeHeight ?? 0, Imagick::FILTER_POINT, 0);
+        }
+
         if ($this->layerMethod !== LayerMethod::None) {
             $this->imagick = $this->imagick->mergeImageLayers($this->layerMethod->value);
         }
@@ -235,20 +243,36 @@ class Pdf
      *
      * @return $this
      *
-     * @throws \Spatie\PdfToImage\Exceptions\InvalidThumbnailSize
+     * @throws \Spatie\PdfToImage\Exceptions\InvalidSize
      */
     public function thumbnailSize(int $width, ?int $height = null)
     {
         if ($width < 0) {
-            throw InvalidThumbnailSize::forWidth($width);
+            throw InvalidSize::forThumbnail($width, 'width');
         }
 
         if ($height !== null && $height < 0) {
-            throw InvalidThumbnailSize::forHeight($height);
+            throw InvalidSize::forThumbnail($height, 'height');
         }
 
         $this->thumbnailWidth = $width;
         $this->thumbnailHeight = $height ?? 0;
+
+        return $this;
+    }
+
+    public function size(int $width, ?int $height = null)
+    {
+        if ($width < 0) {
+            throw InvalidSize::forImage($width, 'width');
+        }
+
+        if ($height !== null && $height < 0) {
+            throw InvalidSize::forImage($height, 'height');
+        }
+
+        $this->resizeWidth = $width;
+        $this->resizeHeight = $height ?? 0;
 
         return $this;
     }
