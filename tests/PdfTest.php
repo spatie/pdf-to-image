@@ -5,8 +5,9 @@ use Spatie\PdfToImage\Exceptions\PageDoesNotExist;
 use Spatie\PdfToImage\Exceptions\PdfDoesNotExist;
 use Spatie\PdfToImage\Pdf;
 
-function unlinkAllOutputImages(string $path) {
-    $files = glob($path . '/*');
+function unlinkAllOutputImages(string $path)
+{
+    $files = glob($path.'/*');
 
     foreach ($files as $file) {
         if (is_file($file) && pathinfo($file, PATHINFO_EXTENSION) !== 'gitignore') {
@@ -31,8 +32,8 @@ it('will throw an exception when trying to convert a non existing file', functio
 it('will throw an exception when passed an invalid page number', function ($invalidPage) {
     (new Pdf($this->testFile))->selectPage($invalidPage);
 })
-->throws(PageDoesNotExist::class)
-->with([100, 0, -1]);
+    ->throws(PageDoesNotExist::class)
+    ->with([100, 0, -1]);
 
 it('will correctly return the number of pages in a pdf file', function () {
     $pdf = new Pdf($this->multipageTestFile);
@@ -49,7 +50,7 @@ it('will accept a custom specified resolution', function ($resolution) {
     expect($image['x'])->toEqual($resolution);
     expect($image['y'])->toEqual($resolution);
 })
-->with([127, 150, 166]);
+    ->with([127, 150, 166]);
 
 it('will convert a specified page', function () {
     $imagick = (new Pdf($this->multipageTestFile))
@@ -78,11 +79,11 @@ it('will accept an output format and convert to it', function ($format) {
 
     $imagick = (new Pdf($this->testFile))
         ->format($fmt)
-        ->getImageData('test.' . $fmt->value, 1);
+        ->getImageData('test.'.$fmt->value, 1);
 
     expect($imagick->getFormat())->toEqual($fmt->value);
 })
-->with(['jpg', 'png', 'webp']);
+    ->with(['jpg', 'png', 'webp']);
 
 it('gets the output format', function () {
     $pdf = new Pdf($this->testFile);
@@ -106,13 +107,13 @@ it('can accept a layer', function () {
 it('throws an error when passed an invalid layer method', function () {
     (new Pdf($this->testFile))->layerMethod(-100);
 })
-->throws(InvalidLayerMethod::class);
+    ->throws(InvalidLayerMethod::class);
 
 it('will throw an exception when passed an invalid quality value', function ($quality) {
     (new Pdf($this->testFile))->quality($quality);
 })
-->throws(\Spatie\PdfToImage\Exceptions\InvalidQuality::class)
-->with([-1, 0, 101]);
+    ->throws(\Spatie\PdfToImage\Exceptions\InvalidQuality::class)
+    ->with([-1, 0, 101]);
 
 it('will set output quality', function () {
     $imagick = (new Pdf($this->testFile))
@@ -145,26 +146,26 @@ it('will create a thumbnail at specified sizes', function () {
 it('will throw an exception when passed an invalid thumbnail size', function ($width, $height) {
     (new Pdf($this->testFile))->thumbnailSize($width, $height);
 })
-->throws(\Spatie\PdfToImage\Exceptions\InvalidThumbnailSize::class)
-->with([
-    'invalid width' => [-1, 100],
-    'invalid height' => [100, -1],
-    'invalid size' => [-1, -1],
-]);
+    ->throws(\Spatie\PdfToImage\Exceptions\InvalidThumbnailSize::class)
+    ->with([
+        'invalid width' => [-1, 100],
+        'invalid height' => [100, -1],
+        'invalid size' => [-1, -1],
+    ]);
 
 it('checks if the provided output format string is a supported format', function ($formats, $expected) {
     $pdf = (new Pdf($this->testFile));
 
-    foreach($formats as $format) {
+    foreach ($formats as $format) {
         expect($pdf->isValidOutputFormat($format))->toBe($expected);
     }
 })
-->with([
-    'supported formats' => [['jpg', 'png', 'webp'], true],
-    'unsupported formats' => [['bmp', 'gif', ''], false],
-]);
+    ->with([
+        'supported formats' => [['jpg', 'png', 'webp'], true],
+        'unsupported formats' => [['bmp', 'gif', ''], false],
+    ]);
 
-it('saves a page to an image', function() {
+it('saves a page to an image', function () {
     $targetFilename = __DIR__.'/output/test.jpg';
 
     (new Pdf($this->testFile))
@@ -174,7 +175,7 @@ it('saves a page to an image', function() {
     expect(file_exists($targetFilename))->toBeTrue();
 });
 
-it('saves only selected pages to images', function() {
+it('saves only selected pages to images', function () {
     $targetPath = __DIR__.'/output';
 
     (new Pdf($this->multipageTestFile))
@@ -183,11 +184,11 @@ it('saves only selected pages to images', function() {
         ->saveImage($targetPath);
 
     foreach ([1, 3] as $pageNumber) {
-        expect(file_exists($targetPath . '/' . $pageNumber . '.png'))->toBeTrue();
+        expect(file_exists($targetPath.'/'.$pageNumber.'.png'))->toBeTrue();
     }
 });
 
-it('saves all pages to images', function() {
+it('saves all pages to images', function () {
     $targetPath = __DIR__.'/output';
 
     (new Pdf($this->multipageTestFile))
@@ -195,6 +196,6 @@ it('saves all pages to images', function() {
         ->saveAllPagesAsImages($targetPath);
 
     foreach (range(1, 3) as $pageNumber) {
-        expect(file_exists($targetPath . '/' . $pageNumber . '.jpg'))->toBeTrue();
+        expect(file_exists($targetPath.'/'.$pageNumber.'.jpg'))->toBeTrue();
     }
 });

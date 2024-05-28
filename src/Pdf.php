@@ -75,7 +75,6 @@ class Pdf
      * To disable merging image layers, set to LayerMethod::None.
      *
      * @param \Spatie\PdfToImage\Enums\LayerMethod|int
-     *
      * @return $this
      *
      * @throws \Spatie\PdfToImage\Exceptions\InvalidLayerMethod
@@ -97,8 +96,6 @@ class Pdf
     /**
      * Expects a string or OutputFormat enum. If a string, expects the file extension of the format,
      * without a leading period.
-     * @param string|null|OutputFormat $outputFormat
-     * @return bool
      */
     public function isValidOutputFormat(null|string|OutputFormat $outputFormat): bool
     {
@@ -140,22 +137,18 @@ class Pdf
      * Saves the PDF as an image. Expects a path to save the image to, which should be
      * a directory if multiple pages have been selected (otherwise the image will be overwritten).
      * Returns either a string with a single filename that was written, or an array of paths to the saved images.
-     * @param string $pathToImage
-     * @param string $prefix
-     * @return array|string
      */
     public function saveImage(string $pathToImage, string $prefix = ''): array|string
     {
         $pages = [PdfPage::make($this->pages[0], $this->outputFormat, $prefix, $pathToImage)];
 
         if (is_dir($pathToImage)) {
-            $pages = array_map(fn($page) =>
-                PdfPage::make($page, $this->outputFormat, $prefix, rtrim($pathToImage, '\/').DIRECTORY_SEPARATOR.$page.'.'.$this->outputFormat->value), $this->pages);
+            $pages = array_map(fn ($page) => PdfPage::make($page, $this->outputFormat, $prefix, rtrim($pathToImage, '\/').DIRECTORY_SEPARATOR.$page.'.'.$this->outputFormat->value), $this->pages);
         }
 
         $result = [];
 
-        foreach($pages as $page) {
+        foreach ($pages as $page) {
             $path = $page->getFilename();
             $imageData = $this->getImageData($path, $page->number);
 
@@ -239,14 +232,12 @@ class Pdf
      * Set the thumbnail size for the image. If no height is provided, the thumbnail height will
      * be scaled according to the width.
      *
-     * @param int $width
-     * @param int $height
+     * @param  int  $height
+     * @return $this
      *
      * @throws \Spatie\PdfToImage\Exceptions\InvalidThumbnailSize
-     *
-     * @return $this
      */
-    public function thumbnailSize(int $width, int|null $height = null)
+    public function thumbnailSize(int $width, ?int $height = null)
     {
         if ($width < 0) {
             throw InvalidThumbnailSize::forWidth($width);
@@ -266,7 +257,7 @@ class Pdf
     {
         $outputFormat = OutputFormat::tryFrom(pathinfo($pathToImage, PATHINFO_EXTENSION));
 
-        if (!empty($this->outputFormat)) {
+        if (! empty($this->outputFormat)) {
             $outputFormat = $this->outputFormat;
         }
 
@@ -279,7 +270,7 @@ class Pdf
 
     protected function validatePageNumbers(int ...$pageNumbers)
     {
-        foreach($pageNumbers as $page) {
+        foreach ($pageNumbers as $page) {
             if ($page > $this->pageCount() || $page < 1) {
                 throw PageDoesNotExist::for($page);
             }
