@@ -49,14 +49,14 @@ class Pdf
         $this->imagick->readImage($this->pdfFile);
     }
 
-    public function resolution(int $dpiResolution)
+    public function resolution(int $dpiResolution): static
     {
         $this->resolution = $dpiResolution;
 
         return $this;
     }
 
-    public function format(OutputFormat $outputFormat)
+    public function format(OutputFormat $outputFormat): static
     {
         $this->outputFormat = $outputFormat;
 
@@ -83,7 +83,7 @@ class Pdf
      * @see https://secure.php.net/manual/en/imagick.constants.php
      * @see Pdf::getImageData()
      */
-    public function layerMethod(LayerMethod|int $method)
+    public function layerMethod(LayerMethod|int $method): static
     {
         if (is_int($method) && ! LayerMethod::isValid($method)) {
             throw InvalidLayerMethod::for($method);
@@ -113,12 +113,12 @@ class Pdf
         return OutputFormat::tryFrom(strtolower($outputFormat)) !== null;
     }
 
-    public function selectPage(int $page)
+    public function selectPage(int $page): static
     {
         return $this->selectPages($page);
     }
 
-    public function selectPages(int ...$pages)
+    public function selectPages(int ...$pages): static
     {
         $this->validatePageNumbers(...$pages);
 
