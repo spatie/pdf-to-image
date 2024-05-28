@@ -232,7 +232,6 @@ class Pdf
      * Set the thumbnail size for the image. If no height is provided, the thumbnail height will
      * be scaled according to the width.
      *
-     * @param  int  $height
      * @return $this
      *
      * @throws \Spatie\PdfToImage\Exceptions\InvalidThumbnailSize
