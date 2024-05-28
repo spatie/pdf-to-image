@@ -150,7 +150,7 @@ class Pdf
         $result = [];
 
         foreach ($pages as $page) {
-            $path = $page->getFilename();
+            $path = $page->filename();
             $imageData = $this->getImageData($path, $page->number);
 
             if (file_put_contents($path, $imageData) !== false) {

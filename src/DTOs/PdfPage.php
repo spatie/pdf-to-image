@@ -6,20 +6,13 @@ use Spatie\PdfToImage\Enums\OutputFormat;
 
 class PdfPage
 {
-    public readonly int $number;
-
-    public readonly OutputFormat $format;
-
-    public readonly string $prefix;
-
-    public readonly string $path;
-
-    public function __construct(int $pageNumber, OutputFormat $format, string $prefix, string $path)
-    {
-        $this->number = $pageNumber;
-        $this->format = $format;
-        $this->prefix = $prefix;
-        $this->path = $path;
+    public function __construct(
+        public int $number,
+        public OutputFormat $format,
+        public string $prefix,
+        public string $path
+    ) {
+        //
     }
 
     public static function make(int $pageNumber, OutputFormat $format, string $prefix, string $path): self
@@ -27,7 +20,7 @@ class PdfPage
         return new self($pageNumber, $format, $prefix, $path);
     }
 
-    public function getFilename(): string
+    public function filename(): string
     {
         $info = pathinfo($this->path);
 
