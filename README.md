@@ -8,16 +8,6 @@
 
 This package provides an easy-to-work-with class to convert a PDF to one or more image.
 
-Spatie is a webdesign agency in Antwerp, Belgium. You'll find an overview of all our open source projects [on our website](https://spatie.be/opensource).
-
-## Support us
-
-[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/pdf-to-image.jpg?t=1" width="419px" />](https://spatie.be/github-ad-click/pdf-to-image)
-
-We invest a lot of resources into creating [best in class open source packages](https://spatie.be/open-source). You can support us by [buying one of our paid products](https://spatie.be/open-source/support-us).
-
-We highly appreciate you sending us a postcard from your hometown, mentioning which of our package(s) you are using. You'll find our address on [our contact page](https://spatie.be/about-us). We publish all received postcards on [our virtual postcard wall](https://spatie.be/open-source/postcards).
-
 ## Requirements
 
 You should have [Imagick](http://php.net/manual/en/imagick.setresolution.php) and [Ghostscript](http://www.ghostscript.com/) installed. 
