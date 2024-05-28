@@ -6,6 +6,7 @@ use Imagick;
 use Spatie\PdfToImage\DTOs\PdfPage;
 use Spatie\PdfToImage\Enums\OutputFormat;
 use Spatie\PdfToImage\Exceptions\InvalidFormat;
+use Spatie\PdfToImage\Exceptions\InvalidQuality;
 use Spatie\PdfToImage\Exceptions\PageDoesNotExist;
 use Spatie\PdfToImage\Exceptions\PdfDoesNotExist;
 
@@ -220,12 +221,16 @@ class Pdf
 
     public function quality(int $compressionQuality)
     {
+        if ($compressionQuality < 1 || $compressionQuality > 100) {
+            throw InvalidQuality::for($compressionQuality);
+        }
+
         $this->compressionQuality = $compressionQuality;
 
         return $this;
     }
 
-    public function width(int $thumbnailWidth)
+    public function thumbnailWidth(int $thumbnailWidth)
     {
         $this->thumbnailWidth = $thumbnailWidth;
 
