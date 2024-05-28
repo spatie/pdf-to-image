@@ -8,6 +8,7 @@ use Spatie\PdfToImage\Enums\LayerMethod;
 use Spatie\PdfToImage\Enums\OutputFormat;
 use Spatie\PdfToImage\Exceptions\InvalidLayerMethod;
 use Spatie\PdfToImage\Exceptions\InvalidQuality;
+use Spatie\PdfToImage\Exceptions\InvalidThumbnailSize;
 use Spatie\PdfToImage\Exceptions\PageDoesNotExist;
 use Spatie\PdfToImage\Exceptions\PdfDoesNotExist;
 
@@ -30,6 +31,8 @@ class Pdf
     protected ?int $compressionQuality = null;
 
     protected ?int $thumbnailWidth = null;
+
+    protected ?int $thumbnailHeight = null;
 
     private ?int $numberOfPages = null;
 
@@ -206,7 +209,7 @@ class Pdf
         }
 
         if ($this->thumbnailWidth !== null) {
-            $this->imagick->thumbnailImage($this->thumbnailWidth, 0);
+            $this->imagick->thumbnailImage($this->thumbnailWidth, $this->thumbnailHeight ?? 0);
         }
 
         $this->imagick->setFormat($this->determineOutputFormat($pathToImage)->value);
@@ -232,9 +235,29 @@ class Pdf
         return $this;
     }
 
-    public function thumbnailWidth(int $thumbnailWidth)
+    /**
+     * Set the thumbnail size for the image. If no height is provided, the thumbnail height will
+     * be scaled according to the width.
+     *
+     * @param int $width
+     * @param int $height
+     *
+     * @throws \Spatie\PdfToImage\Exceptions\InvalidThumbnailSize
+     *
+     * @return $this
+     */
+    public function thumbnailSize(int $width, int|null $height = null)
     {
-        $this->thumbnailWidth = $thumbnailWidth;
+        if ($width < 0) {
+            throw InvalidThumbnailSize::forWidth($width);
+        }
+
+        if ($height !== null && $height < 0) {
+            throw InvalidThumbnailSize::forHeight($height);
+        }
+
+        $this->thumbnailWidth = $width;
+        $this->thumbnailHeight = $height ?? 0;
 
         return $this;
     }

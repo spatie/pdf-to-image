@@ -114,14 +114,35 @@ it('will set output quality', function () {
     expect($imagick->getCompressionQuality())->toEqual(99);
 });
 
-it('will create a thumbnail at specified width', function () {
-    $imagick = (new Pdf($this->multipageTestFile))
-       ->thumbnailWidth(400)
-       ->getImageData('test.jpg', 1)
-       ->getImageGeometry();
+it('will create a thumbnail at specified sizes', function () {
+    $pdf = (new Pdf($this->multipageTestFile));
+
+    $imagick = $pdf
+        ->thumbnailSize(400)
+        ->getImageData('test.jpg', 1)
+        ->getImageGeometry();
 
     expect($imagick['width'])->toBe(400);
+    expect($imagick['height'])->toBeGreaterThan(50);
+
+    $imagick = $pdf
+        ->thumbnailSize(200, 300)
+        ->getImageData('test.jpg', 1)
+        ->getImageGeometry();
+
+    expect($imagick['width'])->toBe(200);
+    expect($imagick['height'])->toBe(300);
 });
+
+it('will throw an exception when passed an invalid thumbnail size', function ($width, $height) {
+    (new Pdf($this->testFile))->thumbnailSize($width, $height);
+})
+->throws(\Spatie\PdfToImage\Exceptions\InvalidThumbnailSize::class)
+->with([
+    'invalid width' => [-1, 100],
+    'invalid height' => [100, -1],
+    'invalid size' => [-1, -1],
+]);
 
 it('checks if the provided output format string is a supported format', function ($formats, $expected) {
     $pdf = (new Pdf($this->testFile));
