@@ -1,5 +1,6 @@
 <?php
 
+use Spatie\PdfToImage\Exceptions\InvalidLayerMethod;
 use Spatie\PdfToImage\Exceptions\PageDoesNotExist;
 use Spatie\PdfToImage\Exceptions\PdfDoesNotExist;
 use Spatie\PdfToImage\Pdf;
@@ -23,7 +24,7 @@ afterEach(function () {
     unlinkAllOutputImages(__DIR__.'/output');
 });
 
-it('will throw an exception when try to convert a non existing file', function () {
+it('will throw an exception when trying to convert a non existing file', function () {
     new Pdf('pdf-does-not-exist.pdf');
 })->throws(PdfDoesNotExist::class);
 
@@ -33,7 +34,7 @@ it('will throw an exception when passed an invalid page number', function ($inva
 ->throws(PageDoesNotExist::class)
 ->with([100, 0, -1]);
 
-it('will correctly return the number of pages in pdf file', function () {
+it('will correctly return the number of pages in a pdf file', function () {
     $pdf = new Pdf($this->multipageTestFile);
 
     expect($pdf->pageCount())->toEqual(3);
@@ -85,7 +86,7 @@ it('will accept an output format and convert to it', function ($format) {
 
 it('can accept a layer', function () {
     $image = (new Pdf($this->testFile))
-        ->mergeLayerMethod(Imagick::LAYERMETHOD_FLATTEN)
+        ->layerMethod(\Spatie\PdfToImage\Enums\LayerMethod::Flatten)
         ->resolution(72)
         ->getImageData('test.jpg', 1)
         ->getImageResolution();
@@ -93,6 +94,11 @@ it('can accept a layer', function () {
     expect($image['x'])->toEqual(72);
     expect($image['y'])->toEqual(72);
 });
+
+it('throws an error when passed an invalid layer method', function () {
+    (new Pdf($this->testFile))->layerMethod(-100);
+})
+->throws(InvalidLayerMethod::class);
 
 it('will throw an exception when passed an invalid quality value', function ($quality) {
     (new Pdf($this->testFile))->quality($quality);

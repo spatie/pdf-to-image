@@ -4,14 +4,16 @@ namespace Spatie\PdfToImage;
 
 use Imagick;
 use Spatie\PdfToImage\DTOs\PdfPage;
+use Spatie\PdfToImage\Enums\LayerMethod;
 use Spatie\PdfToImage\Enums\OutputFormat;
+use Spatie\PdfToImage\Exceptions\InvalidLayerMethod;
 use Spatie\PdfToImage\Exceptions\InvalidQuality;
 use Spatie\PdfToImage\Exceptions\PageDoesNotExist;
 use Spatie\PdfToImage\Exceptions\PdfDoesNotExist;
 
 class Pdf
 {
-    protected $pdfFile;
+    protected string $pdfFile;
 
     protected int $resolution = 144;
 
@@ -21,15 +23,15 @@ class Pdf
 
     public $imagick;
 
-    protected $layerMethod = Imagick::LAYERMETHOD_FLATTEN;
+    protected LayerMethod $layerMethod = LayerMethod::Flatten;
 
     protected $colorspace;
 
-    protected $compressionQuality;
+    protected ?int $compressionQuality = null;
 
-    protected $thumbnailWidth;
+    protected ?int $thumbnailWidth = null;
 
-    private $numberOfPages = null;
+    private ?int $numberOfPages = null;
 
     public function __construct(string $pdfFile)
     {
@@ -65,10 +67,11 @@ class Pdf
 
     /**
      * Sets the layer method for Imagick::mergeImageLayers()
-     * If int, should correspond to a predefined LAYERMETHOD constant.
-     * If null, Imagick::mergeImageLayers() will not be called.
+     * If int, should correspond to a predefined Imagick LAYERMETHOD constant.
+     * If LayerMethod, should be a valid LayerMethod enum.
+     * To disable merging image layers, set to LayerMethod::None.
      *
-     * @param int|null
+     * @param \Spatie\PdfToImage\Enums\LayerMethod|int
      *
      * @return $this
      *
@@ -77,8 +80,12 @@ class Pdf
      * @see https://secure.php.net/manual/en/imagick.constants.php
      * @see Pdf::getImageData()
      */
-    public function mergeLayerMethod(?int $method)
+    public function layerMethod(LayerMethod|int $method)
     {
+        if (is_int($method) && ! LayerMethod::isValid($method)) {
+            throw InvalidLayerMethod::for($method);
+        }
+
         $this->layerMethod = $method;
 
         return $this;
@@ -194,8 +201,8 @@ class Pdf
 
         $this->imagick->readImage(sprintf('%s[%s]', $this->pdfFile, $pageNumber - 1));
 
-        if (is_int($this->layerMethod)) {
-            $this->imagick = $this->imagick->mergeImageLayers($this->layerMethod);
+        if ($this->layerMethod !== LayerMethod::None) {
+            $this->imagick = $this->imagick->mergeImageLayers($this->layerMethod->value);
         }
 
         if ($this->thumbnailWidth !== null) {
