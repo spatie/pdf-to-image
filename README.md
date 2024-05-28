@@ -110,6 +110,20 @@ $pdf
    ->saveImage($pathToWhereImageShouldBeStored);
 ```
 
+Set the output image width:
+
+```php
+$pdf->size(400) // set the width to 400px; height is calculated automatically
+    ->saveImage($pathToWhereImageShouldBeStored);
+```
+
+Set the output image width and height:
+
+```php
+$pdf->size(400, 300) // set the width to 400px and the height to 300px
+    ->saveImage($pathToWhereImageShouldBeStored);
+```
+
 Save all pages to images:
 
 ```php
