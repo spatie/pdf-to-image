@@ -31,7 +31,7 @@ it('will accept a custom specified resolution', function ($resolution) {
 })
     ->with([127, 150, 16]);
 
-it('will convert a specified page', function () {
+it('can select a single page', function () {
     $imagick = (new Pdf($this->multipageTestFile))
         ->selectPage(2)
         ->getImageData('page-2.jpg', 2);
@@ -39,7 +39,7 @@ it('will convert a specified page', function () {
     expect($imagick)->toBeInstanceOf(Imagick::class);
 });
 
-it('will select multiple pages', function () {
+it('can select multiple pages', function () {
     $pdf = (new Pdf($this->multipageTestFile))
         ->selectPages(1, 3);
 
