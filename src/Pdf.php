@@ -5,7 +5,6 @@ namespace Spatie\PdfToImage;
 use Imagick;
 use Spatie\PdfToImage\DTOs\PdfPage;
 use Spatie\PdfToImage\Enums\OutputFormat;
-use Spatie\PdfToImage\Exceptions\InvalidFormat;
 use Spatie\PdfToImage\Exceptions\InvalidQuality;
 use Spatie\PdfToImage\Exceptions\PageDoesNotExist;
 use Spatie\PdfToImage\Exceptions\PdfDoesNotExist;
