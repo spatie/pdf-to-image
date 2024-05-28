@@ -1,7 +1,7 @@
 <?php
 
-use Spatie\PdfToImage\Pdf;
 use Spatie\PdfToImage\Exceptions\InvalidLayerMethod;
+use Spatie\PdfToImage\Pdf;
 
 it('can accept a layer', function () {
     $image = (new Pdf($this->testFile))

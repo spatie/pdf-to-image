@@ -7,7 +7,9 @@ use PHPUnit\Framework\TestCase as BaseTestCase;
 class TestCase extends BaseTestCase
 {
     public $testFile = __DIR__.'/files/test.pdf';
+
     public $multipageTestFile = __DIR__.'/files/multipage-test.pdf';
+
     public $outputDirectory = __DIR__.'/output';
 
     public function unlinkAllOutputImages(string $path): void
@@ -21,7 +23,8 @@ class TestCase extends BaseTestCase
         }
     }
 
-    public function afterEach() {
+    public function afterEach()
+    {
         $this->unlinkAllOutputImages($this->outputDirectory);
     }
 }
