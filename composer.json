@@ -29,7 +29,7 @@
         "ext-imagick" : "*"
     },
     "require-dev": {
-        "pestphp/pest": "^1.23"
+        "pestphp/pest": "^2.34"
     },
     "autoload": {
         "psr-4": {
