@@ -16,6 +16,12 @@
             "email": "freek@spatie.be",
             "homepage": "https://spatie.be",
             "role": "Developer"
+        },
+        {
+            "name": "Patrick Organ",
+            "email": "patrick@permafrost.dev",
+            "homepage": "https://permafrost.dev",
+            "role": "Developer"
         }
     ],
     "require": {
