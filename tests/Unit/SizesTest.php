@@ -67,4 +67,3 @@ it("can get a PDF page's size", function () {
     expect($size->width)->toBeGreaterThanOrEqual(100);
     expect($size->height)->toBeGreaterThanOrEqual(100);
 });
-

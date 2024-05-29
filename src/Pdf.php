@@ -3,8 +3,8 @@
 namespace Spatie\PdfToImage;
 
 use Imagick;
-use Spatie\PdfToImage\DTOs\PdfPage;
 use Spatie\PdfToImage\DTOs\PageSize;
+use Spatie\PdfToImage\DTOs\PdfPage;
 use Spatie\PdfToImage\Enums\LayerMethod;
 use Spatie\PdfToImage\Enums\OutputFormat;
 use Spatie\PdfToImage\Exceptions\InvalidLayerMethod;
