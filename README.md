@@ -1,7 +1,7 @@
 # Convert a PDF to an image
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/spatie/pdf-to-image.svg?style=flat-square)](https://packagist.org/packages/spatie/pdf-to-image)
-[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](.github/LICENSE.md)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
 [![Quality Score](https://img.shields.io/scrutinizer/g/spatie/pdf-to-image.svg?style=flat-square)](https://scrutinizer-ci.com/g/spatie/pdf-to-image)
 [![StyleCI](https://styleci.io/repos/38419604/shield?branch=master)](https://styleci.io/repos/38419604)
 [![Total Downloads](https://img.shields.io/packagist/dt/spatie/pdf-to-image.svg?style=flat-square)](https://packagist.org/packages/spatie/pdf-to-image)
@@ -29,12 +29,12 @@ Converting a PDF to an image is easy.
 
 ```php
 $pdf = new \Spatie\PdfToImage\Pdf($pathToPdf);
-$pdf->saveImage($pathToWhereImageShouldBeStored);
+$pdf->save($pathToWhereImageShouldBeStored);
 ```
 
 If the filename you pass to `saveImage` has the extensions `jpg`, `jpeg`, `png`, or `webp` the image will be saved in that format; otherwise the output format will be `jpg`.
 
-The `saveImage()` method returns an array with the filenames of the saved images if multiple images are saved, otherwise returns a string with the path to the saved image.
+The `save()` method returns an array with the filenames of the saved images if multiple images are saved, otherwise returns a string with the path to the saved image.
 
 ## Other methods
 
@@ -56,35 +56,35 @@ By default, only the first page of the PDF will be rendered. To render another p
 
 ```php
 $pdf->selectPage(2)
-    ->saveImage($pathToWhereImageShouldBeStored); //saves the second page
+    ->save($pathToWhereImageShouldBeStored); //saves the second page
 ```
 
 Or, select multiple pages with the `selectPages()` method:
 
 ```php
 $pdf->selectPages(2, 4, 5)
-    ->saveImage($directoryToWhereImageShouldBeStored); //saves the 2nd, 4th and 5th pages
+    ->save($directoryToWhereImageShouldBeStored); //saves the 2nd, 4th and 5th pages
 ```
 
 Change the output format:
 
 ```php
 $pdf->format(\Spatie\PdfToImage\Enums\OutputFormat::Webp)
-    ->saveImage($pathToWhereImageShouldBeStored); //the saved image will be in webp format
+    ->save($pathToWhereImageShouldBeStored); //the saved image will be in webp format
 ```
 
 Set the output quality _(the compression quality)_ from 0 to 100:
 
 ```php
 $pdf->quality(90) // set an output quality of 90%
-    ->saveImage($pathToWhereImageShouldBeStored);
+    ->save($pathToWhereImageShouldBeStored);
 ```
 
 Set the output resolution DPI:
 
 ```php
 $pdf->resolution(300) // resolution of 300 dpi
-    ->saveImage($pathToWhereImageShouldBeStored);
+    ->save($pathToWhereImageShouldBeStored);
 ```
 
 Specify the thumbnail size of the output image:
@@ -92,32 +92,32 @@ Specify the thumbnail size of the output image:
 ```php
 $pdf
    ->thumbnailSize(400) // set thumbnail width to 400px; height is calculated automatically
-   ->saveImage($pathToWhereImageShouldBeStored);
+   ->save($pathToWhereImageShouldBeStored);
 
 // or:
 $pdf
    ->thumbnailSize(400, 300) // set thumbnail width to 400px and the height to 300px
-   ->saveImage($pathToWhereImageShouldBeStored);
+   ->save($pathToWhereImageShouldBeStored);
 ```
 
 Set the output image width:
 
 ```php
 $pdf->size(400) // set the width to 400px; height is calculated automatically
-    ->saveImage($pathToWhereImageShouldBeStored);
+    ->save($pathToWhereImageShouldBeStored);
 ```
 
 Set the output image width and height:
 
 ```php
 $pdf->size(400, 300) // set the width to 400px and the height to 300px
-    ->saveImage($pathToWhereImageShouldBeStored);
+    ->save($pathToWhereImageShouldBeStored);
 ```
 
 Save all pages to images:
 
 ```php
-$pdf->saveAllPagesAsImages($directoryToWhereImagesShouldBeStored);
+$pdf->saveAllPages($directoryToWhereImagesShouldBeStored);
 ```
 
 Set the Merge Layer Method for Imagick:
