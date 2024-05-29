@@ -114,6 +114,16 @@ $pdf->size(400, 300) // set the width to 400px and the height to 300px
     ->save($pathToWhereImageShouldBeStored);
 ```
 
+Get the dimensions of the PDF. This can be used to determine if the PDF is extremely high-resolution.
+
+```php
+/** @var \Spatie\PdfToImage\DTOs\PageSize $size */
+$size = $pdf->getSize();
+
+$width = $size->width;
+$height = $size->height;
+```
+
 Save all pages to images:
 
 ```php
