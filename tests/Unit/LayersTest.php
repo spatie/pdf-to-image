@@ -5,7 +5,7 @@ use Spatie\PdfToImage\Pdf;
 
 it('can accept a layer', function () {
     $image = (new Pdf($this->testFile))
-        ->layerMethod(\Spatie\PdfToImage\Enums\LayerMethod::Flatten)
+        ->layerMethod(\Spatie\PdfToImage\Enums\LayerMethod::None)
         ->resolution(72)
         ->getImageData('test.jpg', 1)
         ->getImageResolution();

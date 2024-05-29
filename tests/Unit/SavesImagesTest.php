@@ -11,7 +11,7 @@ it('saves a page to an image', function () {
 
     (new Pdf($this->testFile))
         ->selectPage(1)
-        ->saveImage($targetFilename);
+        ->save($targetFilename);
 
     expect(file_exists($targetFilename))->toBeTrue();
 });
@@ -20,17 +20,17 @@ it('saves only selected pages to images', function () {
     (new Pdf($this->multipageTestFile))
         ->selectPages(1, 3)
         ->format(\Spatie\PdfToImage\Enums\OutputFormat::Png)
-        ->saveImage($this->outputDirectory);
+        ->save($this->outputDirectory);
 
     foreach ([1, 3] as $pageNumber) {
         expect(file_exists($this->outputDirectory.'/'.$pageNumber.'.png'))->toBeTrue();
     }
 });
 
-it('saves all pages to images', function () {
+it('saves all pages as images', function () {
     (new Pdf($this->multipageTestFile))
         ->format(\Spatie\PdfToImage\Enums\OutputFormat::Jpg)
-        ->saveAllPagesAsImages($this->outputDirectory);
+        ->saveAllPages($this->outputDirectory);
 
     foreach (range(1, 3) as $pageNumber) {
         expect(file_exists($this->outputDirectory.'/'.$pageNumber.'.jpg'))->toBeTrue();

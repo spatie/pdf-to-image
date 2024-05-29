@@ -4,6 +4,7 @@ namespace Spatie\PdfToImage;
 
 use Imagick;
 use Spatie\PdfToImage\DTOs\PdfPage;
+use Spatie\PdfToImage\DTOs\PageSize;
 use Spatie\PdfToImage\Enums\LayerMethod;
 use Spatie\PdfToImage\Enums\OutputFormat;
 use Spatie\PdfToImage\Exceptions\InvalidLayerMethod;
@@ -128,7 +129,7 @@ class Pdf
     {
         if ($this->imagick === null) {
             $this->imagick = new Imagick();
-            $this->imagick->readImage($this->filename);
+            $this->imagick->pingImage($this->filename);
         }
 
         if ($this->numberOfPages === null) {
@@ -138,12 +139,26 @@ class Pdf
         return $this->numberOfPages;
     }
 
+    public function getSize(): PageSize
+    {
+        if ($this->imagick === null) {
+            $this->imagick = new Imagick();
+            $this->imagick->pingImage($this->filename);
+        }
+
+        $geometry = $this->imagick->getImageGeometry();
+
+        return PageSize::make($geometry['width'], $geometry['height']);
+    }
+
     /**
      * Saves the PDF as an image. Expects a path to save the image to, which should be
      * a directory if multiple pages have been selected (otherwise the image will be overwritten).
-     * Returns either a string with a single filename that was written, or an array of paths to the saved images.
+     * Returns an array of paths to the saved images.
+     *
+     * @return string[]
      */
-    public function saveImage(string $pathToImage, string $prefix = ''): array|string
+    public function save(string $pathToImage, string $prefix = ''): array
     {
         $pages = [PdfPage::make($this->pages[0], $this->outputFormat, $prefix, $pathToImage)];
 
@@ -162,14 +177,10 @@ class Pdf
             }
         }
 
-        if (count($result) === 1) {
-            return $result[0];
-        }
-
         return $result;
     }
 
-    public function saveAllPagesAsImages(string $directory, string $prefix = ''): array|string
+    public function saveAllPages(string $directory, string $prefix = ''): array
     {
         $numberOfPages = $this->pageCount();
 
@@ -179,7 +190,7 @@ class Pdf
 
         $this->selectPages(...range(1, $numberOfPages));
 
-        return $this->saveImage($directory, $prefix);
+        return $this->save($directory, $prefix);
     }
 
     public function getImageData(string $pathToImage, int $pageNumber): Imagick
@@ -294,8 +305,10 @@ class Pdf
 
     protected function validatePageNumbers(int ...$pageNumbers)
     {
+        $count = $this->pageCount();
+
         foreach ($pageNumbers as $page) {
-            if ($page > $this->pageCount() || $page < 1) {
+            if ($page > $count || $page < 1) {
                 throw PageDoesNotExist::for($page);
             }
         }

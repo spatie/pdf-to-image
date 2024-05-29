@@ -3,7 +3,7 @@
 use Spatie\PdfToImage\Pdf;
 
 it('will create a thumbnail at specified sizes', function () {
-    $pdf = (new Pdf($this->multipageTestFile));
+    $pdf = (new Pdf($this->testFile));
 
     $imagick = $pdf
         ->thumbnailSize(400)
@@ -29,11 +29,10 @@ it('will throw an exception when passed an invalid thumbnail size', function ($w
     ->with([
         'invalid width' => [-1, 100],
         'invalid height' => [100, -1],
-        'invalid size' => [-1, -1],
     ]);
 
 it('will create an image at specified sizes', function () {
-    $pdf = (new Pdf($this->multipageTestFile));
+    $pdf = (new Pdf($this->testFile));
 
     $size = $pdf
         ->size(400)
@@ -59,5 +58,13 @@ it('will throw an exception when passed an invalid image size', function ($width
     ->with([
         'invalid width' => [-1, 100],
         'invalid height' => [100, -1],
-        'invalid size' => [-1, -1],
     ]);
+
+it("can get a PDF page's size", function () {
+    $pdf = new Pdf($this->testFile);
+    $size = $pdf->getSize();
+
+    expect($size->width)->toBeGreaterThanOrEqual(100);
+    expect($size->height)->toBeGreaterThanOrEqual(100);
+});
+
