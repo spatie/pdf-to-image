@@ -39,7 +39,7 @@ class Pdf
 
     protected ?int $resizeHeight = null;
 
-    private ?int $numberOfPages = null;
+    protected ?int $numberOfPages = null;
 
     public function __construct(string $filename)
     {
@@ -50,6 +50,13 @@ class Pdf
         $this->filename = $filename;
     }
 
+    /**
+     * Sets the resolution of the generated image in DPI.
+     * Default is 144.
+     *
+     * @param int $dpiResolution
+     * @return static
+     */
     public function resolution(int $dpiResolution): static
     {
         $this->resolution = $dpiResolution;
@@ -57,6 +64,13 @@ class Pdf
         return $this;
     }
 
+    /**
+     * Sets the output format of the generated image.
+     * Default is OutputFormat::Jpg.
+     *
+     * @param \Spatie\PdfToImage\Enums\OutputFormat $outputFormat
+     * @return static
+     */
     public function format(OutputFormat $outputFormat): static
     {
         $this->outputFormat = $outputFormat;
@@ -125,6 +139,11 @@ class Pdf
         return $this;
     }
 
+    /**
+     * Returns the number of pages in the PDF.
+     *
+     * @return int
+     */
     public function pageCount(): int
     {
         if ($this->imagick === null) {
@@ -139,6 +158,12 @@ class Pdf
         return $this->numberOfPages;
     }
 
+    /**
+     * Returns a DTO representing the size of the PDF, which
+     * contains the width and height in pixels.
+     *
+     * @return \Spatie\PdfToImage\DTOs\PageSize
+     */
     public function getSize(): PageSize
     {
         if ($this->imagick === null) {
@@ -156,7 +181,7 @@ class Pdf
      * a directory if multiple pages have been selected (otherwise the image will be overwritten).
      * Returns an array of paths to the saved images.
      *
-     * @return string[]
+     * @return array<string>
      */
     public function save(string $pathToImage, string $prefix = ''): array
     {
@@ -180,12 +205,20 @@ class Pdf
         return $result;
     }
 
+    /**
+     * Saves all pages of the PDF as images. Expects a directory to save the images to,
+     * and an optional prefix for the image filenames. Returns an array of paths to the saved images.
+     *
+     * @param string $directory
+     * @param string $prefix
+     * @return array<string>
+     */
     public function saveAllPages(string $directory, string $prefix = ''): array
     {
         $numberOfPages = $this->pageCount();
 
         if ($numberOfPages === 0) {
-            return false;
+            return [];
         }
 
         $this->selectPages(...range(1, $numberOfPages));
@@ -230,14 +263,22 @@ class Pdf
         return $this->imagick;
     }
 
-    public function colorspace(int $colorspace)
+    public function colorspace(int $colorspace): static
     {
         $this->colorspace = $colorspace;
 
         return $this;
     }
 
-    public function quality(int $compressionQuality)
+    /**
+     * Set the compression quality for the image. The value should be between 1 and 100, where
+     * 1 is the lowest quality and 100 is the highest.
+     *
+     * @param int $compressionQuality
+     * @return static
+     * @throws \Spatie\PdfToImage\Exceptions\InvalidQuality
+     */
+    public function quality(int $compressionQuality): static
     {
         if ($compressionQuality < 1 || $compressionQuality > 100) {
             throw InvalidQuality::for($compressionQuality);
@@ -252,11 +293,11 @@ class Pdf
      * Set the thumbnail size for the image. If no height is provided, the thumbnail height will
      * be scaled according to the width.
      *
-     * @return $this
+     * @return static
      *
      * @throws \Spatie\PdfToImage\Exceptions\InvalidSize
      */
-    public function thumbnailSize(int $width, ?int $height = null)
+    public function thumbnailSize(int $width, ?int $height = null): static
     {
         if ($width < 0) {
             throw InvalidSize::forThumbnail($width, 'width');
@@ -272,7 +313,15 @@ class Pdf
         return $this;
     }
 
-    public function size(int $width, ?int $height = null)
+    /**
+     * Set the size of the image. If no height is provided, the height will be scaled according to the width.
+     *
+     * @param int $width
+     * @param int|null $height
+     * @return static
+     * @throws \Spatie\PdfToImage\Exceptions\InvalidSize
+     */
+    public function size(int $width, ?int $height = null): static
     {
         if ($width < 0) {
             throw InvalidSize::forImage($width, 'width');
@@ -303,6 +352,14 @@ class Pdf
         return $outputFormat;
     }
 
+    /**
+     * Validate that the page numbers are within the range of the PDF, which is 1 to the number of pages.
+     * Throws a PageDoesNotExist exception if a page number is out of range.
+     *
+     * @param int ...$pageNumbers
+     * @return void
+     * @throws \Spatie\PdfToImage\Exceptions\PageDoesNotExist
+     */
     protected function validatePageNumbers(int ...$pageNumbers): void
     {
         $count = $this->pageCount();
