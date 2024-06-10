@@ -303,7 +303,7 @@ class Pdf
         return $outputFormat;
     }
 
-    protected function validatePageNumbers(int ...$pageNumbers)
+    protected function validatePageNumbers(int ...$pageNumbers): void
     {
         $count = $this->pageCount();
 
