@@ -13,11 +13,11 @@ class InvalidSize extends Exception
 
     public static function forThumbnail(int $value, string $property): static
     {
-        return self::for($value, 'thumbnail', $property);
+        return static::for($value, 'thumbnail', $property);
     }
 
     public static function forImage(int $value, string $property): static
     {
-        return self::for($value, 'image', $property);
+        return static::for($value, 'image', $property);
     }
 }
