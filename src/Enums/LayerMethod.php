@@ -25,7 +25,7 @@ enum LayerMethod: int
     case Mosaic = Imagick::LAYERMETHOD_MOSAIC;
     case TrimBounds = Imagick::LAYERMETHOD_TRIMBOUNDS;
 
-    public static function isValid(int $value)
+    public static function isValid(int $value): bool
     {
         return self::tryFrom($value) instanceof self;
     }
