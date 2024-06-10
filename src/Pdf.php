@@ -52,7 +52,7 @@ class Pdf
 
     /**
      * Sets the resolution of the generated image in DPI.
-     * Default is 144.
+     * Default is 144 DPI.
      */
     public function resolution(int $dpiResolution): static
     {
