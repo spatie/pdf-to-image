@@ -4,10 +4,10 @@ namespace Spatie\PdfToImage\Exceptions;
 
 use Exception;
 
-class InvalidLayerMethod extends Exception
+class InvalidQuality extends Exception
 {
     public static function for(int $value): static
     {
-        return new static("Invalid layer method value ({$value}).");
+        return new static("Quality must be between 1 and 100, {$value} given.");
     }
 }

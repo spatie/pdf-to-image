@@ -3,77 +3,87 @@
 namespace Spatie\PdfToImage;
 
 use Imagick;
-use Spatie\PdfToImage\Exceptions\InvalidFormat;
+use Spatie\PdfToImage\DTOs\PageSize;
+use Spatie\PdfToImage\DTOs\PdfPage;
+use Spatie\PdfToImage\Enums\LayerMethod;
+use Spatie\PdfToImage\Enums\OutputFormat;
+use Spatie\PdfToImage\Exceptions\InvalidLayerMethod;
+use Spatie\PdfToImage\Exceptions\InvalidQuality;
+use Spatie\PdfToImage\Exceptions\InvalidSize;
 use Spatie\PdfToImage\Exceptions\PageDoesNotExist;
 use Spatie\PdfToImage\Exceptions\PdfDoesNotExist;
 
 class Pdf
 {
-    protected $pdfFile;
+    protected string $filename;
 
-    protected $resolution = 144;
+    protected int $resolution = 144;
 
-    protected $outputFormat = 'jpg';
+    protected OutputFormat $outputFormat = OutputFormat::Jpg;
 
-    protected $page = 1;
+    protected array $pages = [1];
 
     public $imagick;
 
-    protected $validOutputFormats = ['jpg', 'jpeg', 'png', 'webp'];
-
-    protected $layerMethod = Imagick::LAYERMETHOD_FLATTEN;
+    protected LayerMethod $layerMethod = LayerMethod::Flatten;
 
     protected $colorspace;
 
-    protected $compressionQuality;
+    protected ?int $compressionQuality = null;
 
-    protected $thumbnailWidth;
+    protected ?int $thumbnailWidth = null;
 
-    private $numberOfPages = null;
+    protected ?int $thumbnailHeight = null;
 
-    public function __construct(string $pdfFile)
+    protected ?int $resizeWidth = null;
+
+    protected ?int $resizeHeight = null;
+
+    protected ?int $numberOfPages = null;
+
+    public function __construct(string $filename)
     {
-        if (! file_exists($pdfFile)) {
-            throw new PdfDoesNotExist("File `{$pdfFile}` does not exist");
+        if (! file_exists($filename)) {
+            throw PdfDoesNotExist::for($filename);
         }
 
-        $this->pdfFile = $pdfFile;
-
-        $this->imagick = new Imagick();
-
-        $this->imagick->readImage($this->pdfFile);
+        $this->filename = $filename;
     }
 
-    public function setResolution(int $resolution)
+    /**
+     * Sets the resolution of the generated image in DPI.
+     * Default is 144 DPI.
+     */
+    public function resolution(int $dpiResolution): static
     {
-        $this->resolution = $resolution;
+        $this->resolution = $dpiResolution;
 
         return $this;
     }
 
-    public function setOutputFormat(string $outputFormat)
+    /**
+     * Sets the output format of the generated image.
+     * Default is OutputFormat::Jpg.
+     */
+    public function format(OutputFormat $outputFormat): static
     {
-        if (! $this->isValidOutputFormat($outputFormat)) {
-            throw new InvalidFormat("Format {$outputFormat} is not supported");
-        }
-
         $this->outputFormat = $outputFormat;
 
         return $this;
     }
 
-    public function getOutputFormat(): string
+    public function getFormat(): OutputFormat
     {
         return $this->outputFormat;
     }
 
     /**
      * Sets the layer method for Imagick::mergeImageLayers()
-     * If int, should correspond to a predefined LAYERMETHOD constant.
-     * If null, Imagick::mergeImageLayers() will not be called.
+     * If int, should correspond to a predefined Imagick LAYERMETHOD constant.
+     * If LayerMethod, should be a valid LayerMethod enum.
+     * To disable merging image layers, set to LayerMethod::None.
      *
-     * @param int|null
-     *
+     * @param \Spatie\PdfToImage\Enums\LayerMethod|int
      * @return $this
      *
      * @throws \Spatie\PdfToImage\Exceptions\InvalidLayerMethod
@@ -81,31 +91,58 @@ class Pdf
      * @see https://secure.php.net/manual/en/imagick.constants.php
      * @see Pdf::getImageData()
      */
-    public function setLayerMethod(?int $layerMethod)
+    public function layerMethod(LayerMethod|int $method): static
     {
-        $this->layerMethod = $layerMethod;
-
-        return $this;
-    }
-
-    public function isValidOutputFormat(string $outputFormat): bool
-    {
-        return in_array($outputFormat, $this->validOutputFormats);
-    }
-
-    public function setPage(int $page)
-    {
-        if ($page > $this->getNumberOfPages() || $page < 1) {
-            throw new PageDoesNotExist("Page {$page} does not exist");
+        if (is_int($method) && ! LayerMethod::isValid($method)) {
+            throw InvalidLayerMethod::for($method);
         }
 
-        $this->page = $page;
+        $this->layerMethod = $method;
 
         return $this;
     }
 
-    public function getNumberOfPages(): int
+    /**
+     * Expects a string or OutputFormat enum. If a string, expects the file extension of the format,
+     * without a leading period.
+     */
+    public function isValidOutputFormat(null|string|OutputFormat $outputFormat): bool
     {
+        if ($outputFormat === null) {
+            return false;
+        }
+
+        if ($outputFormat instanceof OutputFormat) {
+            return true;
+        }
+
+        return OutputFormat::tryFrom(strtolower($outputFormat)) !== null;
+    }
+
+    public function selectPage(int $page): static
+    {
+        return $this->selectPages($page);
+    }
+
+    public function selectPages(int ...$pages): static
+    {
+        $this->validatePageNumbers(...$pages);
+
+        $this->pages = $pages;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of pages in the PDF.
+     */
+    public function pageCount(): int
+    {
+        if ($this->imagick === null) {
+            $this->imagick = new Imagick();
+            $this->imagick->pingImage($this->filename);
+        }
+
         if ($this->numberOfPages === null) {
             $this->numberOfPages = $this->imagick->getNumberImages();
         }
@@ -113,37 +150,71 @@ class Pdf
         return $this->numberOfPages;
     }
 
-    public function saveImage(string $pathToImage): bool
+    /**
+     * Returns a DTO representing the size of the PDF, which
+     * contains the width and height in pixels.
+     */
+    public function getSize(): PageSize
     {
-        if (is_dir($pathToImage)) {
-            $pathToImage = rtrim($pathToImage, '\/').DIRECTORY_SEPARATOR.$this->page.'.'.$this->outputFormat;
+        if ($this->imagick === null) {
+            $this->imagick = new Imagick();
+            $this->imagick->pingImage($this->filename);
         }
 
-        $imageData = $this->getImageData($pathToImage);
+        $geometry = $this->imagick->getImageGeometry();
 
-        return file_put_contents($pathToImage, $imageData) !== false;
+        return PageSize::make($geometry['width'], $geometry['height']);
     }
 
-    public function saveAllPagesAsImages(string $directory, string $prefix = ''): array
+    /**
+     * Saves the PDF as an image. Expects a path to save the image to, which should be
+     * a directory if multiple pages have been selected (otherwise the image will be overwritten).
+     * Returns an array of paths to the saved images.
+     *
+     * @return array<string>
+     */
+    public function save(string $pathToImage, string $prefix = ''): array
     {
-        $numberOfPages = $this->getNumberOfPages();
+        $pages = [PdfPage::make($this->pages[0], $this->outputFormat, $prefix, $pathToImage)];
+
+        if (is_dir($pathToImage)) {
+            $pages = array_map(fn ($page) => PdfPage::make($page, $this->outputFormat, $prefix, rtrim($pathToImage, '\/').DIRECTORY_SEPARATOR.$page.'.'.$this->outputFormat->value), $this->pages);
+        }
+
+        $result = [];
+
+        foreach ($pages as $page) {
+            $path = $page->filename();
+            $imageData = $this->getImageData($path, $page->number);
+
+            if (file_put_contents($path, $imageData) !== false) {
+                $result[] = $path;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Saves all pages of the PDF as images. Expects a directory to save the images to,
+     * and an optional prefix for the image filenames. Returns an array of paths to the saved images.
+     *
+     * @return array<string>
+     */
+    public function saveAllPages(string $directory, string $prefix = ''): array
+    {
+        $numberOfPages = $this->pageCount();
 
         if ($numberOfPages === 0) {
             return [];
         }
 
-        return array_map(function ($pageNumber) use ($directory, $prefix) {
-            $this->setPage($pageNumber);
+        $this->selectPages(...range(1, $numberOfPages));
 
-            $destination = "{$directory}/{$prefix}{$pageNumber}.{$this->outputFormat}";
-
-            $this->saveImage($destination);
-
-            return $destination;
-        }, range(1, $numberOfPages));
+        return $this->save($directory, $prefix);
     }
 
-    public function getImageData(string $pathToImage): Imagick
+    public function getImageData(string $pathToImage, int $pageNumber): Imagick
     {
         /*
          * Reinitialize imagick because the target resolution must be set
@@ -161,75 +232,122 @@ class Pdf
             $this->imagick->setCompressionQuality($this->compressionQuality);
         }
 
-        if (filter_var($this->pdfFile, FILTER_VALIDATE_URL)) {
-            return $this->getRemoteImageData($pathToImage);
+        $this->imagick->readImage(sprintf('%s[%s]', $this->filename, $pageNumber - 1));
+
+        if ($this->resizeWidth !== null) {
+            $this->imagick->resizeImage($this->resizeWidth, $this->resizeHeight ?? 0, Imagick::FILTER_POINT, 0);
         }
 
-        $this->imagick->readImage(sprintf('%s[%s]', $this->pdfFile, $this->page - 1));
-
-        if (is_int($this->layerMethod)) {
-            $this->imagick = $this->imagick->mergeImageLayers($this->layerMethod);
+        if ($this->layerMethod !== LayerMethod::None) {
+            $this->imagick = $this->imagick->mergeImageLayers($this->layerMethod->value);
         }
 
         if ($this->thumbnailWidth !== null) {
-            $this->imagick->thumbnailImage($this->thumbnailWidth, 0);
+            $this->imagick->thumbnailImage($this->thumbnailWidth, $this->thumbnailHeight ?? 0);
         }
 
-        $this->imagick->setFormat($this->determineOutputFormat($pathToImage));
+        $this->imagick->setFormat($this->determineOutputFormat($pathToImage)->value);
 
         return $this->imagick;
     }
 
-    public function setColorspace(int $colorspace)
+    public function colorspace(int $colorspace): static
     {
         $this->colorspace = $colorspace;
 
         return $this;
     }
 
-    public function setCompressionQuality(int $compressionQuality)
+    /**
+     * Set the compression quality for the image. The value should be between 1 and 100, where
+     * 1 is the lowest quality and 100 is the highest.
+     *
+     * @throws \Spatie\PdfToImage\Exceptions\InvalidQuality
+     */
+    public function quality(int $compressionQuality): static
     {
+        if ($compressionQuality < 1 || $compressionQuality > 100) {
+            throw InvalidQuality::for($compressionQuality);
+        }
+
         $this->compressionQuality = $compressionQuality;
 
         return $this;
     }
 
-    public function width(int $thumbnailWidth)
+    /**
+     * Set the thumbnail size for the image. If no height is provided, the thumbnail height will
+     * be scaled according to the width.
+     *
+     *
+     * @throws \Spatie\PdfToImage\Exceptions\InvalidSize
+     */
+    public function thumbnailSize(int $width, ?int $height = null): static
     {
-        $this->thumbnailWidth = $thumbnailWidth;
+        if ($width < 0) {
+            throw InvalidSize::forThumbnail($width, 'width');
+        }
+
+        if ($height !== null && $height < 0) {
+            throw InvalidSize::forThumbnail($height, 'height');
+        }
+
+        $this->thumbnailWidth = $width;
+        $this->thumbnailHeight = $height ?? 0;
 
         return $this;
     }
 
-    protected function getRemoteImageData(string $pathToImage): Imagick
+    /**
+     * Set the size of the image. If no height is provided, the height will be scaled according to the width.
+     *
+     * @throws \Spatie\PdfToImage\Exceptions\InvalidSize
+     */
+    public function size(int $width, ?int $height = null): static
     {
-        $this->imagick->readImage($this->pdfFile);
-
-        $this->imagick->setIteratorIndex($this->page - 1);
-
-        if (is_int($this->layerMethod)) {
-            $this->imagick = $this->imagick->mergeImageLayers($this->layerMethod);
+        if ($width < 0) {
+            throw InvalidSize::forImage($width, 'width');
         }
 
-        $this->imagick->setFormat($this->determineOutputFormat($pathToImage));
+        if ($height !== null && $height < 0) {
+            throw InvalidSize::forImage($height, 'height');
+        }
 
-        return $this->imagick;
+        $this->resizeWidth = $width;
+        $this->resizeHeight = $height ?? 0;
+
+        return $this;
     }
 
-    protected function determineOutputFormat(string $pathToImage): string
+    protected function determineOutputFormat(string $pathToImage): OutputFormat
     {
-        $outputFormat = pathinfo($pathToImage, PATHINFO_EXTENSION);
+        $outputFormat = OutputFormat::tryFrom(pathinfo($pathToImage, PATHINFO_EXTENSION));
 
-        if ($this->outputFormat != '') {
+        if (! empty($this->outputFormat)) {
             $outputFormat = $this->outputFormat;
         }
 
-        $outputFormat = strtolower($outputFormat);
-
         if (! $this->isValidOutputFormat($outputFormat)) {
-            $outputFormat = 'jpg';
+            $outputFormat = OutputFormat::Jpg;
         }
 
         return $outputFormat;
+    }
+
+    /**
+     * Validate that the page numbers are within the range of the PDF, which is 1 to the number of pages.
+     * Throws a PageDoesNotExist exception if a page number is out of range.
+     *
+     * @throws \Spatie\PdfToImage\Exceptions\PageDoesNotExist
+     */
+    protected function validatePageNumbers(int ...$pageNumbers): void
+    {
+        $count = $this->pageCount();
+
+        foreach ($pageNumbers as $page) {
+            if ($page > $count || $page < 1) {
+                throw PageDoesNotExist::for($page);
+            }
+        }
     }
 }

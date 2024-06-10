@@ -16,14 +16,20 @@
             "email": "freek@spatie.be",
             "homepage": "https://spatie.be",
             "role": "Developer"
+        },
+        {
+            "name": "Patrick Organ",
+            "email": "patrick@permafrost.dev",
+            "homepage": "https://permafrost.dev",
+            "role": "Developer"
         }
     ],
     "require": {
-        "php" : "^7.2|^8.0",
+        "php" : "^8.2",
         "ext-imagick" : "*"
     },
     "require-dev": {
-        "pestphp/pest": "^1.21"
+        "pestphp/pest": "^2.34"
     },
     "autoload": {
         "psr-4": {
