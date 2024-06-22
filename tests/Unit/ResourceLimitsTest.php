@@ -61,8 +61,8 @@ it('sets the throttle resource limit', function () {
 
 it('sets the thread resource limit', function () {
     $pdf = new Pdf($this->testFile);
-    $im = $pdf->resourceLimit(ResourceLimitType::Thread, 4)
+    $im = $pdf->resourceLimit(ResourceLimitType::Thread, 1)
         ->getImageData($this->testFile, 1);
 
-    expect((int) $im::getResourceLimit(ResourceLimitType::Thread->value))->toBe((int) 4);
+    expect((int)$im::getResourceLimit(ResourceLimitType::Thread->value))->toBe((int)1);
 });
