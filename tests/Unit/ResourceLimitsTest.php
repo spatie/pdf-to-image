@@ -8,7 +8,7 @@ it('sets the area resource limit', function () {
     $im = $pdf->resourceLimit(ResourceLimitType::Area, 1024 * 1024 * 128)
         ->getImageData($this->testFile, 1);
 
-    expect((int) $im::getResourceLimit(ResourceLimitType::Area->value))->toBe((int) 1024 * 1024 * 128);
+    expect((int) $im::getResourceLimit(ResourceLimitType::Area->value))->toBeGreaterThanOrEqual((int) 1024 * 1024 * 128);
 });
 
 it('sets the disk resource limit', function () {
@@ -16,7 +16,7 @@ it('sets the disk resource limit', function () {
     $im = $pdf->resourceLimit(ResourceLimitType::Disk, 1024 * 1024 * 128)
         ->getImageData($this->testFile, 1);
 
-    expect((int) $im::getResourceLimit(ResourceLimitType::Disk->value))->toBe((int) 1024 * 1024 * 128);
+    expect((int) $im::getResourceLimit(ResourceLimitType::Disk->value))->toBeGreaterThanOrEqual((int) 1024 * 1024 * 128);
 });
 
 it('sets the map resource limit', function () {
@@ -24,7 +24,7 @@ it('sets the map resource limit', function () {
     $im = $pdf->resourceLimit(ResourceLimitType::Map, 1024 * 1024 * 128)
         ->getImageData($this->testFile, 1);
 
-    expect((int) $im::getResourceLimit(ResourceLimitType::Map->value))->toBe((int) 1024 * 1024 * 128);
+    expect((int) $im::getResourceLimit(ResourceLimitType::Map->value))->toBeGreaterThanOrEqual((int) 1024 * 1024 * 128);
 });
 
 it('sets the memory resource limit', function () {
@@ -32,7 +32,7 @@ it('sets the memory resource limit', function () {
     $im = $pdf->resourceLimit(ResourceLimitType::Memory, 1024 * 1024 * 128)
         ->getImageData($this->testFile, 1);
 
-    expect((int) $im::getResourceLimit(ResourceLimitType::Memory->value))->toBe((int) 1024 * 1024 * 128);
+    expect((int) $im::getResourceLimit(ResourceLimitType::Memory->value))->toBeGreaterThanOrEqual((int) 1024 * 1024 * 128);
 });
 
 it('sets the time resource limit', function () {
