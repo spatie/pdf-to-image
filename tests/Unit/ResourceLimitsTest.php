@@ -4,7 +4,7 @@ use Spatie\PdfToImage\Enums\ResourceLimitType;
 use Spatie\PdfToImage\Pdf;
 
 beforeEach(function () {
-    $this->memory128MbInBytes = 134217728;
+    $this->memory128MbInBytes = 128000000;
 });
 
 it('sets the area resource limit', function () {
