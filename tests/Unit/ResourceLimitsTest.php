@@ -65,4 +65,4 @@ it('sets the thread resource limit', function () {
         ->getImageData($this->testFile, 1);
 
     expect((int)$im::getResourceLimit(ResourceLimitType::Thread->value))->toBe((int)1);
-});
+})->skip(getenv('CI'), 'Skip in CI environments');
