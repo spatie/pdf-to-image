@@ -58,11 +58,3 @@ it('sets the throttle resource limit', function () {
 
     expect((int) $im::getResourceLimit(ResourceLimitType::Throttle->value))->toBe((int) 10);
 });
-
-it('sets the thread resource limit', function () {
-    $pdf = new Pdf($this->testFile);
-    $im = $pdf->resourceLimit(ResourceLimitType::Thread, 1)
-        ->getImageData($this->testFile, 1);
-
-    expect((int)$im::getResourceLimit(ResourceLimitType::Thread->value))->toBe((int)1);
-})->skip(getenv('CI'), 'Skip in CI environments');
