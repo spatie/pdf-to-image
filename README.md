@@ -138,6 +138,16 @@ $pdf->layerMethod(\Spatie\PdfToImage\Enums\LayerMethod::Merge);
 $pdf->layerMethod(\Spatie\PdfToImage\Enums\LayerMethod::None);
 ```
 
+Set resource limits for Imagick:
+
+```php
+// set memory limit to 128 MB:
+$pdf->resourceLimit(\Spatie\PdfToImage\Enums\ResourceLimitType::Memory, 134217728);
+
+// set thread limit to 4:
+$pdf->resourceLimit(\Spatie\PdfToImage\Enums\ResourceLimitType::Thread, 4);
+```
+
 ## Issues regarding Ghostscript
 
 This package uses Ghostscript through Imagick. For this to work Ghostscripts `gs` command should be accessible from the PHP process. For the PHP CLI process (e.g. Laravel's asynchronous jobs, commands, etc...) this is usually already the case. 
@@ -163,6 +173,8 @@ If you receive an error with the message `attempt to perform an operation not al
 ```xml
 <policy domain="coder" rights="read | write" pattern="PDF" />
 ```
+
+If you are experiencing failures without any error messages, you may need to increase the resource limits for Imagick. This can be done with the `resourceLimit` method.
 
 ## Testing
 
