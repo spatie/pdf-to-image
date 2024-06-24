@@ -176,7 +176,12 @@ If you receive an error with the message `attempt to perform an operation not al
 <policy domain="coder" rights="read | write" pattern="PDF" />
 ```
 
-If you are experiencing failures without any error messages, you may need to increase the resource limits for Imagick. This can be done with the `resourceLimit` method.
+If you are experiencing failures without any error messages, you may need to increase the resource limits for Imagick. This can be done by modifying your `policy.xml` file. For example, to increase the memory limit to 128 MB and the thread limit to 4, you can add the following lines to your `policy.xml` file:
+
+```xml
+<policy domain="resource" name="memory" value="128MiB"/>
+<policy domain="resource" name="thread" value="4"/>
+```
 
 ## Testing
 
