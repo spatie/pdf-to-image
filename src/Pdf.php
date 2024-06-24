@@ -7,6 +7,7 @@ use Spatie\PdfToImage\DTOs\PageSize;
 use Spatie\PdfToImage\DTOs\PdfPage;
 use Spatie\PdfToImage\Enums\LayerMethod;
 use Spatie\PdfToImage\Enums\OutputFormat;
+use Spatie\PdfToImage\Enums\ResourceLimitType;
 use Spatie\PdfToImage\Exceptions\InvalidLayerMethod;
 use Spatie\PdfToImage\Exceptions\InvalidQuality;
 use Spatie\PdfToImage\Exceptions\InvalidSize;
@@ -40,6 +41,8 @@ class Pdf
     protected ?int $resizeHeight = null;
 
     protected ?int $numberOfPages = null;
+
+    protected array $resourceLimits = [];
 
     public function __construct(string $filename)
     {
@@ -224,6 +227,12 @@ class Pdf
 
         $this->imagick->setResolution($this->resolution, $this->resolution);
 
+        if (! empty($this->resourceLimits)) {
+            foreach ($this->resourceLimits as [$type, $limit]) {
+                $this->imagick::setResourceLimit($type, $limit);
+            }
+        }
+
         if ($this->colorspace !== null) {
             $this->imagick->setColorspace($this->colorspace);
         }
@@ -315,6 +324,13 @@ class Pdf
 
         $this->resizeWidth = $width;
         $this->resizeHeight = $height ?? 0;
+
+        return $this;
+    }
+
+    public function resourceLimit(ResourceLimitType|int $type, int $limit): static
+    {
+        $this->resourceLimits[] = [$type instanceof ResourceLimitType ? $type->value : $type, $limit];
 
         return $this;
     }
