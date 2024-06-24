@@ -148,6 +148,8 @@ $pdf->resourceLimit(\Spatie\PdfToImage\Enums\ResourceLimitType::Memory, 13421772
 $pdf->resourceLimit(\Spatie\PdfToImage\Enums\ResourceLimitType::Thread, 4);
 ```
 
+> When setting resource limits, Imagemagick may return success but will not set limits that exceed the values defined in your `policy.xml` file. 
+
 ## Issues regarding Ghostscript
 
 This package uses Ghostscript through Imagick. For this to work Ghostscripts `gs` command should be accessible from the PHP process. For the PHP CLI process (e.g. Laravel's asynchronous jobs, commands, etc...) this is usually already the case. 
