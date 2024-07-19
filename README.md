@@ -28,12 +28,12 @@ Converting a PDF to an image is easy.
 
 ```php
 $pdf = new \Spatie\PdfToImage\Pdf($pathToPdf);
-$pdf->save($pathToWhereImageShouldBeStored);
+$pdf->saveImage($pathToWhereImageShouldBeStored);
 ```
 
 If the filename you pass to `saveImage` has the extensions `jpg`, `jpeg`, `png`, or `webp` the image will be saved in that format; otherwise the output format will be `jpg`.
 
-The `save()` method returns an array with the filenames of the saved images if multiple images are saved, otherwise returns a string with the path to the saved image.
+The `saveImage()` method returns an array with the filenames of the saved images if multiple images are saved, otherwise returns a string with the path to the saved image.
 
 ## Other methods
 
