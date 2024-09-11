@@ -48,3 +48,15 @@ it('can select multiple pages', function () {
 
     expect($imagick1)->toBeInstanceOf(Imagick::class);
 });
+
+it('can set the background color', function ($backgroundColor) {
+    $image = (new Pdf($this->testFile))
+        ->backgroundColor($backgroundColor)
+        ->selectPage(1)
+        ->getImageData('page-1.jpg', 1)
+        ->getImageBackgroundColor()
+        ->getColorAsString();
+
+    $expectedSRGBValueForWhiteColor = 'srgb(255,255,255)';
+    expect($image)->toEqual($expectedSRGBValueForWhiteColor);
+})->with(['srgb(255,255,255)', 'rgb(255,255,255)', 'white', '#fff']);
