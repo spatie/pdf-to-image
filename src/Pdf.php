@@ -12,12 +12,15 @@ use Spatie\PdfToImage\Exceptions\InvalidQuality;
 use Spatie\PdfToImage\Exceptions\InvalidSize;
 use Spatie\PdfToImage\Exceptions\PageDoesNotExist;
 use Spatie\PdfToImage\Exceptions\PdfDoesNotExist;
+use ImagickPixel;
 
 class Pdf
 {
     protected string $filename;
 
     protected int $resolution = 144;
+
+    protected ?string $backgroundColor = null;
 
     protected OutputFormat $outputFormat = OutputFormat::Jpg;
 
@@ -57,6 +60,16 @@ class Pdf
     public function resolution(int $dpiResolution): static
     {
         $this->resolution = $dpiResolution;
+
+        return $this;
+    }
+
+    /**
+     * Set the background color e.g. 'white', '#fff', 'rgb(255, 255, 255)'
+     */
+    public function backgroundColor(string $backgroundColorCode): static
+    {
+        $this->backgroundColor = $backgroundColorCode;
 
         return $this;
     }
@@ -233,6 +246,11 @@ class Pdf
         }
 
         $this->imagick->readImage(sprintf('%s[%s]', $this->filename, $pageNumber - 1));
+
+        if ($this->backgroundColor !== null) {
+            $this->imagick->setImageBackgroundColor(new ImagickPixel($this->backgroundColor));
+            $this->imagick->setImageAlphaChannel(Imagick::ALPHACHANNEL_REMOVE);
+        }
 
         if ($this->resizeWidth !== null) {
             $this->imagick->resizeImage($this->resizeWidth, $this->resizeHeight ?? 0, Imagick::FILTER_POINT, 0);
