@@ -138,6 +138,19 @@ $pdf->layerMethod(\Spatie\PdfToImage\Enums\LayerMethod::Merge);
 $pdf->layerMethod(\Spatie\PdfToImage\Enums\LayerMethod::None);
 ```
 
+Set the background color of the output image:
+
+```php
+$pdf->backgroundColor('white') // simple text for 'white' color
+    ->save($pathToWhereImageShouldBeStored);
+
+$pdf->backgroundColor('#fff') // code for 'white' color
+    ->save($pathToWhereImageShouldBeStored);
+
+$pdf->backgroundColor('rgb(255,255,255)') // rgb for 'white' color
+    ->save($pathToWhereImageShouldBeStored);
+```
+
 ## Issues regarding Ghostscript
 
 This package uses Ghostscript through Imagick. For this to work Ghostscripts `gs` command should be accessible from the PHP process. For the PHP CLI process (e.g. Laravel's asynchronous jobs, commands, etc...) this is usually already the case. 
