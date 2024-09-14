@@ -3,6 +3,7 @@
 namespace Spatie\PdfToImage;
 
 use Imagick;
+use ImagickPixel;
 use Spatie\PdfToImage\DTOs\PageSize;
 use Spatie\PdfToImage\DTOs\PdfPage;
 use Spatie\PdfToImage\Enums\LayerMethod;
@@ -12,7 +13,6 @@ use Spatie\PdfToImage\Exceptions\InvalidQuality;
 use Spatie\PdfToImage\Exceptions\InvalidSize;
 use Spatie\PdfToImage\Exceptions\PageDoesNotExist;
 use Spatie\PdfToImage\Exceptions\PdfDoesNotExist;
-use ImagickPixel;
 
 class Pdf
 {
@@ -152,7 +152,7 @@ class Pdf
     public function pageCount(): int
     {
         if ($this->imagick === null) {
-            $this->imagick = new Imagick();
+            $this->imagick = new Imagick;
             $this->imagick->pingImage($this->filename);
         }
 
@@ -170,7 +170,7 @@ class Pdf
     public function getSize(): PageSize
     {
         if ($this->imagick === null) {
-            $this->imagick = new Imagick();
+            $this->imagick = new Imagick;
             $this->imagick->pingImage($this->filename);
         }
 
@@ -233,7 +233,7 @@ class Pdf
          * Reinitialize imagick because the target resolution must be set
          * before reading the actual image.
          */
-        $this->imagick = new Imagick();
+        $this->imagick = new Imagick;
 
         $this->imagick->setResolution($this->resolution, $this->resolution);
 
