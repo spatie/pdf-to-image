@@ -247,7 +247,7 @@ class Pdf
 
         $this->imagick->readImage(sprintf('%s[%s]', $this->filename, $pageNumber - 1));
 
-        if ($this->backgroundColor !== null) {
+        if (! empty($this->backgroundColor)) {
             $this->imagick->setImageBackgroundColor(new ImagickPixel($this->backgroundColor));
             $this->imagick->setImageAlphaChannel(Imagick::ALPHACHANNEL_REMOVE);
         }
