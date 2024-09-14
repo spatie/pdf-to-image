@@ -2,6 +2,18 @@
 
 All notable changes to `pdf-to-image` will be documented in this file
 
+## 3.1.0 - 2024-09-14
+
+### What's Changed
+
+* Add background color setting for the output image by @waithawoo in https://github.com/spatie/pdf-to-image/pull/239
+
+### New Contributors
+
+* @waithawoo made their first contribution in https://github.com/spatie/pdf-to-image/pull/239
+
+**Full Changelog**: https://github.com/spatie/pdf-to-image/compare/3.0.0...3.1.0
+
 ## 3.0.0 - 2024-06-10
 
 This release updates the package to a new major version, `v3.0.0`.
