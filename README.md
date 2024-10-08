@@ -123,6 +123,9 @@ $width = $size->width;
 $height = $size->height;
 ```
 
+> [!NOTE]
+> $directoryToWhereImagesShouldBeStored must be an existing directory
+
 Save all pages to images:
 
 ```php
