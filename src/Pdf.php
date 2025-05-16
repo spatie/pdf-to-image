@@ -172,7 +172,7 @@ class Pdf
     public function getSize(): PageSize
     {
         if (empty($this->imagick)) {
-            $this->imagick = new Imagick();
+            $this->imagick = new Imagick;
             $this->imagick->pingImage($this->filename);
         }
 

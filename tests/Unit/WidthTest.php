@@ -2,13 +2,13 @@
 
 use Spatie\PdfToImage\Pdf;
 
-afterAll(function() {
+afterAll(function () {
     $files = [
         output_file('wide-2-1.jpg'),
         output_file('wide-1.jpg'),
     ];
 
-    foreach($files as $file) {
+    foreach ($files as $file) {
         if (file_exists($file)) {
             unlink($file);
         }

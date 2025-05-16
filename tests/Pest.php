@@ -24,7 +24,7 @@ function get_test_file(string $name, ?string $extension = null, string $dirname 
         $extension = $extensionStr;
     }
 
-    return __DIR__ . "/$dirname/test-" . str_replace('.'.$extensionStr, '', basename($name)) . '.' . $extension;
+    return __DIR__."/$dirname/test-".str_replace('.'.$extensionStr, '', basename($name)).'.'.$extension;
 }
 
 function test_file(string $name, ?string $extension = null): string
@@ -32,7 +32,7 @@ function test_file(string $name, ?string $extension = null): string
     return get_test_file($name, $extension);
 }
 
-function output_file(string $name, string $extension = null): string
+function output_file(string $name, ?string $extension = null): string
 {
     return get_test_file($name, $extension, 'output');
 }
