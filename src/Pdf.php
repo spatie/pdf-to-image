@@ -26,6 +26,8 @@ class Pdf
 
     protected array $pages = [1];
 
+    protected $antialiased = true;
+
     public ?Imagick $imagick = null;
 
     public $fileHandle;
@@ -148,6 +150,12 @@ class Pdf
         return $this;
     }
 
+    public function antialiased(bool $antiAliased): static
+    {
+        $this->antialiased = $antiAliased;
+        return $this;
+    }
+
     /**
      * Returns the number of pages in the PDF.
      */
@@ -238,6 +246,7 @@ class Pdf
         $this->imagick = new Imagick;
 
         $this->imagick->setResolution($this->resolution, $this->resolution);
+        $this->imagick->setAntialias($this->antialiased);
 
         if ($this->colorspace !== null) {
             $this->imagick->setColorspace($this->colorspace);
