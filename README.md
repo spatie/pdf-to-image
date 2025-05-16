@@ -164,6 +164,15 @@ $pdf->backgroundColor('rgb(255,255,255)') // rgb for 'white' color
     ->save($pathToWhereImageShouldBeStored);
 ```
 
+## Ultra-wide PDFs
+
+When working with ultra-wide PDFs, you may encounter issues loading PDF files. To resolve this, update your `policy.xml` Imagick file, using values appropriate for your use case:
+
+```xml
+  <policy domain="resource" name="width" value="4GiB"/>
+  <policy domain="resource" name="height" value="4GiB"/>
+```
+
 ## Issues regarding Ghostscript
 
 This package uses Ghostscript through Imagick. For this to work Ghostscripts `gs` command should be accessible from the PHP process. For the PHP CLI process (e.g. Laravel's asynchronous jobs, commands, etc...) this is usually already the case. 
