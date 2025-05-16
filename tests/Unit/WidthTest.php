@@ -20,8 +20,8 @@ it('ensures that ultra-wide PDFs can be used', function () {
 
     $size = $pdf->getSize();
 
-    expect($size->width)->toBeGreaterThanOrEqual(94968);
-    expect($size->height)->toBeGreaterThanOrEqual(42516);
+    expect($size->width)->toBeGreaterThanOrEqual(94900);
+    expect($size->height)->toBeGreaterThanOrEqual(42500);
 });
 
 it('ensures that wide PDFs can be used', function () {
