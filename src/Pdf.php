@@ -26,7 +26,9 @@ class Pdf
 
     protected array $pages = [1];
 
-    public $imagick;
+    public ?Imagick $imagick;
+
+    public $fileHandle;
 
     protected LayerMethod $layerMethod = LayerMethod::Flatten;
 
@@ -169,9 +171,12 @@ class Pdf
      */
     public function getSize(): PageSize
     {
-        if ($this->imagick === null) {
-            $this->imagick = new Imagick;
+        if (empty($this->imagick)) {
+            $this->imagick = new Imagick();
+//            $this->fileHandle = $this->getFileHandleForPdf();
             $this->imagick->pingImage($this->filename);
+            //$this->imagick->setResolution(144, 144);
+            //$this->imagick->readImageFile($this->fileHandle);
         }
 
         $geometry = $this->imagick->getImageGeometry();
