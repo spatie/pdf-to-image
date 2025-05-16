@@ -26,7 +26,7 @@ class Pdf
 
     protected array $pages = [1];
 
-    public ?Imagick $imagick;
+    public ?Imagick $imagick = null;
 
     public $fileHandle;
 
@@ -78,7 +78,7 @@ class Pdf
 
     /**
      * Sets the output format of the generated image.
-     * Default is OutputFormat::Jpg.
+     * The default is OutputFormat::Jpg.
      */
     public function format(OutputFormat $outputFormat): static
     {
@@ -153,7 +153,7 @@ class Pdf
      */
     public function pageCount(): int
     {
-        if ($this->imagick === null) {
+        if (empty($this->imagick)) {
             $this->imagick = new Imagick;
             $this->imagick->pingImage($this->filename);
         }
@@ -173,10 +173,7 @@ class Pdf
     {
         if (empty($this->imagick)) {
             $this->imagick = new Imagick();
-//            $this->fileHandle = $this->getFileHandleForPdf();
             $this->imagick->pingImage($this->filename);
-            //$this->imagick->setResolution(144, 144);
-            //$this->imagick->readImageFile($this->fileHandle);
         }
 
         $geometry = $this->imagick->getImageGeometry();
