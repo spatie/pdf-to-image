@@ -4,27 +4,18 @@ use Spatie\PdfToImage\Test\TestCase;
 
 uses(TestCase::class)->in(__DIR__);
 
+
 function get_test_file(string $name, ?string $extension = null, string $dirname = 'files'): string
 {
-    /** @var string $nameStr */
-    $nameStr = pathinfo($name, PATHINFO_FILENAME);
-
-    if (empty(trim($extension)) || strlen($extension) >= 2) {
-        $name = $nameStr;
-    }
-
-    $extensionStr = pathinfo($name, PATHINFO_EXTENSION);
-    $extensionStr = ltrim($extensionStr, '.');
-
-    if (empty($extensionStr)) {
-        $extensionStr = 'pdf';
-    }
+    $extension = empty($extension) ? pathinfo($name, PATHINFO_EXTENSION) : $extension;
+    $name = pathinfo($name, PATHINFO_FILENAME);
+    $extension = ltrim($extension,'.');
 
     if (empty($extension)) {
-        $extension = $extensionStr;
+        $extension = 'pdf';
     }
 
-    return __DIR__."/$dirname/test-".str_replace('.'.$extensionStr, '', basename($name)).'.'.$extension;
+    return __DIR__ . "/$dirname/test-$name.$extension";
 }
 
 function test_file(string $name, ?string $extension = null): string
