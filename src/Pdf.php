@@ -153,6 +153,7 @@ class Pdf
     public function antialiased(bool $antiAliased): static
     {
         $this->antialiased = $antiAliased;
+
         return $this;
     }
 
