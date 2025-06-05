@@ -2,7 +2,7 @@
     <a href="https://spatie.be/open-source?utm_source=github&utm_medium=banner&utm_campaign=pdf-to-image">
       <picture>
         <source media="(prefers-color-scheme: dark)" srcset="https://spatie.be/packages/header/pdf-to-image/html/dark.webp">
-        <img alt="Logo for pdf-to-image" src="https://spatie.be/packages/header/pdf-to-image/html/light.webp" height="190">
+        <img alt="Logo for pdf-to-image" src="https://spatie.be/packages/header/pdf-to-image/html/light.webp">
       </picture>
     </a>
 
