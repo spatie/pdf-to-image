@@ -8,7 +8,7 @@ jobs:
         strategy:
             fail-fast: true
             matrix:
-                php: [8.3, 8.2]
+                php: [8.5, 8.4, 8.3, 8.2]
                 dependency-version: [prefer-lowest, prefer-stable]
                 os: [ubuntu-latest]
 
@@ -28,7 +28,7 @@ jobs:
               with:
                   php-version: ${{ matrix.php }}
                   extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, mysql, mysqli, pdo_mysql, bcmath, soap, intl, gd, exif, iconv, imagick
-                  coverage: none
+                  coverage: pcov
 
             - name: Fix Imagick Policy
               run: sudo sed -i 's/none/read|write/g' /etc/ImageMagick-6/policy.xml
