@@ -51,7 +51,7 @@ Get the total number of pages in the pdf:
 
 ```php
 /** @var int $numberOfPages */
-$numberOfPages = $pdf->pageCount();
+$numberOfPages = $pdf->getNumberOfPages();
 ```
 
 Check if a file type is a supported output format:
