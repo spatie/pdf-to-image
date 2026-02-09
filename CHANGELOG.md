@@ -2,6 +2,27 @@
 
 All notable changes to `pdf-to-image` will be documented in this file
 
+## 3.2.0 - 2026-02-09
+
+### What's Changed
+
+* Update README.md by @danielrona in https://github.com/spatie/pdf-to-image/pull/240
+* Bump stefanzweifel/git-auto-commit-action from 4 to 6 by @dependabot[bot] in https://github.com/spatie/pdf-to-image/pull/251
+* Update issue template by @AlexVanderbist in https://github.com/spatie/pdf-to-image/pull/253
+* Bump actions/checkout from 4 to 5 by @dependabot[bot] in https://github.com/spatie/pdf-to-image/pull/252
+* Bump stefanzweifel/git-auto-commit-action from 6 to 7 by @dependabot[bot] in https://github.com/spatie/pdf-to-image/pull/254
+* feat: add tests for php 8.4 and 8.5 by @Chris53897 in https://github.com/spatie/pdf-to-image/pull/256
+* Bump actions/checkout from 5 to 6 by @dependabot[bot] in https://github.com/spatie/pdf-to-image/pull/257
+* Wide PDFs, Antialiasing, Minor Improvements by @patinthehat in https://github.com/spatie/pdf-to-image/pull/249
+
+### New Contributors
+
+* @danielrona made their first contribution in https://github.com/spatie/pdf-to-image/pull/240
+* @AlexVanderbist made their first contribution in https://github.com/spatie/pdf-to-image/pull/253
+* @Chris53897 made their first contribution in https://github.com/spatie/pdf-to-image/pull/256
+
+**Full Changelog**: https://github.com/spatie/pdf-to-image/compare/3.1.0...3.2.0
+
 ## 3.1.0 - 2024-09-14
 
 ### What's Changed
