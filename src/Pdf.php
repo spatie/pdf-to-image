@@ -26,7 +26,11 @@ class Pdf
 
     protected array $pages = [1];
 
-    public $imagick;
+    protected $antialiased = true;
+
+    public ?Imagick $imagick = null;
+
+    public $fileHandle;
 
     protected LayerMethod $layerMethod = LayerMethod::Flatten;
 
@@ -76,7 +80,7 @@ class Pdf
 
     /**
      * Sets the output format of the generated image.
-     * Default is OutputFormat::Jpg.
+     * The default is OutputFormat::Jpg.
      */
     public function format(OutputFormat $outputFormat): static
     {
@@ -146,12 +150,19 @@ class Pdf
         return $this;
     }
 
+    public function antialiased(bool $antiAliased): static
+    {
+        $this->antialiased = $antiAliased;
+
+        return $this;
+    }
+
     /**
      * Returns the number of pages in the PDF.
      */
     public function pageCount(): int
     {
-        if ($this->imagick === null) {
+        if (empty($this->imagick)) {
             $this->imagick = new Imagick;
             $this->imagick->pingImage($this->filename);
         }
@@ -169,7 +180,7 @@ class Pdf
      */
     public function getSize(): PageSize
     {
-        if ($this->imagick === null) {
+        if (empty($this->imagick)) {
             $this->imagick = new Imagick;
             $this->imagick->pingImage($this->filename);
         }
@@ -236,6 +247,7 @@ class Pdf
         $this->imagick = new Imagick;
 
         $this->imagick->setResolution($this->resolution, $this->resolution);
+        $this->imagick->setAntialias($this->antialiased);
 
         if ($this->colorspace !== null) {
             $this->imagick->setColorspace($this->colorspace);

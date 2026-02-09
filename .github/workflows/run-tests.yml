@@ -31,7 +31,10 @@ jobs:
                   coverage: pcov
 
             - name: Fix Imagick Policy
-              run: sudo sed -i 's/none/read|write/g' /etc/ImageMagick-6/policy.xml
+              run: |
+                sudo sed -i 's/none/read|write/g' /etc/ImageMagick-6/policy.xml
+                sudo sed -i -E 's/[0-9]+MP"/3GiB"/g' /etc/ImageMagick-6/policy.xml
+
 
             - name: Install dependencies
               run: composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction
@@ -42,4 +45,4 @@ jobs:
                   echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
 
             - name: Execute tests
-              run: vendor/bin/pest
+              run: vendor/bin/pest --parallel
