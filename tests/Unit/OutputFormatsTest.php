@@ -1,9 +1,10 @@
 <?php
 
+use Spatie\PdfToImage\Enums\OutputFormat;
 use Spatie\PdfToImage\Pdf;
 
 it('will accept an output format and convert to it', function ($format) {
-    $fmt = \Spatie\PdfToImage\Enums\OutputFormat::from($format);
+    $fmt = OutputFormat::from($format);
 
     $imagick = (new Pdf($this->testFile))
         ->format($fmt)
@@ -17,7 +18,7 @@ it('gets the output format', function () {
     $pdf = new Pdf($this->testFile);
     expect($pdf->getFormat()->value)->toEqual('jpg');
 
-    $pdf->format(\Spatie\PdfToImage\Enums\OutputFormat::Png);
+    $pdf->format(OutputFormat::Png);
     expect($pdf->getFormat()->value)->toEqual('png');
 });
 

@@ -1,5 +1,6 @@
 <?php
 
+use Spatie\PdfToImage\Exceptions\InvalidSize;
 use Spatie\PdfToImage\Pdf;
 
 it('will create a thumbnail at specified sizes', function () {
@@ -25,7 +26,7 @@ it('will create a thumbnail at specified sizes', function () {
 it('will throw an exception when passed an invalid thumbnail size', function ($width, $height) {
     (new Pdf($this->testFile))->thumbnailSize($width, $height);
 })
-    ->throws(\Spatie\PdfToImage\Exceptions\InvalidSize::class)
+    ->throws(InvalidSize::class)
     ->with([
         'invalid width' => [-1, 100],
         'invalid height' => [100, -1],
@@ -54,7 +55,7 @@ it('will create an image at specified sizes', function () {
 it('will throw an exception when passed an invalid image size', function ($width, $height) {
     (new Pdf($this->testFile))->size($width, $height);
 })
-    ->throws(\Spatie\PdfToImage\Exceptions\InvalidSize::class)
+    ->throws(InvalidSize::class)
     ->with([
         'invalid width' => [-1, 100],
         'invalid height' => [100, -1],

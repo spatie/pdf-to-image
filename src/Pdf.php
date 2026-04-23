@@ -100,10 +100,10 @@ class Pdf
      * If LayerMethod, should be a valid LayerMethod enum.
      * To disable merging image layers, set to LayerMethod::None.
      *
-     * @param \Spatie\PdfToImage\Enums\LayerMethod|int
+     * @param LayerMethod|int
      * @return $this
      *
-     * @throws \Spatie\PdfToImage\Exceptions\InvalidLayerMethod
+     * @throws InvalidLayerMethod
      *
      * @see https://secure.php.net/manual/en/imagick.constants.php
      * @see Pdf::getImageData()
@@ -292,7 +292,7 @@ class Pdf
      * Set the compression quality for the image. The value should be between 1 and 100, where
      * 1 is the lowest quality and 100 is the highest.
      *
-     * @throws \Spatie\PdfToImage\Exceptions\InvalidQuality
+     * @throws InvalidQuality
      */
     public function quality(int $compressionQuality): static
     {
@@ -310,7 +310,7 @@ class Pdf
      * be scaled according to the width.
      *
      *
-     * @throws \Spatie\PdfToImage\Exceptions\InvalidSize
+     * @throws InvalidSize
      */
     public function thumbnailSize(int $width, ?int $height = null): static
     {
@@ -331,7 +331,7 @@ class Pdf
     /**
      * Set the size of the image. If no height is provided, the height will be scaled according to the width.
      *
-     * @throws \Spatie\PdfToImage\Exceptions\InvalidSize
+     * @throws InvalidSize
      */
     public function size(int $width, ?int $height = null): static
     {
@@ -368,7 +368,7 @@ class Pdf
      * Validate that the page numbers are within the range of the PDF, which is 1 to the number of pages.
      * Throws a PageDoesNotExist exception if a page number is out of range.
      *
-     * @throws \Spatie\PdfToImage\Exceptions\PageDoesNotExist
+     * @throws PageDoesNotExist
      */
     protected function validatePageNumbers(int ...$pageNumbers): void
     {

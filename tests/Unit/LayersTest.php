@@ -1,11 +1,12 @@
 <?php
 
+use Spatie\PdfToImage\Enums\LayerMethod;
 use Spatie\PdfToImage\Exceptions\InvalidLayerMethod;
 use Spatie\PdfToImage\Pdf;
 
 it('can accept a layer', function () {
     $image = (new Pdf($this->testFile))
-        ->layerMethod(\Spatie\PdfToImage\Enums\LayerMethod::None)
+        ->layerMethod(LayerMethod::None)
         ->resolution(72)
         ->getImageData('test.jpg', 1)
         ->getImageResolution();

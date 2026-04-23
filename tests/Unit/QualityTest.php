@@ -1,11 +1,12 @@
 <?php
 
+use Spatie\PdfToImage\Exceptions\InvalidQuality;
 use Spatie\PdfToImage\Pdf;
 
 it('will throw an exception when passed an invalid quality value', function ($quality) {
     (new Pdf($this->testFile))->quality($quality);
 })
-    ->throws(\Spatie\PdfToImage\Exceptions\InvalidQuality::class)
+    ->throws(InvalidQuality::class)
     ->with([-1, 0, 101]);
 
 it('will set output quality', function () {
