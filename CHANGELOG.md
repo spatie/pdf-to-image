@@ -2,6 +2,20 @@
 
 All notable changes to `pdf-to-image` will be documented in this file
 
+## 3.3.0 - 2026-06-26
+
+### What's Changed
+
+* Bump dependabot/fetch-metadata from 2 to 3 by @dependabot[bot] in https://github.com/spatie/pdf-to-image/pull/260
+* Bump actions/checkout from 6 to 7 by @dependabot[bot] in https://github.com/spatie/pdf-to-image/pull/266
+* fix: use white background by default when flattening PDF layers by @lazerg in https://github.com/spatie/pdf-to-image/pull/267
+
+### New Contributors
+
+* @lazerg made their first contribution in https://github.com/spatie/pdf-to-image/pull/267
+
+**Full Changelog**: https://github.com/spatie/pdf-to-image/compare/3.2.0...3.3.0
+
 ## 3.2.0 - 2026-02-09
 
 ### What's Changed
