@@ -164,6 +164,13 @@ $pdf->backgroundColor('rgb(255,255,255)') // rgb for 'white' color
     ->save($pathToWhereImageShouldBeStored);
 ```
 
+Convert a password-protected (encrypted) PDF by passing the password with the `password()` method:
+
+```php
+$pdf->password('your-password')
+    ->save($pathToWhereImageShouldBeStored);
+```
+
 ## Ultra-wide PDFs
 
 When working with ultra-wide PDFs, you may encounter issues loading PDF files. To resolve this, update your `policy.xml` Imagick file, using values appropriate for your use case:
