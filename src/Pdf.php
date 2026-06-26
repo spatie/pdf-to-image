@@ -48,6 +48,8 @@ class Pdf
 
     protected ?int $numberOfPages = null;
 
+    protected ?string $password = null;
+
     public function __construct(string $filename)
     {
         if (! file_exists($filename)) {
@@ -74,6 +76,16 @@ class Pdf
     public function backgroundColor(string $backgroundColorCode): static
     {
         $this->backgroundColor = $backgroundColorCode;
+
+        return $this;
+    }
+
+    /**
+     * Set the password used to open a password-protected (encrypted) PDF.
+     */
+    public function password(string $password): static
+    {
+        $this->password = $password;
 
         return $this;
     }
@@ -164,6 +176,7 @@ class Pdf
     {
         if (empty($this->imagick)) {
             $this->imagick = new Imagick;
+            $this->applyPassword($this->imagick);
             $this->imagick->pingImage($this->filename);
         }
 
@@ -182,6 +195,7 @@ class Pdf
     {
         if (empty($this->imagick)) {
             $this->imagick = new Imagick;
+            $this->applyPassword($this->imagick);
             $this->imagick->pingImage($this->filename);
         }
 
@@ -245,6 +259,8 @@ class Pdf
          * before reading the actual image.
          */
         $this->imagick = new Imagick;
+
+        $this->applyPassword($this->imagick);
 
         $this->imagick->setResolution($this->resolution, $this->resolution);
         $this->imagick->setAntialias($this->antialiased);
@@ -347,6 +363,19 @@ class Pdf
         $this->resizeHeight = $height ?? 0;
 
         return $this;
+    }
+
+    /**
+     * Pass the configured password to Imagick so it can open a
+     * password-protected (encrypted) PDF.
+     */
+    protected function applyPassword(Imagick $imagick): void
+    {
+        if ($this->password === null) {
+            return;
+        }
+
+        $imagick->setOption('authenticate', $this->password);
     }
 
     protected function determineOutputFormat(string $pathToImage): OutputFormat
