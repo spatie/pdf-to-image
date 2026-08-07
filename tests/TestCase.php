@@ -10,6 +10,8 @@ class TestCase extends BaseTestCase
 
     public $multipageTestFile = __DIR__.'/files/multipage-test.pdf';
 
+    public $passwordProtectedTestFile = __DIR__.'/files/test-password-protected.pdf';
+
     public $outputDirectory = __DIR__.'/output';
 
     public function unlinkAllOutputImages(string $path): void

@@ -69,3 +69,20 @@ it('uses white background by default when flattening layers', function () {
 
     expect($image)->toContain('255,255,255');
 });
+
+it('still reports the total page count after rendering a single page', function () {
+    $pdf = new Pdf($this->multipageTestFile);
+
+    $pdf->getImageData('page-1.jpg', 1);
+
+    expect($pdf->pageCount())->toEqual(3);
+});
+
+it('still reports the pdf size after rendering a resized page', function () {
+    $expectedWidth = (new Pdf($this->testFile))->getSize()->width;
+
+    $pdf = new Pdf($this->testFile);
+    $pdf->thumbnailSize(100)->getImageData('page-1.jpg', 1);
+
+    expect($pdf->getSize()->width)->toEqual($expectedWidth);
+});

@@ -12,6 +12,7 @@ use Spatie\PdfToImage\Exceptions\InvalidLayerMethod;
 use Spatie\PdfToImage\Exceptions\InvalidQuality;
 use Spatie\PdfToImage\Exceptions\InvalidSize;
 use Spatie\PdfToImage\Exceptions\PageDoesNotExist;
+use Spatie\PdfToImage\Exceptions\PasswordNotSupported;
 use Spatie\PdfToImage\Exceptions\PdfDoesNotExist;
 
 class Pdf
@@ -30,6 +31,8 @@ class Pdf
 
     public ?Imagick $imagick = null;
 
+    protected ?Imagick $pingedImagick = null;
+
     public $fileHandle;
 
     protected LayerMethod $layerMethod = LayerMethod::Flatten;
@@ -47,6 +50,8 @@ class Pdf
     protected ?int $resizeHeight = null;
 
     protected ?int $numberOfPages = null;
+
+    protected ?string $password = null;
 
     public function __construct(string $filename)
     {
@@ -76,6 +81,30 @@ class Pdf
         $this->backgroundColor = $backgroundColorCode;
 
         return $this;
+    }
+
+    /**
+     * Set the password used to open a password-protected (encrypted) PDF.
+     * Requires ImageMagick 7.
+     */
+    public function password(string $password): static
+    {
+        if (! static::supportsPasswordProtectedPdfs()) {
+            throw PasswordNotSupported::forImageMagickMajorVersion(static::imageMagickMajorVersion());
+        }
+
+        $this->password = $password;
+
+        return $this;
+    }
+
+    /**
+     * ImageMagick 6 reads the password from a struct field that ext-imagick cannot write to,
+     * so it silently drops any password passed to it.
+     */
+    public static function supportsPasswordProtectedPdfs(): bool
+    {
+        return static::imageMagickMajorVersion() >= 7;
     }
 
     /**
@@ -162,13 +191,8 @@ class Pdf
      */
     public function pageCount(): int
     {
-        if (empty($this->imagick)) {
-            $this->imagick = new Imagick;
-            $this->imagick->pingImage($this->filename);
-        }
-
         if ($this->numberOfPages === null) {
-            $this->numberOfPages = $this->imagick->getNumberImages();
+            $this->numberOfPages = $this->pingedImagick()->getNumberImages();
         }
 
         return $this->numberOfPages;
@@ -180,14 +204,27 @@ class Pdf
      */
     public function getSize(): PageSize
     {
-        if (empty($this->imagick)) {
-            $this->imagick = new Imagick;
-            $this->imagick->pingImage($this->filename);
-        }
-
-        $geometry = $this->imagick->getImageGeometry();
+        $geometry = $this->pingedImagick()->getImageGeometry();
 
         return PageSize::make($geometry['width'], $geometry['height']);
+    }
+
+    /**
+     * Metadata is read from a dedicated instance, kept apart from the one getImageData()
+     * renders with. Sharing a single instance made pageCount() report the pages that
+     * happened to be read last, and made a failed ping poison every later call.
+     */
+    protected function pingedImagick(): Imagick
+    {
+        if ($this->pingedImagick === null) {
+            $imagick = new Imagick;
+            $this->applyPassword($imagick);
+            $imagick->pingImage($this->filename);
+
+            $this->pingedImagick = $imagick;
+        }
+
+        return $this->pingedImagick;
     }
 
     /**
@@ -245,6 +282,8 @@ class Pdf
          * before reading the actual image.
          */
         $this->imagick = new Imagick;
+
+        $this->applyPassword($this->imagick);
 
         $this->imagick->setResolution($this->resolution, $this->resolution);
         $this->imagick->setAntialias($this->antialiased);
@@ -349,6 +388,22 @@ class Pdf
         $this->resizeHeight = $height ?? 0;
 
         return $this;
+    }
+
+    protected static function imageMagickMajorVersion(): int
+    {
+        preg_match('/^ImageMagick (\d+)\./', Imagick::getVersion()['versionString'], $matches);
+
+        return (int) ($matches[1] ?? 0);
+    }
+
+    protected function applyPassword(Imagick $imagick): void
+    {
+        if ($this->password === null) {
+            return;
+        }
+
+        $imagick->setOption('authenticate', $this->password);
     }
 
     protected function determineOutputFormat(string $pathToImage): OutputFormat
