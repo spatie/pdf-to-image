@@ -12,6 +12,7 @@ use Spatie\PdfToImage\Exceptions\InvalidLayerMethod;
 use Spatie\PdfToImage\Exceptions\InvalidQuality;
 use Spatie\PdfToImage\Exceptions\InvalidSize;
 use Spatie\PdfToImage\Exceptions\PageDoesNotExist;
+use Spatie\PdfToImage\Exceptions\PasswordNotSupported;
 use Spatie\PdfToImage\Exceptions\PdfDoesNotExist;
 
 class Pdf
@@ -82,12 +83,26 @@ class Pdf
 
     /**
      * Set the password used to open a password-protected (encrypted) PDF.
+     * Requires ImageMagick 7.
      */
     public function password(string $password): static
     {
+        if (! static::supportsPasswordProtectedPdfs()) {
+            throw PasswordNotSupported::forImageMagickMajorVersion(static::imageMagickMajorVersion());
+        }
+
         $this->password = $password;
 
         return $this;
+    }
+
+    /**
+     * ImageMagick 6 reads the password from a struct field that ext-imagick cannot write to,
+     * so it silently drops any password passed to it.
+     */
+    public static function supportsPasswordProtectedPdfs(): bool
+    {
+        return static::imageMagickMajorVersion() >= 7;
     }
 
     /**
@@ -367,10 +382,13 @@ class Pdf
         return $this;
     }
 
-    /**
-     * Pass the configured password to Imagick so it can open a
-     * password-protected (encrypted) PDF.
-     */
+    protected static function imageMagickMajorVersion(): int
+    {
+        preg_match('/^ImageMagick (\d+)\./', Imagick::getVersion()['versionString'], $matches);
+
+        return (int) ($matches[1] ?? 0);
+    }
+
     protected function applyPassword(Imagick $imagick): void
     {
         if ($this->password === null) {

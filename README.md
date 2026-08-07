@@ -171,6 +171,14 @@ $pdf->password('your-password')
     ->save($pathToWhereImageShouldBeStored);
 ```
 
+This requires ImageMagick 7. ImageMagick 6 reads the password from an internal struct field that the `imagick` extension cannot write to, so it silently ignores any password it is given. On ImageMagick 6, `password()` therefore throws a `PasswordNotSupported` exception rather than failing later with an unrelated "Failed to read the file" error.
+
+You can check which behaviour applies to your installation:
+
+```php
+Pdf::supportsPasswordProtectedPdfs(); // true on ImageMagick 7
+```
+
 ## Ultra-wide PDFs
 
 When working with ultra-wide PDFs, you may encounter issues loading PDF files. To resolve this, update your `policy.xml` Imagick file, using values appropriate for your use case:
