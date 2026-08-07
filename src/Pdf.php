@@ -31,6 +31,8 @@ class Pdf
 
     public ?Imagick $imagick = null;
 
+    protected ?Imagick $pingedImagick = null;
+
     public $fileHandle;
 
     protected LayerMethod $layerMethod = LayerMethod::Flatten;
@@ -189,14 +191,8 @@ class Pdf
      */
     public function pageCount(): int
     {
-        if (empty($this->imagick)) {
-            $this->imagick = new Imagick;
-            $this->applyPassword($this->imagick);
-            $this->imagick->pingImage($this->filename);
-        }
-
         if ($this->numberOfPages === null) {
-            $this->numberOfPages = $this->imagick->getNumberImages();
+            $this->numberOfPages = $this->pingedImagick()->getNumberImages();
         }
 
         return $this->numberOfPages;
@@ -208,15 +204,27 @@ class Pdf
      */
     public function getSize(): PageSize
     {
-        if (empty($this->imagick)) {
-            $this->imagick = new Imagick;
-            $this->applyPassword($this->imagick);
-            $this->imagick->pingImage($this->filename);
-        }
-
-        $geometry = $this->imagick->getImageGeometry();
+        $geometry = $this->pingedImagick()->getImageGeometry();
 
         return PageSize::make($geometry['width'], $geometry['height']);
+    }
+
+    /**
+     * Metadata is read from a dedicated instance, kept apart from the one getImageData()
+     * renders with. Sharing a single instance made pageCount() report the pages that
+     * happened to be read last, and made a failed ping poison every later call.
+     */
+    protected function pingedImagick(): Imagick
+    {
+        if ($this->pingedImagick === null) {
+            $imagick = new Imagick;
+            $this->applyPassword($imagick);
+            $imagick->pingImage($this->filename);
+
+            $this->pingedImagick = $imagick;
+        }
+
+        return $this->pingedImagick;
     }
 
     /**

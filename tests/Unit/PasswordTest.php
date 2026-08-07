@@ -43,3 +43,12 @@ it('throws when setting a password on an ImageMagick version that ignores it', f
     expect(fn () => (new Pdf($this->passwordProtectedTestFile))->password('secret'))
         ->toThrow(PasswordNotSupported::class);
 })->skip(fn () => Pdf::supportsPasswordProtectedPdfs(), 'Only applies to ImageMagick 6');
+
+it('can read metadata after a first attempt failed without a password', function () {
+    $pdf = new Pdf($this->passwordProtectedTestFile);
+
+    expect(fn () => $pdf->pageCount())->toThrow(ImagickException::class);
+
+    expect($pdf->password('secret')->pageCount())->toEqual(1);
+    expect($pdf->getSize()->width)->toBeGreaterThan(0);
+})->skip(fn () => ! Pdf::supportsPasswordProtectedPdfs(), 'Requires ImageMagick 7');
