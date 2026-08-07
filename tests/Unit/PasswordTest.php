@@ -1,5 +1,6 @@
 <?php
 
+use Spatie\PdfToImage\Exceptions\PasswordNotSupported;
 use Spatie\PdfToImage\Pdf;
 
 it('can convert a password-protected pdf when the correct password is given', function () {
@@ -8,7 +9,7 @@ it('can convert a password-protected pdf when the correct password is given', fu
         ->getImageData('page-1.jpg', 1);
 
     expect($imagick)->toBeInstanceOf(Imagick::class);
-});
+})->skip(fn () => ! Pdf::supportsPasswordProtectedPdfs(), 'Requires ImageMagick 7');
 
 it('can save a password-protected pdf as an image', function () {
     $path = $this->outputDirectory.'/page-1.jpg';
@@ -18,7 +19,7 @@ it('can save a password-protected pdf as an image', function () {
         ->save($path);
 
     expect($path)->toBeFile();
-});
+})->skip(fn () => ! Pdf::supportsPasswordProtectedPdfs(), 'Requires ImageMagick 7');
 
 it('can count the pages of a password-protected pdf', function () {
     $pageCount = (new Pdf($this->passwordProtectedTestFile))
@@ -26,14 +27,19 @@ it('can count the pages of a password-protected pdf', function () {
         ->pageCount();
 
     expect($pageCount)->toEqual(1);
-});
+})->skip(fn () => ! Pdf::supportsPasswordProtectedPdfs(), 'Requires ImageMagick 7');
 
-it('throws an exception when converting a password-protected pdf without a password', function () {
-    (new Pdf($this->passwordProtectedTestFile))->getImageData('page-1.jpg', 1);
-})->throws(ImagickException::class);
+it('opens a password-protected pdf only when the password is correct', function () {
+    expect((new Pdf($this->passwordProtectedTestFile))->password('secret')->pageCount())->toEqual(1);
 
-it('throws an exception when converting a password-protected pdf with the wrong password', function () {
-    (new Pdf($this->passwordProtectedTestFile))
-        ->password('wrong-password')
-        ->getImageData('page-1.jpg', 1);
-})->throws(ImagickException::class);
+    expect(fn () => (new Pdf($this->passwordProtectedTestFile))->password('wrong-password')->getImageData('page-1.jpg', 1))
+        ->toThrow(ImagickException::class);
+
+    expect(fn () => (new Pdf($this->passwordProtectedTestFile))->getImageData('page-1.jpg', 1))
+        ->toThrow(ImagickException::class);
+})->skip(fn () => ! Pdf::supportsPasswordProtectedPdfs(), 'Requires ImageMagick 7');
+
+it('throws when setting a password on an ImageMagick version that ignores it', function () {
+    expect(fn () => (new Pdf($this->passwordProtectedTestFile))->password('secret'))
+        ->toThrow(PasswordNotSupported::class);
+})->skip(fn () => Pdf::supportsPasswordProtectedPdfs(), 'Only applies to ImageMagick 6');

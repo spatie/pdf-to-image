@@ -46,3 +46,32 @@ jobs:
 
             - name: Execute tests
               run: vendor/bin/pest --parallel
+
+    # The runner images only ship ImageMagick 6, which cannot open password-protected PDFs,
+    # so the password tests skip there. This job runs the suite on a distro that packages
+    # ImageMagick 7, where those tests actually execute.
+    test-password-protected-pdfs:
+        runs-on: ubuntu-latest
+        container: debian:trixie
+
+        name: Password-protected PDFs - ImageMagick 7
+
+        steps:
+            - name: Install ImageMagick 7, PHP and ghostscript
+              run: |
+                  apt-get update
+                  apt-get install -y php-cli php-imagick php-xml php-mbstring php-zip php-curl php-pcov ghostscript composer git unzip
+
+            - name: Checkout code
+              uses: actions/checkout@v7
+
+            - name: Fix Imagick Policy
+              run: |
+                  sed -i 's/rights="none"/rights="read|write"/g' /etc/ImageMagick-7/policy.xml
+                  sed -i -E 's/[0-9]+MP"/3GiB"/g' /etc/ImageMagick-7/policy.xml
+
+            - name: Install dependencies
+              run: composer update --prefer-dist --no-interaction
+
+            - name: Execute tests
+              run: vendor/bin/pest --parallel
