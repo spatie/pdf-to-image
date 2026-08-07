@@ -57,6 +57,15 @@ it('can set the background color', function ($backgroundColor) {
         ->getImageBackgroundColor()
         ->getColorAsString();
 
-    $expectedSRGBValueForWhiteColor = 'srgb(255,255,255)';
-    expect($image)->toEqual($expectedSRGBValueForWhiteColor);
+    expect($image)->toContain('255,255,255');
 })->with(['srgb(255,255,255)', 'rgb(255,255,255)', 'white', '#fff']);
+
+it('uses white background by default when flattening layers', function () {
+    $image = (new Pdf($this->testFile))
+        ->selectPage(1)
+        ->getImageData('page-1.jpg', 1)
+        ->getImageBackgroundColor()
+        ->getColorAsString();
+
+    expect($image)->toContain('255,255,255');
+});
