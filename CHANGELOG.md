@@ -2,6 +2,14 @@
 
 All notable changes to `pdf-to-image` will be documented in this file
 
+## 3.4.0 - 2026-08-07
+
+### What's Changed
+
+* Add support for password-protected PDFs by @freekmurze in https://github.com/spatie/pdf-to-image/pull/268
+
+**Full Changelog**: https://github.com/spatie/pdf-to-image/compare/3.3.0...3.4.0
+
 ## 3.3.0 - 2026-06-26
 
 ### What's Changed
