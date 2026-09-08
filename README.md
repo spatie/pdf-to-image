@@ -179,6 +179,16 @@ You can check which behaviour applies to your installation:
 Pdf::supportsPasswordProtectedPdfs(); // true on ImageMagick 7
 ```
 
+Not every password can be used. ImageMagick hands the password to Ghostscript through a command line, and replaces every character outside of a fixed allowlist with an underscore first. Ghostscript then reports `Password did not work.` even though the password is correct. On Linux and macOS the allowlist holds the ASCII letters, the digits, the space and ``$-_.+!;*(),{}|\^~[]`"><#%/?:@&=``. Notably, a single quote and any non-ASCII character (such as `é` or `密`) are not supported. On Windows a single quote is supported, but a double quote and a backslash are not.
+
+`password()` throws a `PasswordContainsUnsupportedCharacters` exception when the given password holds such a character. There is no length limit: a password of any length works, as long as every character is supported.
+
+The full list of supported characters for your platform is available through:
+
+```php
+Pdf::supportedPasswordCharacters();
+```
+
 ## Ultra-wide PDFs
 
 When working with ultra-wide PDFs, you may encounter issues loading PDF files. To resolve this, update your `policy.xml` Imagick file, using values appropriate for your use case:

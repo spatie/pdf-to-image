@@ -12,6 +12,10 @@ class TestCase extends BaseTestCase
 
     public $passwordProtectedTestFile = __DIR__.'/files/test-password-protected.pdf';
 
+    public $passwordWithSpecialCharactersTestFile = __DIR__.'/files/test-password-protected-special-characters.pdf';
+
+    public $passwordWithSpecialCharacters = 's3cret $-_.+!;*(),{}|^~[]`><#%/?:@&=';
+
     public $outputDirectory = __DIR__.'/output';
 
     public function unlinkAllOutputImages(string $path): void
