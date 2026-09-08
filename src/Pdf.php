@@ -12,6 +12,7 @@ use Spatie\PdfToImage\Exceptions\InvalidLayerMethod;
 use Spatie\PdfToImage\Exceptions\InvalidQuality;
 use Spatie\PdfToImage\Exceptions\InvalidSize;
 use Spatie\PdfToImage\Exceptions\PageDoesNotExist;
+use Spatie\PdfToImage\Exceptions\PasswordContainsUnsupportedCharacters;
 use Spatie\PdfToImage\Exceptions\PasswordNotSupported;
 use Spatie\PdfToImage\Exceptions\PdfDoesNotExist;
 
@@ -93,6 +94,12 @@ class Pdf
             throw PasswordNotSupported::forImageMagickMajorVersion(static::imageMagickMajorVersion());
         }
 
+        $supportedCharacters = static::supportedPasswordCharacters();
+
+        if (strspn($password, $supportedCharacters) !== strlen($password)) {
+            throw PasswordContainsUnsupportedCharacters::for($supportedCharacters);
+        }
+
         $this->password = $password;
 
         return $this;
@@ -105,6 +112,22 @@ class Pdf
     public static function supportsPasswordProtectedPdfs(): bool
     {
         return static::imageMagickMajorVersion() >= 7;
+    }
+
+    /**
+     * Before handing the password to Ghostscript, ImageMagick replaces every character that is
+     * not on this allowlist with an underscore. Ghostscript then rejects the mangled password.
+     * The allowlist lives in SanitizeDelegateString() in ImageMagick's delegate-private.h.
+     */
+    public static function supportedPasswordCharacters(): string
+    {
+        $characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 $-_.+!;*(),{}|^~[]`><#%/?:@&=';
+
+        if (DIRECTORY_SEPARATOR === '\\') {
+            return $characters."'";
+        }
+
+        return $characters.'\\"';
     }
 
     /**

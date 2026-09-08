@@ -1,5 +1,6 @@
 <?php
 
+use Spatie\PdfToImage\Exceptions\PasswordContainsUnsupportedCharacters;
 use Spatie\PdfToImage\Exceptions\PasswordNotSupported;
 use Spatie\PdfToImage\Pdf;
 
@@ -52,3 +53,28 @@ it('can read metadata after a first attempt failed without a password', function
     expect($pdf->password('secret')->pageCount())->toEqual(1);
     expect($pdf->getSize()->width)->toBeGreaterThan(0);
 })->skip(fn () => ! Pdf::supportsPasswordProtectedPdfs(), 'Requires ImageMagick 7');
+
+it('can convert a pdf protected by a password full of special characters', function () {
+    $pageCount = (new Pdf($this->passwordWithSpecialCharactersTestFile))
+        ->password($this->passwordWithSpecialCharacters)
+        ->pageCount();
+
+    expect($pageCount)->toEqual(1);
+})->skip(fn () => ! Pdf::supportsPasswordProtectedPdfs(), 'Requires ImageMagick 7');
+
+it('throws when the password holds a character that ImageMagick mangles', function (string $password) {
+    expect(fn () => (new Pdf($this->passwordProtectedTestFile))->password($password))
+        ->toThrow(PasswordContainsUnsupportedCharacters::class);
+})->with([
+    "secret's",
+    'gehéim',
+    '密码',
+    "secret\n",
+])->skip(fn () => ! Pdf::supportsPasswordProtectedPdfs(), 'Requires ImageMagick 7');
+
+it('reports the characters ImageMagick hands over to Ghostscript unchanged', function () {
+    expect(Pdf::supportedPasswordCharacters())
+        ->toContain('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 $-_.+!;*(),{}|^~[]`><#%/?:@&=')
+        ->and(strspn($this->passwordWithSpecialCharacters, Pdf::supportedPasswordCharacters()))
+        ->toEqual(strlen($this->passwordWithSpecialCharacters));
+});
