@@ -2,6 +2,14 @@
 
 All notable changes to `pdf-to-image` will be documented in this file
 
+## 3.5.0 - 2026-09-08
+
+### What's Changed
+
+* Throw a clear exception for passwords ImageMagick cannot pass on to Ghostscript by @freekmurze in https://github.com/spatie/pdf-to-image/pull/270
+
+**Full Changelog**: https://github.com/spatie/pdf-to-image/compare/3.4.0...3.5.0
+
 ## 3.4.0 - 2026-08-07
 
 ### What's Changed
