@@ -8,7 +8,7 @@ jobs:
         strategy:
             fail-fast: true
             matrix:
-                php: [8.5, 8.4, 8.3, 8.2]
+                php: ['8.6', '8.5', '8.4', '8.3', '8.2']
                 dependency-version: [prefer-lowest, prefer-stable]
                 os: [ubuntu-latest]
 
@@ -30,10 +30,14 @@ jobs:
                   extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, mysql, mysqli, pdo_mysql, bcmath, soap, intl, gd, exif, iconv, imagick
                   coverage: pcov
 
+            - name: Verify PHP version
+              run: |
+                  php -r 'echo PHP_VERSION, PHP_EOL; exit(PHP_MAJOR_VERSION . "." . PHP_MINOR_VERSION === "${{ matrix.php }}" ? 0 : 1);'
+
             - name: Fix Imagick Policy
               run: |
-                sudo sed -i 's/none/read|write/g' /etc/ImageMagick-6/policy.xml
-                sudo sed -i -E 's/[0-9]+MP"/3GiB"/g' /etc/ImageMagick-6/policy.xml
+                sudo sed -i 's/none/read|write/g' /etc/ImageMagick-*/policy.xml
+                sudo sed -i -E 's/[0-9]+MP"/3GiB"/g' /etc/ImageMagick-*/policy.xml
 
 
             - name: Install dependencies
@@ -47,9 +51,7 @@ jobs:
             - name: Execute tests
               run: vendor/bin/pest --parallel
 
-    # The runner images only ship ImageMagick 6, which cannot open password-protected PDFs,
-    # so the password tests skip there. This job runs the suite on a distro that packages
-    # ImageMagick 7, where those tests actually execute.
+    # Keep password-protected PDF coverage on ImageMagick 7 regardless of the runner's version.
     test-password-protected-pdfs:
         runs-on: ubuntu-latest
         container: debian:trixie
