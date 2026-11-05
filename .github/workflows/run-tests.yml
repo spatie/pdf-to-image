@@ -8,7 +8,7 @@ jobs:
         strategy:
             fail-fast: true
             matrix:
-                php: [8.5, 8.4, 8.3, 8.2]
+                php: ['8.6', '8.5', '8.4', '8.3', '8.2']
                 dependency-version: [prefer-lowest, prefer-stable]
                 os: [ubuntu-latest]
 
@@ -29,6 +29,10 @@ jobs:
                   php-version: ${{ matrix.php }}
                   extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, mysql, mysqli, pdo_mysql, bcmath, soap, intl, gd, exif, iconv, imagick
                   coverage: pcov
+
+            - name: Verify PHP version
+              run: |
+                  php -r 'echo PHP_VERSION, PHP_EOL; exit(PHP_MAJOR_VERSION . "." . PHP_MINOR_VERSION === "${{ matrix.php }}" ? 0 : 1);'
 
             - name: Fix Imagick Policy
               run: |
